@@ -3,9 +3,9 @@
     public class ExamUser
     {
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        public User User { get; set; } = null!;
         public Guid ExamId { get; set; }
-        public Exam Exam { get; set; }
+        public Exam Exam { get; set; } = null!;
         public bool CompleteStatus { get; set; }
     }
 }
