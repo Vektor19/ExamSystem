@@ -7,5 +7,6 @@
         public string Label { get; set; } = string.Empty;
         public string OptionText { get; set; } = string.Empty;
         public bool IsCorrect { get; set; }
+        public List<Answer> Answers { get; set; } = [];
     }
 }
