@@ -9,5 +9,6 @@ namespace ExamSystem.Core.Entities
         public string QuestionText { get; set; } = string.Empty;
         public QuestionType Type { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public List<QuestionOption> QuestionOptions { get; set; } = [];
     }
 }
