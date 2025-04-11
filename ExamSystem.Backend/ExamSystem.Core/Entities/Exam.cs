@@ -13,7 +13,6 @@ namespace ExamSystem.Core.Entities
         public ExamStatus Status { get; set; }
         public User UserCreatedBy { get; set; } = null!;
         public List<ExamUser> ExamUsers { get; set; } = [];
-        public List<Exam> CreatedExams { get; set; } = [];
         public List<Question> Questions { get; set; } = [];
     }
 }
