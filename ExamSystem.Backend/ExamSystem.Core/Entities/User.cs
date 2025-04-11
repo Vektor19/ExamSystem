@@ -10,5 +10,6 @@
         public List<Role> Roles { get; set; } = [];
         public List<ExamUser> ExamUsers { get; set; } = [];
         public List<Exam> CreatedExams { get; set; } = [];
+        public List<Answer> Answers { get; set; } = [];
     }
 }
