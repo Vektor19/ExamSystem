@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ExamSystem.Core.Common;
 
 namespace ExamSystem.Core.Interfaces
 {
     public interface ICrudRepository<T>
     {
-        Task<T?> GetByIdAsync(Guid id);
-        Task<IEnumerable<T>> GetAllAsync();
-        Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(Guid id);
+        Task<OperationResult<T>> GetByIdAsync(Guid id);
+        Task<OperationResult<IEnumerable<T>>> GetAllAsync();
+        Task<OperationResult> AddAsync(T entity);
+        Task<OperationResult> UpdateAsync(T entity);
+        Task<OperationResult> DeleteAsync(Guid id);
     }
 }
