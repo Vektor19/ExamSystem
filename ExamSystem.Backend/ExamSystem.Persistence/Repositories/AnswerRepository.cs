@@ -14,10 +14,10 @@ namespace ExamSystem.Persistence.Repositories
         }
         public async Task<OperationResult<IEnumerable<Answer>>> GetAllAsync()
         {
-            var exams = await _dbContext.Answers.Include(a => a.QuestionOption)
-                                                .Include(a => a.User)
-                                                .ToListAsync();
-            return OperationResult<IEnumerable<Answer>>.Ok(exams);
+            var answers = await _dbContext.Answers.Include(a => a.QuestionOption)
+                                                  .Include(a => a.User)
+                                                  .ToListAsync();
+            return OperationResult<IEnumerable<Answer>>.Ok(answers);
         }
         public async Task<OperationResult<Answer>> GetByIdAsync(Guid id)
         {
