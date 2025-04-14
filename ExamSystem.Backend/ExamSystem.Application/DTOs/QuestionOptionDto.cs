@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+namespace ExamSystem.Application.DTOs
+{
+    public class QuestionOptionDto
+    {
+        public Guid QuestionOptionId { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string OptionText { get; set; } = string.Empty;
+        
+    }
+}
