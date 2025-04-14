@@ -1,11 +1,8 @@
-﻿// Services/JwtService.cs
-using ExamSystem.Application.DTOs;
+﻿using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Application.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -21,7 +18,7 @@ namespace ExamSystem.Application.Services
             _jwtSettings = jwtSettings.Value;
         }
 
-        public string GenerateToken(UserDto user)
+        public TokenResult GenerateToken(UserDto user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -40,16 +37,16 @@ namespace ExamSystem.Application.Services
                     claims.Add(new Claim(ClaimTypes.Role, role));
                 }
             }
-
+            var expiresTime = DateTime.Now.AddMinutes(_jwtSettings.ExpiryMinutes);
             var token = new JwtSecurityToken(
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_jwtSettings.ExpiryMinutes),
+                expires: expiresTime,
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new TokenResult { Token = new JwtSecurityTokenHandler().WriteToken(token), Expiration = expiresTime };
         }
 
         public ClaimsPrincipal? GetPrincipalFromToken(string token)
