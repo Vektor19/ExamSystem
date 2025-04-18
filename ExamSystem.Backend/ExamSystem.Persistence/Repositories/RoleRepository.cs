@@ -74,5 +74,21 @@ namespace ExamSystem.Persistence.Repositories
 
             return OperationResult.Ok();
         }
+
+        public async Task<OperationResult<IEnumerable<Role>>> GetRolesByNamesAsync(IEnumerable<string> names)
+        {
+            if (names == null || !names.Any())
+                return OperationResult<IEnumerable<Role>>.Fail("No role names provided.");
+
+            var roles = await _dbContext.Roles
+                                        .Where(r => names.Contains(r.Name))
+                                        .ToListAsync();
+
+            if (roles == null || roles.Count == 0)
+                return OperationResult<IEnumerable<Role>>.Fail("No matching roles found.");
+
+            return OperationResult<IEnumerable<Role>>.Ok(roles);
+        }
+
     }
 }
