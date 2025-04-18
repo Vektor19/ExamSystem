@@ -68,5 +68,16 @@ namespace ExamSystem.Persistence.Repositories
                 return OperationResult.Fail("Failed to delete user.");
             return OperationResult.Ok();
         }
+        public async Task<OperationResult<User>> GetByEmailAsync(string email)
+        {
+            var user = await _dbContext.Users.Include(u => u.UserRoles)
+                                             .Include(u => u.ExamUsers)
+                                             .Include(u => u.CreatedExams)
+                                             .Include(u => u.Answers)
+                                             .FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+                return OperationResult<User>.Fail("User not found.");
+            return OperationResult<User>.Ok(user);
+        }
     }
 }
