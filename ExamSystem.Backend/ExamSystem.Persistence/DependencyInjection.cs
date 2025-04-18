@@ -1,4 +1,4 @@
-﻿using ExamSystem.Core.Interfaces;
+﻿using ExamSystem.Core.Interfaces.Repositories;
 using ExamSystem.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

@@ -1,6 +1,6 @@
 ﻿using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;
-using ExamSystem.Core.Interfaces;
+using ExamSystem.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamSystem.Persistence.Repositories

@@ -1,6 +1,6 @@
 ﻿using ExamSystem.Core.Common;
 
-namespace ExamSystem.Core.Interfaces
+namespace ExamSystem.Core.Interfaces.Repositories
 {
     public interface ICrudRepository<T>
     {
