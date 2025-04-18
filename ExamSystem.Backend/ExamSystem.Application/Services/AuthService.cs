@@ -1,7 +1,6 @@
 ﻿using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
-using ExamSystem.Core.Interfaces;
 
 namespace ExamSystem.Application.Services
 {
@@ -16,11 +15,13 @@ namespace ExamSystem.Application.Services
         }
         public async Task<OperationResult<AuthResponseDto>> LoginAsync(LoginUserDto loginDto)
         {
-            bool isValid = await _userService.ValidateCredentialsAsync(loginDto.Email, loginDto.Password);
+            bool isValid = (await _userService.ValidateCredentialsAsync(loginDto.Email, loginDto.Password)).Success;
             if (!isValid)
                 return OperationResult<AuthResponseDto>.Fail("Invalid email or password");
-            var user = await _userService.GetByEmailAsync(loginDto.Email);
-            var tokenResult = _jwtService.GenerateToken(user);
+            var result = await _userService.GetByEmailAsync(loginDto.Email);
+            if (!result.Success)
+                return OperationResult<AuthResponseDto>.Fail(result.ErrorMessage!);
+            var tokenResult = _jwtService.GenerateToken(result.Data!);
             if (string.IsNullOrEmpty(tokenResult.Token))
                 return OperationResult<AuthResponseDto>.Fail("Invalid email or password");
             return OperationResult<AuthResponseDto>.Ok(new AuthResponseDto { Success = true, AccessToken = tokenResult.Token, Expiration = tokenResult.Expiration });
@@ -34,12 +35,15 @@ namespace ExamSystem.Application.Services
                 return OperationResult<AuthResponseDto>.Fail("User with this email already exists");
             }
 
-            var isCreated = await _userService.CreateUserAsync(registerDto);
-            if (!isCreated)
+            var isCreatedResult = await _userService.CreateUserAsync(registerDto);
+            if (!isCreatedResult.Success)
             {
                 return OperationResult<AuthResponseDto>.Fail("Failed to register user");
             }
-            var user = await _userService.GetByEmailAsync(registerDto.Email);
+            var result = await _userService.GetByEmailAsync(registerDto.Email);
+            if (!result.Success)
+                return OperationResult<AuthResponseDto>.Fail(result.ErrorMessage!);
+            var user = result.Data!;
             var token = _jwtService.GenerateToken(user);
 
             var tokenResult = _jwtService.GenerateToken(user);

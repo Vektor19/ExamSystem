@@ -13,6 +13,7 @@ namespace ExamSystem.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddAutoMapper(typeof(Mappings.ExamMapping).Assembly);
             //services.AddScoped<IUserService, UserService>();
             return services;
         }

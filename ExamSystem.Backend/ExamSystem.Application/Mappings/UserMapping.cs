@@ -22,6 +22,9 @@ namespace ExamSystem.Application.Mappings
             CreateMap<CreateUserByAdminDto, User>()
                 .ForMember(dest => dest.UserRoles, opt => opt.Ignore())
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+            CreateMap<UpdateUserDto, User>()
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore())
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
         }
     }
 }

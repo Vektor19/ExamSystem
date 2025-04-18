@@ -1,15 +1,16 @@
 ﻿using ExamSystem.Application.DTOs;
+using ExamSystem.Core.Common;
 
 namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<UserDto> GetByIdAsync(Guid id);
-        Task<IEnumerable<UserDto>> GetAllAsync();
-        Task<UserDto> GetByEmailAsync(string email);
-        Task<bool> UpdateAsync(UserDto userDto);
-        Task<bool> DeleteAsync(Guid id);
-        Task<bool> ValidateCredentialsAsync(string email, string password);
-        Task<bool> CreateUserAsync(RegisterUserDto userDto);
+        Task<OperationResult<UserDto>> GetByIdAsync(Guid id);
+        Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync();
+        Task<OperationResult<UserDto>> GetByEmailAsync(string email);
+        Task<OperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto);
+        Task<OperationResult> DeleteAsync(Guid id);
+        Task<OperationResult> ValidateCredentialsAsync(string email, string password);
+        Task<OperationResult> CreateUserAsync(RegisterUserDto userDto);
     }
 }
