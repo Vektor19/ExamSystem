@@ -18,8 +18,4 @@
     <ProjectReference Include="..\ExamSystem.Core\ExamSystem.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappings\" />
-  </ItemGroup>
-
 </Project>
