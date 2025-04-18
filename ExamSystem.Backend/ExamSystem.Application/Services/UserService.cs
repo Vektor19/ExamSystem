@@ -127,5 +127,37 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Invalid credentials.");
         }
+        public async Task<OperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto)
+        {
+            if (string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
+                return OperationResult.Fail("Email and password are required.");
+
+            var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
+            if (existingUser.Success && existingUser.Data != null)
+                return OperationResult.Fail("User with this email already exists.");
+
+            if (userDto.Roles == null || !userDto.Roles.Any())
+                return OperationResult.Fail("At least one role must be specified.");
+
+            var rolesFromDb = await _roleRepository.GetRolesByNamesAsync(userDto.Roles);
+            if (!rolesFromDb.Success || rolesFromDb.Data == null || !rolesFromDb.Data.Any())
+                return OperationResult.Fail("Invalid roles specified.");
+
+            var user = _mapper.Map<User>(userDto);
+            user.PasswordHash = _passwordHasher.HashPassword(userDto.Password);
+
+            user.UserRoles = rolesFromDb.Data.Select(role => new UserRole
+            {
+                UserRoleId = Guid.NewGuid(),
+                RoleId = role.RoleId,
+                User = user
+            }).ToList();
+
+            var result = await _userRepository.AddAsync(user);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to create user.");
+        }
+
     }
 }

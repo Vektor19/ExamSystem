@@ -12,5 +12,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> DeleteAsync(Guid id);
         Task<OperationResult> ValidateCredentialsAsync(string email, string password);
         Task<OperationResult> CreateUserAsync(RegisterUserDto userDto);
+        Task<OperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
     }
 }
