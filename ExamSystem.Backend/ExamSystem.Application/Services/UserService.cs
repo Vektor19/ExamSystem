@@ -42,6 +42,7 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("Can't create user");
 
             var user = _mapper.Map<User>(userDto);
+            user.UserId = Guid.NewGuid();
             user.PasswordHash = _passwordHasher.HashPassword(userDto.Password);
 
             user.UserRoles = rolesFromDb.Data.Select(role => new UserRole
@@ -144,6 +145,7 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("Invalid roles specified.");
 
             var user = _mapper.Map<User>(userDto);
+            user.UserId = Guid.NewGuid();
             user.PasswordHash = _passwordHasher.HashPassword(userDto.Password);
 
             user.UserRoles = rolesFromDb.Data.Select(role => new UserRole
