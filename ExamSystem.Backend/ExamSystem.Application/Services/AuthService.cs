@@ -29,10 +29,10 @@ namespace ExamSystem.Application.Services
 
         public async Task<OperationResult<AuthResponseDto>> RegisterAsync(RegisterUserDto registerDto)
         {
-            var existingUser = await _userService.GetByEmailAsync(registerDto.Email);
-            if (existingUser != null)
+            var existingUserResult = await _userService.GetByEmailAsync(registerDto.Email);
+            if (existingUserResult.Success || existingUserResult.Data != null)
             {
-                return OperationResult<AuthResponseDto>.Fail("User with this email already exists");
+                return OperationResult<AuthResponseDto>.Fail(existingUserResult.ErrorMessage!);
             }
 
             var isCreatedResult = await _userService.CreateUserAsync(registerDto);
