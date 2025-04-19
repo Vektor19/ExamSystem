@@ -1,8 +1,10 @@
 using ExamSystem.Application;
 using ExamSystem.Infrastructure;
 using ExamSystem.Persistence;
+using SQLitePCL;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddPersistance(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -12,6 +14,8 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+Batteries.Init();
 
 var app = builder.Build();
 
