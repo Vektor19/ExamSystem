@@ -20,7 +20,7 @@ namespace ExamSystem.API.Controllers
             _userService = userService;
         }
         [Authorize(Roles = SystemRoles.Admin)]
-        [HttpPost("create-by-admin")]
+        [HttpPost]
         public async Task<IActionResult> CreateByAdmin([FromBody] CreateUserByAdminDto userDto)
         {
             var result = await _userService.CreateUserByAdminAsync(userDto);
