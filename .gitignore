@@ -933,3 +933,7 @@ $RECYCLE.BIN/
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,csharp,dotnetcore,aspnetcore,node,windows,linux,macos
+
+
+
+*.db
