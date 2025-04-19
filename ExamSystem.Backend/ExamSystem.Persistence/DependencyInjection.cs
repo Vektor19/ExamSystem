@@ -42,6 +42,7 @@ namespace ExamSystem.Persistence
             services.AddScoped<IQuestionRepository, QuestionRepository>();
             services.AddScoped<IQuestionOptionRepository, QuestionOptionRepository>();
             services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<DbSeeder>();
 
             return services;
         }
