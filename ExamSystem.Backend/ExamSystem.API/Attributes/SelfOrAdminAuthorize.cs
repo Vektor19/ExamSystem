@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 
 public class SelfOrAdminAuthorize : Attribute, IAuthorizationFilter
 {
@@ -12,7 +11,7 @@ public class SelfOrAdminAuthorize : Attribute, IAuthorizationFilter
     {
         var user = context.HttpContext.User;
         var userRole = user.FindFirstValue(ClaimTypes.Role);
-        var userId = user.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId == null)
         {
