@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ExamSystem.Core.Common;
+﻿using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +15,7 @@ namespace ExamSystem.Persistence.Repositories
         public async Task<OperationResult<IEnumerable<User>>> GetAllAsync()
         {
             var users = await _dbContext.Users.Include(u => u.UserRoles)
+                                                .ThenInclude(ur => ur.Role)
                                               .Include(u => u.ExamUsers)
                                               .Include(u => u.CreatedExams)
                                               .Include(u => u.Answers)
@@ -29,10 +25,11 @@ namespace ExamSystem.Persistence.Repositories
         public async Task<OperationResult<User>> GetByIdAsync(Guid id)
         {
             var user = await _dbContext.Users.Include(u => u.UserRoles)
+                                                .ThenInclude(ur => ur.Role)
                                              .Include(u => u.ExamUsers)
                                              .Include(u => u.CreatedExams)
                                              .Include(u => u.Answers)
-                                             .FirstOrDefaultAsync();
+                                             .FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null)
                 return OperationResult<User>.Fail("User not found.");
             return OperationResult<User>.Ok(user);
@@ -71,6 +68,7 @@ namespace ExamSystem.Persistence.Repositories
         public async Task<OperationResult<User>> GetByEmailAsync(string email)
         {
             var user = await _dbContext.Users.Include(u => u.UserRoles)
+                                                .ThenInclude(ur => ur.Role)
                                              .Include(u => u.ExamUsers)
                                              .Include(u => u.CreatedExams)
                                              .Include(u => u.Answers)
