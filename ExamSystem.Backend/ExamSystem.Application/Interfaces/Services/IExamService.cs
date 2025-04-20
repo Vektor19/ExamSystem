@@ -7,8 +7,8 @@ namespace ExamSystem.Application.Interfaces.Services
     {
         Task<OperationResult<ExamDto>> GetByIdAsync(Guid examId);
         Task<OperationResult<IEnumerable<ExamDto>>> GetAllAsync();
-        Task<OperationResult<IEnumerable<ExamDto>>> GetAllByCreatedUserIdAsync();
-        Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync();
+        Task<OperationResult<IEnumerable<ExamDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
+        Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
         Task<OperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
         Task<OperationResult> DeleteAsync(Guid examId);
         Task<OperationResult> CreateAsync(ExamCreateDto createExamDto);
