@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.DTOs
 {
-    public class QuestionDto
+    public class QuestionUpdateDto
     {
-        public Guid QuestionId { get; set; }
         public string QuestionText { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
