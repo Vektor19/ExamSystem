@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ExamSystem.Core.Enums;
 
 namespace ExamSystem.Application.DTOs
 {
@@ -11,5 +7,6 @@ namespace ExamSystem.Application.DTOs
         public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public ExamStatus Status { get; set; }
     }
 }
