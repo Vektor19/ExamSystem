@@ -5,7 +5,6 @@ using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
-using ExamSystem.Core.Interfaces.Security;
 
 namespace ExamSystem.Application.Services
 {
