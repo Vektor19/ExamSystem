@@ -3,6 +3,7 @@ using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
+using ExamSystem.Application.Services;
 
 namespace ExamSystem.API.Controllers
 {
@@ -27,7 +28,7 @@ namespace ExamSystem.API.Controllers
             return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
         }
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
-        [HttpGet("by-me")]
+        [HttpGet("by-me/{id}")]
         public async Task<IActionResult> GetAllByCreatedUserIdAsync(Guid id)
         {
             var result = await _examService.GetAllByCreatedUserIdAsync(id);
@@ -35,7 +36,7 @@ namespace ExamSystem.API.Controllers
         }
 
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
-        [HttpGet("by-participant")]
+        [HttpGet("by-participant/{id}")]
         public async Task<IActionResult> GetAllByParticipantIdAsync(Guid id)
         {
             var result = await _examService.GetAllByParticipantUserIdAsync(id);
@@ -49,6 +50,14 @@ namespace ExamSystem.API.Controllers
             var result = await _examService.GetByIdAsync(id);
             return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
         }
+        [CreateExamAuthorize]
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] ExamCreateDto examDto)
+        {
+            var result = await _examService.CreateAsync(examDto);
+            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+        }
+
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ExamUpdateDto updateDto)
