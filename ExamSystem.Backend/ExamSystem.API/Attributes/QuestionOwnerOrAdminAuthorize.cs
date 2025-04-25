@@ -4,15 +4,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-public class ExamOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
+public class QuestionOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
 {
+    private readonly IQuestionService _questionService;
     private readonly IExamService _examService;
     private readonly string _routeKey;
 
-    public ExamOwnerOrAdminAuthorize(IExamService examService, string routeKey = "id")
+    public QuestionOwnerOrAdminAuthorize(IQuestionService questionService, string routeKey = "id", IExamService examService = null)
     {
-        _examService = examService;
+        _questionService = questionService;
         _routeKey = routeKey;
+        _examService = examService;
     }
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -32,17 +34,24 @@ public class ExamOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
             context.Result = new ForbidResult();
             return;
         }
-
         var routeIdString = context.RouteData.Values[_routeKey]?.ToString();
-        if (!Guid.TryParse(routeIdString, out var examId))
+        if (!Guid.TryParse(routeIdString, out var questionId))
         {
             context.Result = new ForbidResult();
             return;
         }
 
-        var result = await _examService.GetByIdAsync(examId);
+        var resultQuestion = await _questionService.GetByIdAsync(questionId);
 
-        if (!result.Success || result.Data!.CreatedBy.UserId.ToString() != userId)
+        if (!resultQuestion.Success)
+        {
+            context.Result = new ForbidResult();
+        }
+        var question = resultQuestion.Data!;
+
+        var resultExam = await _examService.GetByIdAsync(question.Exam.ExamId);
+
+        if (!resultExam.Success || resultExam.Data!.CreatedBy.UserId.ToString() != userId)
         {
             context.Result = new ForbidResult();
         }
