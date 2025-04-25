@@ -72,5 +72,13 @@ namespace ExamSystem.API.Controllers
             var result = await _examService.DeleteAsync(id);
             return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
         }
+        [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
+        [HttpPost("{id}/participants")]
+        public async Task<IActionResult> AddParticipant(Guid id, [FromBody] AddParticipantDto dto)
+        {
+            var result = await _examService.AddParticipantAsync(id, dto.UserId);
+            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+        }
+
     }
 }

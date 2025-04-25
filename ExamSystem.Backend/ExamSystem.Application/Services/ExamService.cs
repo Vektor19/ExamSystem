@@ -125,5 +125,30 @@ namespace ExamSystem.Application.Services
             var isParticipant = exam.ExamUsers.Any(eu => eu.UserId == userId);
             return OperationResult<bool>.Ok(isParticipant);
         }
+
+        public async Task<OperationResult> AddParticipantAsync(Guid examId, Guid userId)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+            var existingUserResult = await _userRepository.GetByIdAsync(userId);
+            if (!existingUserResult.Success || existingUserResult.Data == null)
+                return OperationResult.Fail("User not found.");
+            var exam = existingExamResult.Data;
+            var user = existingUserResult.Data;
+            exam.ExamUsers.Add(new ExamUser
+            {
+                ExamId = examId,
+                UserId = userId
+               ,
+                User = user,
+                Exam = exam,
+                CompleteStatus = false
+            });
+            var result = await _examRepository.UpdateAsync(exam);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to add participant.");
+        }
     }
 }

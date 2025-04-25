@@ -9,6 +9,7 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<IEnumerable<ExamDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<ExamDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
         Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
+        Task<OperationResult> AddParticipantAsync(Guid examId, Guid userId);
         Task<OperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
         Task<OperationResult> DeleteAsync(Guid examId);
         Task<OperationResult> CreateAsync(ExamCreateDto createExamDto);
