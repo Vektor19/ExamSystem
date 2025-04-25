@@ -16,6 +16,7 @@ namespace ExamSystem.Application.Mappings
         {
             CreateMap<QuestionOption, QuestionOptionDto>();
             CreateMap<QuestionOptionCreateDto, QuestionOption>();
+            CreateMap<QuestionOptionUpdateDto, QuestionOption>();
         }
     }
 }

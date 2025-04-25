@@ -16,6 +16,7 @@ namespace ExamSystem.Application
             services.AddAutoMapper(typeof(Mappings.ExamMapping).Assembly);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IExamService, ExamService>();
+            services.AddScoped<IQuestionService, QuestionService>();
 
             return services;
         }

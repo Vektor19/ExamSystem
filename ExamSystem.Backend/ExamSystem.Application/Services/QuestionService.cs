@@ -99,6 +99,22 @@ namespace ExamSystem.Application.Services
             question.Type = Enum.Parse<QuestionType>(updateDto.Type);
             question.ImageUrl = updateDto.ImageUrl;
 
+            if (updateDto.Options != null || updateDto!.Options!.Any())
+            {
+                question.QuestionOptions.Clear();
+                foreach (var option in updateDto.Options!)
+                {
+                    var questionOption = new QuestionOption
+                    {
+                        QuestionOptionId = Guid.NewGuid(),
+                        OptionText = option.OptionText,
+                        IsCorrect = option.IsCorrect,
+                        Label = option.Label,
+                    };
+                    question.QuestionOptions.Add(questionOption);
+                }
+            }
+
             var updateResult = await _questionRepository.UpdateAsync(question);
             return updateResult.Success
                 ? OperationResult.Ok()
