@@ -21,6 +21,10 @@ namespace ExamSystem.Application.Mappings
             CreateMap<QuestionCreateDto, Question>()
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<QuestionType>(src.Type)))
                 .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.Options));
+            CreateMap<QuestionUpdateDto, Question>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => Enum.Parse<QuestionType>(src.Type)))
+                .ForMember(dest => dest.QuestionOptions, opt => opt.MapFrom(src => src.Options));
+
         }
     }
 }

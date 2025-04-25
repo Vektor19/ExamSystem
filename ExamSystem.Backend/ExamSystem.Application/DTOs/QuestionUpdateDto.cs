@@ -11,6 +11,6 @@ namespace ExamSystem.Application.DTOs
         public string QuestionText { get; set; } = string.Empty;
         public string Type { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
-        public List<QuestionOptionDto> Options { get; set; } = [];
+        public List<QuestionOptionUpdateDto> Options { get; set; } = [];
     }
 }
