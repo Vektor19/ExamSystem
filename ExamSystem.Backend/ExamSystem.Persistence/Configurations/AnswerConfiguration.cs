@@ -17,6 +17,10 @@ namespace ExamSystem.Persistence.Configurations
             builder.HasOne(a => a.QuestionOption)
                 .WithMany(qo => qo.Answers)
                 .HasForeignKey(a => a.QuestionOptionId);
+
+            builder.HasOne(a => a.Exam)
+                .WithMany(e => e.Answers)
+                .HasForeignKey(a => a.ExamId);
         }
     }
 }

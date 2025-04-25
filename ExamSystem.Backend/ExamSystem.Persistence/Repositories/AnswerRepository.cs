@@ -16,6 +16,7 @@ namespace ExamSystem.Persistence.Repositories
         {
             var answers = await _dbContext.Answers.Include(a => a.QuestionOption)
                                                   .Include(a => a.User)
+                                                  .Include(a => a.Exam)
                                                   .ToListAsync();
             return OperationResult<IEnumerable<Answer>>.Ok(answers);
         }
@@ -23,6 +24,7 @@ namespace ExamSystem.Persistence.Repositories
         {
             var answer = await _dbContext.Answers.Include(a => a.QuestionOption)
                                                  .Include(a => a.User)
+                                                 .Include(a => a.Exam)
                                                  .FirstOrDefaultAsync();
             if (answer == null)
                 return OperationResult<Answer>.Fail("Answer not found.");

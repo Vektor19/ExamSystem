@@ -11,7 +11,9 @@ namespace ExamSystem.Core.Entities
         public Guid AnswerId { get; set; }
         public Guid UserId { get; set; }
         public Guid QuestionOptionId { get; set; }
+        public Guid ExamId { get; set; }
         public User User { get; set; } = null!;
         public QuestionOption QuestionOption { get; set; } = null!;
+        public Exam Exam { get; set; } = null!;
     }
 }

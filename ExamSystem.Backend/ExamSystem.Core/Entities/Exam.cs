@@ -14,5 +14,6 @@ namespace ExamSystem.Core.Entities
         public User UserCreatedBy { get; set; } = null!;
         public List<ExamUser> ExamUsers { get; set; } = [];
         public List<Question> Questions { get; set; } = [];
+        public List<Answer> Answers { get; set; } = [];
     }
 }
