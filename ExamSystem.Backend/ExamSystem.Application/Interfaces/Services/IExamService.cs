@@ -12,5 +12,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
         Task<OperationResult> DeleteAsync(Guid examId);
         Task<OperationResult> CreateAsync(ExamCreateDto createExamDto);
+        Task<OperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId);
     }
 }

@@ -115,5 +115,15 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to update exam.");
         }
+
+        public async Task<OperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId)
+        {
+            var examResult = await _examRepository.GetByIdAsync(examId);
+            if (!examResult.Success || examResult.Data == null)
+                return OperationResult<bool>.Fail("Exam not found.");
+            var exam = examResult.Data;
+            var isParticipant = exam.ExamUsers.Any(eu => eu.UserId == userId);
+            return OperationResult<bool>.Ok(isParticipant);
+        }
     }
 }
