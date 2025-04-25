@@ -14,12 +14,14 @@ namespace ExamSystem.Application.Services
         private readonly IMapper _mapper;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IRoleRepository _roleRepository;
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher, IRoleRepository roleRepository)
+        private readonly IExamRepository _examRepository;
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordHasher passwordHasher, IRoleRepository roleRepository, IExamRepository examRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _roleRepository = roleRepository;
+            _examRepository = examRepository;
         }
 
         public async Task<OperationResult> CreateUserAsync(RegisterUserDto userDto)
@@ -154,6 +156,18 @@ namespace ExamSystem.Application.Services
             return result.Success
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to create user.");
+        }
+        public async Task<OperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId)
+        {
+            var examResult = await _examRepository.GetByIdAsync(examId);
+            if (!examResult.Success || examResult.Data == null)
+                return OperationResult<IEnumerable<UserDto>>.Fail("Exam not found.");
+
+            var exam = examResult.Data;
+            var participants = exam.ExamUsers.Select(eu => eu.User).ToList();
+
+            var userDtos = _mapper.Map<IEnumerable<UserDto>>(participants);
+            return OperationResult<IEnumerable<UserDto>>.Ok(userDtos);
         }
 
     }

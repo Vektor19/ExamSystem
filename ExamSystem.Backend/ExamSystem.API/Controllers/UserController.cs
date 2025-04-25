@@ -54,5 +54,13 @@ namespace ExamSystem.API.Controllers
             var result = await _userService.DeleteAsync(id);
             return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
         }
+
+        [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
+        [HttpGet("by-exam/{id}")]
+        public async Task<IActionResult> GetAllByParticipantIdAsync(Guid id)
+        {
+            var result = await _userService.GetParticipantsByExamIdAsync(id);
+            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+        }
     }
 }

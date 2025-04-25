@@ -15,6 +15,7 @@ namespace ExamSystem.Persistence.Repositories
         public async Task<OperationResult<IEnumerable<Exam>>> GetAllAsync()
         {
             var exams = await _dbContext.Exams.Include(e => e.ExamUsers)
+                                                .ThenInclude(eu => eu.User)
                                               .Include(e => e.UserCreatedBy)
                                               .Include(e => e.Questions)
                                               .Include(e => e.Answers)
@@ -24,10 +25,11 @@ namespace ExamSystem.Persistence.Repositories
         public async Task<OperationResult<Exam>> GetByIdAsync(Guid id)
         {
             var exam = await _dbContext.Exams.Include(e => e.ExamUsers)
+                                                .ThenInclude(eu => eu.User)
                                              .Include(e => e.UserCreatedBy)
                                              .Include(e => e.Questions)
                                              .Include(e => e.Answers)
-                                             .FirstOrDefaultAsync();
+                                             .FirstOrDefaultAsync(e => e.ExamId == id);
             if (exam == null)
                 return OperationResult<Exam>.Fail("Exam not found.");
             return OperationResult<Exam>.Ok(exam);

@@ -13,5 +13,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> ValidateCredentialsAsync(string email, string password);
         Task<OperationResult> CreateUserAsync(RegisterUserDto userDto);
         Task<OperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
+        Task<OperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId);
     }
 }
