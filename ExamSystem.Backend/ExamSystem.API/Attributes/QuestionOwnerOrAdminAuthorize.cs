@@ -10,7 +10,7 @@ public class QuestionOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilte
     private readonly IExamService _examService;
     private readonly string _routeKey;
 
-    public QuestionOwnerOrAdminAuthorize(IQuestionService questionService, string routeKey = "id", IExamService examService = null)
+    public QuestionOwnerOrAdminAuthorize(IQuestionService questionService, IExamService examService, string routeKey = "id")
     {
         _questionService = questionService;
         _routeKey = routeKey;

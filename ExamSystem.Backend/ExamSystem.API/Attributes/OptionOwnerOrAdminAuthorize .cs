@@ -11,7 +11,7 @@ public class OptionOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
     private readonly IExamService _examService;
     private readonly string _routeKey;
 
-    public OptionOwnerOrAdminAuthorize(IQuestionOptionService questionOptionService, string routeKey = "id", IExamService examService, IQuestionService questionService)
+    public OptionOwnerOrAdminAuthorize(IQuestionOptionService questionOptionService, IExamService examService, IQuestionService questionService, string routeKey = "id")
     {
         _questionOptionService = questionOptionService;
         _routeKey = routeKey;
