@@ -51,5 +51,12 @@ namespace ExamSystem.Application.Services
                 return OperationResult<AuthResponseDto>.Fail("Failed to register user");
             return OperationResult<AuthResponseDto>.Ok(new AuthResponseDto { Success = true, AccessToken = tokenResult.Token, Expiration = tokenResult.Expiration });
         }
+        public async Task<OperationResult<bool>> ValidateTokenAsync(string token)
+        {
+            bool isValid = _jwtService.ValidateToken(token);
+            if (!isValid)
+                return OperationResult<bool>.Fail("Invalid token");
+            return OperationResult<bool>.Ok(true);
+        }
     }
 }

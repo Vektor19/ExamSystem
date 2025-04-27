@@ -28,5 +28,11 @@ namespace ExamSystem.API.Controllers
             var result = await _authService.RegisterAsync(registerDto);
             return result.Success ? Ok(result.Data) : BadRequest(result.ErrorMessage);
         }
+        [HttpPost("validate")]
+        public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenDto tokenDto)
+        {
+            var result = await _authService.ValidateTokenAsync(tokenDto.Token);
+            return result.Success ? Ok(result.Data) : Unauthorized(result.ErrorMessage);
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace ExamSystem.Application.Interfaces.Services
     {
         Task<OperationResult<AuthResponseDto>> LoginAsync(LoginUserDto loginDto);
         Task<OperationResult<AuthResponseDto>> RegisterAsync(RegisterUserDto registerDto);
+        Task<OperationResult<bool>> ValidateTokenAsync(string token);
     }
 }
