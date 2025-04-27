@@ -17,6 +17,16 @@ builder.Services.AddSwaggerGen();
 
 Batteries.Init();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllPolicy", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -33,6 +43,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAllPolicy");
 app.UseAuthorization();
 app.MapControllers();
 await app.RunAsync();
