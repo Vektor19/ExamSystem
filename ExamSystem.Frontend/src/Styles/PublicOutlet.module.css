@@ -1,4 +1,6 @@
 .public-outlet {
  position:absolute;
+ width: 100vw;
+ height: calc(100vh - var(--public-header-height));
  margin-top: var(--public-header-height);
 }
