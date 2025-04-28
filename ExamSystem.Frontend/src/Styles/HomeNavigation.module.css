@@ -1,0 +1,4 @@
+.home-navigation ul{
+  display: flex;
+  justify-content: space-between;
+}
