@@ -1,4 +1,3 @@
-import "../Styles/App.css";
 import Home from "./Home/Home.tsx";
 import { Navigate, Route, Routes } from "react-router-dom";
 import PublicLayout from "./Layouts/PublicLayout.tsx";

@@ -1,0 +1,4 @@
+.public-outlet {
+ position:absolute;
+ margin-top: var(--public-header-height);
+}

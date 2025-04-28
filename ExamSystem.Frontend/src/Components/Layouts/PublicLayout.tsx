@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom'
-import HomeNavigation from '../Home/HomeNavigation.tsx'
+import HomeHeader from '../Home/HomeHeader.tsx'
 
 const PublicLayout = () => {
     return (
       <>
-        <HomeNavigation />
+        <HomeHeader />
         <Outlet />
       </>
     )
