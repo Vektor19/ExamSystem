@@ -19,6 +19,14 @@ const Home = () => {
                 onClick={() => {
                   window.location.href = "/dashboard";
                 }}
+                sx={{
+                  fontSize: '1.1em',
+                  fontWeight: '700',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark',
+                    color: 'primary.light',
+                  }
+                }}
               >
                 Get Started
               </Button>
