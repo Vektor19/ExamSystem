@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
         if (!result.success) {
             setErrorMessage(result.message);
         } else {
-            alert('Login successful!');
+            setErrorMessage(result.message || 'Login successful');
         }
     };
 

@@ -5,7 +5,7 @@ class AuthService {
   async login(email: string, password: string): Promise<string> {
     try {
       const res = await examSystemApi.post("/auth/login", { email, password });
-      return res.data.token;
+      return res.data.accessToken;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Login failed");
     }
@@ -19,7 +19,7 @@ class AuthService {
         email: registerUser.email,
         password: registerUser.password,
       });
-      return res.data.token;
+      return res.data.accessToken;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Register failed");
     }

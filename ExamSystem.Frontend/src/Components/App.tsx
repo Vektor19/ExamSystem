@@ -7,6 +7,7 @@ import Dashboard from "./Dashboard/Dashboard.tsx";
 import { AuthProvider } from "../Providers/AuthProvider.tsx";
 import RegisterPage from "./AuthPages/RegisterPage.tsx";
 import LoginPage from "./AuthPages/LoginPage.tsx";
+import AuthRoute from "./Routes/AuthRoute.tsx";
 
 const App = () => {
   return (
@@ -15,8 +16,8 @@ const App = () => {
         <Routes>
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<AuthRoute><LoginPage /></AuthRoute>} />
+            <Route path="/register" element={<AuthRoute><RegisterPage /></AuthRoute>} />
           </Route>
           <Route
             path="/dashboard"
