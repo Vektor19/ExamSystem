@@ -1,36 +1,36 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#29223C',
-      dark: '#F4F3F8',
-      light: '#29223C',
+      main: "#29223C",
+      dark: "#29223C",
+      light: "#F4F3F8",
     },
     secondary: {
-      main: '#F4F3F8',
-      dark: '#29223C',
-        light: '#29223C',
-
+      main: "#F4F3F8",
+      dark: "#29223C",
+      light: "#29223C",
     },
   },
   typography: {
-    fontFamily: '"Montserrat", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily:
+      '"Montserrat", "Roboto", "Helvetica", "Arial", "Lato", sans-serif',
   },
 });
 
-declare module '@mui/material/styles' {
+declare module "@mui/material/styles" {
   interface Palette {
-    customColor: Palette['primary'];
+    hoverTextPrimaryColor: Palette["primary"];
   }
   interface PaletteOptions {
-    customColor?: PaletteOptions['primary'];
+    hoverTextPrimaryColor?: PaletteOptions["primary"];
   }
 }
 
-theme.palette.customColor = theme.palette.augmentColor({
+theme.palette.hoverTextPrimaryColor = theme.palette.augmentColor({
   color: {
-    main: '#29223C',
+    main: "#29223C",
   },
 });
 

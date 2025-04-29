@@ -1,5 +1,6 @@
 import homeStyles from "../../Styles/Home.module.css";
 import outletStyles from "../../Styles/PublicOutlet.module.css";
+import PrimaryButton from "../Buttons/PrimaryButton";
 import mainLogo from "/home_page.png";
 import { Button } from "@mui/material";
 
@@ -12,24 +13,16 @@ const Home = () => {
             <div className={homeStyles["home-page-introduction-text"]}>
               <h1>Welcome to the Exam System</h1>
               <h3>This is the home page of our application.</h3>
-              <Button
+              <PrimaryButton
+                size="medium"
                 variant="contained"
-                color="primary"
-                className={homeStyles["home-page-button"]}
+                className={homeStyles["home-page-introduction-button"]}
                 onClick={() => {
                   window.location.href = "/dashboard";
                 }}
-                sx={{
-                  fontSize: '1.1em',
-                  fontWeight: '700',
-                  '&:hover': {
-                    backgroundColor: 'primary.dark',
-                    color: 'primary.light',
-                  }
-                }}
               >
                 Get Started
-              </Button>
+              </PrimaryButton>
             </div>
 
             <img
