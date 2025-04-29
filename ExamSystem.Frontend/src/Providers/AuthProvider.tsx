@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import AuthService from "../Services/AuthService";
+import { RegisterUserRequest } from "../Models/RegisterUserRequest";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -15,8 +16,7 @@ type AuthContextType = {
     password: string
   ) => Promise<{ success: boolean; message: string }>;
   register: (
-    email: string,
-    password: string
+    registerUser: RegisterUserRequest
   ) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
 };
@@ -57,9 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (registerUser: RegisterUserRequest) => {
     try {
-      const token = await AuthService.register(email, password);
+      const token = await AuthService.register(registerUser);
       localStorage.setItem("token", token);
       setIsAuthenticated(true);
       return {
