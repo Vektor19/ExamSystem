@@ -1,0 +1,6 @@
+.dashboard-outlet {
+ position: absolute;
+ height: 100vh;
+ width: calc(100vw - var(--dashboard-navigation-width));
+ margin-left: var(--dashboard-navigation-width);
+}
