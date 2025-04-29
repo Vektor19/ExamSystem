@@ -12,11 +12,13 @@ namespace ExamSystem.Persistence.Configurations
 
             builder.HasOne(eu => eu.User)
                 .WithMany(u => u.ExamUsers)
-                .HasForeignKey(eu => eu.UserId);
+                .HasForeignKey(eu => eu.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(eu => eu.Exam)
                 .WithMany(e => e.ExamUsers)
-                .HasForeignKey(eu => eu.ExamId);
+                .HasForeignKey(eu => eu.ExamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasIndex(eu => new { eu.UserId, eu.ExamId })
                 .IsUnique();
