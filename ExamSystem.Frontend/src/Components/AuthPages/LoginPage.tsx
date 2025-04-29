@@ -7,7 +7,7 @@ const LoginPage = () => {
     <section className={`${outletStyles["public-outlet"]}`}>
       <div className={`${loginStyles["login-page-container"]} `}>
         <div className={`${loginStyles["form-container"]} `}>
-            <LoginForm />
+          <LoginForm />
         </div>
       </div>
     </section>
