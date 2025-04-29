@@ -1,19 +1,19 @@
 import { Button, ButtonProps } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const PrimaryButton = styled((props: ButtonProps) => (
+const SecondaryButton = styled((props: ButtonProps) => (
   <Button variant={props.variant ?? "contained"} {...props} />
 ))(({ theme }) => ({
   fontFamily: '"Lato", sans-serif',
   textTransform: "none",
   transition: "all 0.3s ease-in-out",
   "&.MuiButton-contained": {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.light,
+    backgroundColor: theme.palette.primary.light,
+    color: theme.palette.primary.dark,
 
     "&:hover": {
-      backgroundColor: theme.palette.primary.light,
-      color: theme.palette.hoverTextPrimaryColor.main,
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.primary.contrastText,
     },
   },
 
@@ -42,4 +42,4 @@ const PrimaryButton = styled((props: ButtonProps) => (
   },
 }));
 
-export default PrimaryButton;
+export default SecondaryButton;
