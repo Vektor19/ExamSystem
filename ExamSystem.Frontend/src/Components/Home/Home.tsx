@@ -2,7 +2,6 @@ import homeStyles from "../../Styles/Home.module.css";
 import outletStyles from "../../Styles/PublicOutlet.module.css";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import mainLogo from "/home_page.png";
-import { Button } from "@mui/material";
 
 const Home = () => {
   return (
