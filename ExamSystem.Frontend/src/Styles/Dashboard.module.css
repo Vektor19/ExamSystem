@@ -1,6 +1,7 @@
-.dashboard-outlet {
- position: absolute;
- height: 100vh;
- width: calc(100vw - var(--dashboard-navigation-width));
- margin-left: var(--dashboard-navigation-width);
-}
+.dashboard-page-container{
+    background-color: #F4F3F8;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    padding: 4em;
+  }

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
 import outletStyles from "../../Styles/DashboardOutlet.module.css";
 import dashboardStyles from "../../Styles/Dashboard.module.css";
+import { useDashboardContext } from "../../Providers/DashboardProvider";
+import StudentDashboardBody from "./StudentDashboardBody";
 const Dashboard = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { mode } = useDashboardContext();
 
   useEffect(() => {
     setSnackbarMessage("Welcome to the Dashboard!");
@@ -17,12 +20,13 @@ const Dashboard = () => {
     <>
       <section className={`${outletStyles["dashboard-outlet"]}`}>
         <div className={`${dashboardStyles["dashboard-page-container"]} `}>
-          <h1>Welcome to the Exam System</h1>
-          <h3>This is the dashboard page of our application.</h3>
-          <p>
-            You can navigate to different sections of the application using the
-            navigation bar.
-          </p>
+          {mode === "student" ? (
+            <StudentDashboardBody />
+          ) : (
+            <h1 className={`${dashboardStyles["dashboard-title"]}`}>
+              Examinator Dashboard
+            </h1>
+          )}
         </div>
       </section>
       <Snackbar
