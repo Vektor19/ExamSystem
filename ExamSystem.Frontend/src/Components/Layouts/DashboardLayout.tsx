@@ -1,13 +1,16 @@
-import { Outlet } from 'react-router-dom'
-import DashboardNavigation from '../Dashboard/DashboardNavigation.tsx'
+import { Outlet } from "react-router-dom";
+import DashboardNavigation from "../Dashboard/DashboardNavigation.tsx";
+import { DashboardProvider } from "../../Providers/DashboardProvider.tsx";
 
 const DashboardLayout = () => {
-    return (
-      <>
+  return (
+    <>
+      <DashboardProvider>
         <DashboardNavigation />
         <Outlet />
-      </>
-    )
-  }
+      </DashboardProvider>
+    </>
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

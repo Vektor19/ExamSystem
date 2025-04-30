@@ -3,9 +3,10 @@ import styles from "../../Styles/DashboardNavigation.module.css";
 import viteLogo from "/vite.svg";
 
 import { Switch, FormControlLabel, Typography } from "@mui/material";
+import { useDashboardContext } from "../../Providers/DashboardProvider";
 
 const DashboardNavigation = () => {
-  const [mode, setMode] = useState<"student" | "examinator">("student");
+  const {mode, setMode} = useDashboardContext();
 
   const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMode(event.target.checked ? "examinator" : "student");
