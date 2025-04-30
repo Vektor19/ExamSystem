@@ -24,10 +24,11 @@
 }
 
 .dashboard-navigation-header{
-  align-self: center;
-  justify-self: center;
-  justify-content: center;
-
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+  padding-top: 1em;
   
 }
 .dashboard-navigation ul{
@@ -47,4 +48,11 @@
   color: #f0f0f0;
   text-decoration: underline;
   border-left: solid 0.5em #f0f0f0;
+}
+.dashboard-navigation-mode{
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+  padding-bottom: 1em;
 }
