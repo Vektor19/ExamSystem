@@ -11,6 +11,7 @@ import AuthRoute from "./Routes/AuthRoute.tsx";
 import LogoutRoute from "./Routes/LogoutRoute.tsx";
 import { UserProvider } from "../Providers/UserProvider.tsx";
 import UserGuardRoute from "./Routes/UserGuardRoute.tsx";
+import Profile from "./Dashboard/Profile.tsx";
 
 const App = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
               }
             >
               <Route index element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
             <Route path="*" element={<Navigate to="/" />} />
             <Route path="/logout" element={<LogoutRoute />} />
