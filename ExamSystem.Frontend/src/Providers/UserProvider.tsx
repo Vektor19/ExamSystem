@@ -8,11 +8,13 @@ import {
 import { User } from "../Models/User";
 import UserService from "../Services/UserService";
 import TokenParser from "../Services/TokenParser";
+import { UpdateUser } from "../Models/UpdateUser";
 
 type UserContextType = {
   user: User | null;
   fetchUser: () => Promise<void>;
   loading: boolean;
+  updateUser: (user: UpdateUser) => Promise<boolean>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -49,8 +51,29 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateUser = async (updateUser: UpdateUser) => {
+    setLoading(true);
+    try {
+      const userId = user?.userId;
+      if (!userId) {
+        setLoading(false);
+        return false;
+      }
+      const success = await UserService.updateUser(userId, updateUser);
+      if (success) {
+        await fetchUser();
+      }
+      return success;
+    } catch (err) {
+      console.error(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, fetchUser, loading }}>
+    <UserContext.Provider value={{ user, fetchUser, loading, updateUser }}>
       {children}
     </UserContext.Provider>
   );
