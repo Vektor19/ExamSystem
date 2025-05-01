@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
-import outletStyles from "../../Styles/DashboardOutlet.module.css";
 import dashboardStyles from "../../Styles/Dashboard.module.css";
 import { useDashboardContext } from "../../Providers/DashboardProvider";
 import StudentDashboardBody from "./StudentDashboardBody";

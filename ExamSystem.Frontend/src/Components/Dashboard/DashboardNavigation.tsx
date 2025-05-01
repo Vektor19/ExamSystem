@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import styles from "../../Styles/DashboardNavigation.module.css";
 import viteLogo from "/vite.svg";
 
-import { Switch, FormControlLabel, Typography } from "@mui/material";
+import { Switch } from "@mui/material";
 import { useDashboardContext } from "../../Providers/DashboardProvider";
 
 const DashboardNavigation = () => {
-  const {mode, setMode} = useDashboardContext();
+  const { mode, setMode } = useDashboardContext();
 
   const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMode(event.target.checked ? "examinator" : "student");
@@ -17,9 +17,9 @@ const DashboardNavigation = () => {
   return (
     <div className={`${styles["dashboard-navigation-container"]}`}>
       <div className={`${styles["dashboard-navigation-header"]}`}>
-        <a href="/">
+        <Link to="/">
           <img src={viteLogo} className={styles["logo"]} alt="Vite logo" />
-        </a>
+        </Link>
         <div className={`${styles["dashboard-navigation-mode"]}`}>
           <h4 style={{ fontWeight: mode === "examinator" ? "bold" : "normal" }}>
             Examinator
@@ -46,36 +46,36 @@ const DashboardNavigation = () => {
       <nav className={`${styles["dashboard-navigation"]}`}>
         <ul className={`${styles["dashboard-navigation-list"]}`}>
           <li className={`${styles["dashboard-navigation-item"]}`}>
-            <a
-              href="/dashboard"
+            <Link
+              to="/dashboard"
               className={`${styles["dashboard-navigation-link"]}`}
             >
               Dashboard
-            </a>
+            </Link>
           </li>
           <li className={`${styles["dashboard-navigation-item"]}`}>
-            <a
-              href="/dashboard/profile"
+            <Link
+              to="/dashboard/profile"
               className={`${styles["dashboard-navigation-link"]}`}
             >
               Profile
-            </a>
+            </Link>
           </li>
           <li className={`${styles["dashboard-navigation-item"]}`}>
-            <a
-              href={examsLink}
+            <Link
+              to={examsLink}
               className={`${styles["dashboard-navigation-link"]}`}
             >
               Exams
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>
 
       <div>
-        <a href="/logout" className={`${styles["dashboard-logout"]}`}>
+        <Link to="/logout" className={`${styles["dashboard-logout"]}`}>
           Logout
-        </a>
+        </Link>
       </div>
     </div>
   );

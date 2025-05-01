@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import homeStyles from "../../Styles/Home.module.css";
 import outletStyles from "../../Styles/PublicOutlet.module.css";
 import PrimaryButton from "../Buttons/PrimaryButton";
@@ -12,16 +13,15 @@ const Home = () => {
             <div className={homeStyles["home-page-introduction-text"]}>
               <h1>Welcome to the Exam System</h1>
               <h3>This is the home page of our application.</h3>
-              <PrimaryButton
-                size="medium"
-                variant="contained"
-                className={homeStyles["home-page-introduction-button"]}
-                onClick={() => {
-                  window.location.href = "/dashboard";
-                }}
-              >
-                Get Started
-              </PrimaryButton>
+              <Link to="/dashboard">
+                <PrimaryButton
+                  size="medium"
+                  variant="contained"
+                  className={homeStyles["home-page-introduction-button"]}
+                >
+                  Get Started
+                </PrimaryButton>
+              </Link>
             </div>
 
             <img

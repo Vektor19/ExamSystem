@@ -1,25 +1,24 @@
+import { Link } from "react-router-dom";
 import styles from "../../Styles/HomeNavigation.module.css";
 
 const HomeNavigation = () => {
   return (
-    <>
-      <nav className={styles["home-navigation"]}>
-        <ul>
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
-            <a href="/">About</a>
-          </li>
-          <li>
-            <a href="/">Contact</a>
-          </li>
-          <li>
-            <a href="/">Get started</a>
-          </li>
-        </ul>
-      </nav>
-    </>
+    <nav className={styles["home-navigation"]}>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact</Link>
+        </li>
+        <li>
+          <Link to="/get-started">Get started</Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
