@@ -9,44 +9,50 @@ import RegisterPage from "./AuthPages/RegisterPage.tsx";
 import LoginPage from "./AuthPages/LoginPage.tsx";
 import AuthRoute from "./Routes/AuthRoute.tsx";
 import LogoutRoute from "./Routes/LogoutRoute.tsx";
+import { UserProvider } from "../Providers/UserProvider.tsx";
+import UserGuardRoute from "./Routes/UserGuardRoute.tsx";
 
 const App = () => {
   return (
     <>
       <AuthProvider>
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
+        <UserProvider>
+          <Routes>
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/login"
+                element={
+                  <AuthRoute>
+                    <LoginPage />
+                  </AuthRoute>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <AuthRoute>
+                    <RegisterPage />
+                  </AuthRoute>
+                }
+              />
+            </Route>
             <Route
-              path="/login"
+              path="/dashboard"
               element={
-                <AuthRoute>
-                  <LoginPage />
-                </AuthRoute>
+                <PrivateRoute>
+                  <UserGuardRoute>
+                    <DashboardLayout />
+                  </UserGuardRoute>
+                </PrivateRoute>
               }
-            />
-            <Route
-              path="/register"
-              element={
-                <AuthRoute>
-                  <RegisterPage />
-                </AuthRoute>
-              }
-            />
-          </Route>
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <DashboardLayout />
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<Dashboard />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" />} />
-          <Route path="/logout" element={<LogoutRoute />} />
-        </Routes>
+            >
+              <Route index element={<Dashboard />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="/logout" element={<LogoutRoute />} />
+          </Routes>
+        </UserProvider>
       </AuthProvider>
     </>
   );
