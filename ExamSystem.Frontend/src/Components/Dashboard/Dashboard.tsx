@@ -20,12 +20,13 @@ const Dashboard = () => {
     <>
       <section className={`${outletStyles["dashboard-outlet"]}`}>
         <div className={`${dashboardStyles["dashboard-page-container"]} `}>
+        <h1 className={`${dashboardStyles["dashboard-title"]}`}>
+              Overview
+            </h1>
           {mode === "student" ? (
             <StudentDashboardBody />
           ) : (
-            <h1 className={`${dashboardStyles["dashboard-title"]}`}>
-              Examinator Dashboard
-            </h1>
+            <></>
           )}
         </div>
       </section>

@@ -47,4 +47,6 @@ h1, h2, h3, h4, h5, h6{font-size:inherit; font-weight: 400;}
 :root {
   --public-header-height: 8vh;
   --dashboard-navigation-width: 12vw;
+  --primary-main-color: #29223C;
+  --primary-light-color: #F4F3F8;
 }
