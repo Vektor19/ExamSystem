@@ -18,18 +18,8 @@ const Dashboard = () => {
   }, []);
   return (
     <>
-      <section className={`${outletStyles["dashboard-outlet"]}`}>
-        <div className={`${dashboardStyles["dashboard-page-container"]} `}>
-        <h1 className={`${dashboardStyles["dashboard-title"]}`}>
-              Overview
-            </h1>
-          {mode === "student" ? (
-            <StudentDashboardBody />
-          ) : (
-            <></>
-          )}
-        </div>
-      </section>
+      <h1 className={`${dashboardStyles["dashboard-title"]}`}>Overview</h1>
+      {mode === "student" ? <StudentDashboardBody /> : <></>}
       <Snackbar
         open={openSnackbar}
         onClose={() => setOpenSnackbar(false)}
