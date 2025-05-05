@@ -6,6 +6,7 @@ export interface Exam {
   createdDate: string;
   startDate: string;
   endDate: string;
+  joinCode: string;
   status: string;
   createdBy: User;
   questionCount: number;

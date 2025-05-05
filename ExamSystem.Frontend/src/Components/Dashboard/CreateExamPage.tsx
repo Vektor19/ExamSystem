@@ -46,14 +46,14 @@ const CreateExamPage: React.FC = () => {
         open={showQuestionModal}
         onClose={() => setShowQuestionModal(false)}
         onSave={handleSaveQuestion}
-        examId={exam!.examId || ""}
+        examId={exam?.examId || ""}
       />
 
       {isCreated && (
         <DashboardPaper>
           <Stack spacing={3} mt={4} px={4}>
             <Typography variant="subtitle1" fontWeight={600}>
-                Exam: {exam?.name}
+              Exam: {exam?.name}
             </Typography>
             <Typography variant="subtitle1" fontWeight={600}>
               Start Date: {exam?.startDate}
@@ -69,6 +69,9 @@ const CreateExamPage: React.FC = () => {
             </Typography>
             <Typography variant="subtitle1" fontWeight={600}>
               Status: {exam?.status}
+            </Typography>
+            <Typography variant="subtitle1" fontWeight={600}>
+              Join Code: {exam?.joinCode}
             </Typography>
 
             <Button

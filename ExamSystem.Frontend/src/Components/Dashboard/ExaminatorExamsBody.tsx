@@ -40,6 +40,7 @@ const ExaminatorExamsBody: React.FC = () => {
                         <Typography>
                           Participants: {exam.participantCount}
                         </Typography>
+                        <Typography>Join Code: {exam.joinCode}</Typography>
                       </CardContent>
                     </Card>
                   )

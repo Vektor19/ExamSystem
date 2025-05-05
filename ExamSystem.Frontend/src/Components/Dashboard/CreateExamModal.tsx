@@ -7,8 +7,9 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExamCreate } from "../../Models/ExamCreate";
+import { useUser } from "../../Providers/UserProvider";
 
 interface Props {
   open: boolean;
@@ -17,12 +18,20 @@ interface Props {
 }
 
 const CreateExamModal: React.FC<Props> = ({ open, onClose, onCreate }) => {
+  const {user} = useUser();
   const [form, setForm] = useState<ExamCreate>({
-    createdByUserId: "", // Заповни ID відповідно до автентифікації
+    createdByUserId: "",
     name: "",
     startDate: "",
     endDate: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({ ...prev, createdByUserId: user.userId }));
+    }
+  }
+, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
