@@ -10,7 +10,6 @@ public class SelfOrAdminAuthorize : Attribute, IAuthorizationFilter
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         var user = context.HttpContext.User;
-        var userRole = user.FindFirstValue(ClaimTypes.Role);
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId == null)
@@ -19,7 +18,9 @@ public class SelfOrAdminAuthorize : Attribute, IAuthorizationFilter
             return;
         }
 
-        if (userRole == SystemRoles.Admin)
+        var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        if (roles.Contains(SystemRoles.Admin))
             return;
 
         var routeIdString = context.RouteData.Values[RouteKey]?.ToString();

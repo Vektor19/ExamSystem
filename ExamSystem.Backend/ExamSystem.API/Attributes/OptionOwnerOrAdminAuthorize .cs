@@ -22,7 +22,6 @@ public class OptionOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var user = context.HttpContext.User;
-        var userRole = user.FindFirstValue(ClaimTypes.Role);
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId == null)
@@ -31,7 +30,9 @@ public class OptionOwnerOrAdminAuthorize : Attribute, IAsyncAuthorizationFilter
             return;
         }
 
-        if (userRole != SystemRoles.Admin && userRole != SystemRoles.Examinator)
+        var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+
+        if (!roles.Contains(SystemRoles.Admin) && !roles.Contains(SystemRoles.Examinator))
         {
             context.Result = new ForbidResult();
             return;

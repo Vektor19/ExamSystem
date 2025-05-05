@@ -18,7 +18,6 @@ public class ExamReadAccessAuthorize : Attribute, IAsyncAuthorizationFilter
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var user = context.HttpContext.User;
-        var userRole = user.FindFirstValue(ClaimTypes.Role);
         var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userIdStr == null || !Guid.TryParse(userIdStr, out var userId))
@@ -27,7 +26,9 @@ public class ExamReadAccessAuthorize : Attribute, IAsyncAuthorizationFilter
             return;
         }
 
-        if (userRole == SystemRoles.Admin)
+        var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
+        
+        if (roles.Contains(SystemRoles.Admin))
             return;
 
         var routeIdStr = context.RouteData.Values[_routeKey]?.ToString();
