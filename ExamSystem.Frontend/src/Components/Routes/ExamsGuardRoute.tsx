@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Navigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
 import { useExams } from "../../Providers/ExamsProvider";
 
@@ -14,10 +13,10 @@ const ExamsGuardRoute = ({ children }: { children: React.ReactNode }) => {
   } = useExams();
 
   useEffect(() => {
-    if (!studentExams && !isStudentExamsLoading) {
+    if (!studentExams) {
       fetchStudentExams();
     }
-    if (!examinatorExams && !isExaminatorExamsLoading) {
+    if (!examinatorExams) {
       fetchExaminatorExams();
     }
   }, [

@@ -1,32 +1,72 @@
 import { Exam } from "../../Models/Exam";
 import { useExams } from "../../Providers/ExamsProvider";
-import DashboardPaper from "../Papers/DashboardPaper";
+import { useNavigate } from "react-router-dom";
+import {
+  Paper,
+  Typography,
+  Box,
+  Stack,
+  Card,
+  CardContent,
+  Fab,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import styles from "../../Styles/ExaminatorExamsBody.module.css";
+import PrimaryFab from "../Buttons/PrimaryFab";
 
 const ExaminatorExamsBody: React.FC = () => {
   const { examinatorExams } = useExams();
+  const navigate = useNavigate();
 
   return (
-    <>
-      <DashboardPaper className="examinator-exams-paper">
-        <h1 className="examinator-exams-title">Examinator Exams</h1>
-        <div className="examinator-exams-list">
-          {examinatorExams?.map(
-            (exam: Exam | null) =>
-              exam && (
-                <div key={exam.examId} className="examinator-exam-item">
-                  <h2>{exam.name}</h2>
-                  <p>Status: {exam.status}</p>
-                  <p>Start Date: {exam.startDate}</p>
-                  <p>End Date: {exam.endDate}</p>
-                  <p>Created By: {exam.createdBy.lastName}</p>
-                  <p>Questions: {exam.questionCount}</p>
-                  <p>Participants: {exam.participantCount}</p>
-                </div>
+    <div className={styles["exams-page-container"]}>
+      <Box minHeight="80vh">
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+
+          <Stack spacing={2}>
+            {examinatorExams?.length ? (
+              examinatorExams.map(
+                (exam: Exam | null) =>
+                  exam && (
+                    <Card key={exam.examId} variant="outlined">
+                      <CardContent>
+                        <Typography variant="h6" gutterBottom>
+                          {exam.name}
+                        </Typography>
+                        <Typography>Status: {exam.status}</Typography>
+                        <Typography>Start Date: {exam.startDate}</Typography>
+                        <Typography>End Date: {exam.endDate}</Typography>
+                        <Typography>Questions: {exam.questionCount}</Typography>
+                        <Typography>
+                          Participants: {exam.participantCount}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  )
               )
-          )}
-        </div>
-      </DashboardPaper>
-    </>
+            ) : (
+              <Typography variant="body1" color="text.secondary">
+                No exams found.
+              </Typography>
+            )}
+          </Stack>
+        </Paper>
+        <PrimaryFab
+          color="primary"
+          aria-label="add"
+          size ="large"
+          sx={{
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+            zIndex: 1000,
+          }}
+          onClick={() => navigate("/create-exam")}
+        >
+          <AddIcon />
+        </PrimaryFab>
+      </Box>
+    </div>
   );
 };
 
