@@ -12,9 +12,7 @@ import {
   TextField,
   Select,
   MenuItem,
-  Button,
 } from "@mui/material";
-import { QuestionCreate } from "../../Models/QuestionCreate";
 import { useEffect, useState } from "react";
 import CreateQuestionModal from "./CreateQuestionModal";
 import DashboardPaper from "../Papers/DashboardPaper";
@@ -24,6 +22,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import QuestionService from "../../Services/QuestionService";
 import ExamService from "../../Services/ExamService";
@@ -32,7 +31,8 @@ const statusOptions = ["NotStarted", "Started", "Finished"];
 
 const ExamEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { examinatorExams, questions, fetchQuestions, fetchExaminatorExams } = useExams();
+  const { examinatorExams, questions, fetchQuestions, fetchExaminatorExams } =
+    useExams();
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formValues, setFormValues] = useState({
@@ -198,19 +198,44 @@ const ExamEditPage: React.FC = () => {
             </Typography>
             <Stack spacing={2}>
               {questions?.map((q, i) => (
-                <Paper key={i} sx={{ p: 2 }}>
-                  <Typography variant="subtitle1" fontWeight={500}>
-                    {i + 1}. {q.questionText}
-                  </Typography>
-                  <Stack component="ul" pl={2} spacing={0.5}>
-                    {q.options.map((option, idx) => (
-                      <li key={idx}>
-                        <Typography variant="body2">
-                          {option?.label}: {option?.optionText}
-                        </Typography>
-                      </li>
-                    ))}
-                  </Stack>
+                <Paper
+                  key={i}
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={500}>
+                      {i + 1}. {q.questionText}
+                    </Typography>
+                    <Stack component="ul" pl={2} spacing={0.5}>
+                      {q.options.map((option, idx) => (
+                        <li key={idx}>
+                          <Typography variant="body2">
+                            {option?.label}: {option?.optionText}
+                          </Typography>
+                        </li>
+                      ))}
+                    </Stack>
+                  </Box>
+
+                  <IconButton
+                    color="error"
+                    onClick={async () => {
+                      if (!id) return;
+                      try {
+                        await QuestionService.deleteQuestion(q.questionId);
+                        await fetchQuestions(id);
+                      } catch (err) {
+                        console.error("Failed to delete question:", err);
+                      }
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </Paper>
               ))}
               {questions?.length === 0 && (

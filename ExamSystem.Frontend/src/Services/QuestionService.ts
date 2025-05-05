@@ -14,9 +14,17 @@ class QuestionService {
   async createQuestion(question: QuestionCreate): Promise<boolean> {
     try {
       const res = await examSystemApi.post("/question/", question);
-      return res.data;
+      return res.data.success;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Question not created");
+    }
+  }
+  async deleteQuestion(id: string): Promise<boolean> {
+    try {
+      const res = await examSystemApi.delete("/question/" + id);
+      return res.data.success;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Question not deleted");
     }
   }
 }
