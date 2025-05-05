@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useExams } from "../../Providers/ExamsProvider";
 import { Exam } from "../../Models/Exam";
 import {
@@ -16,6 +16,7 @@ import CreateQuestionModal from "./CreateQuestionModal";
 import DashboardPaper from "../Papers/DashboardPaper";
 import LoadingPage from "../Extra/LoadingPage";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import QuestionService from "../../Services/QuestionService";
 
@@ -23,7 +24,7 @@ const ExamEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { examinatorExams, questions, fetchQuestions } = useExams();
   const [showQuestionModal, setShowQuestionModal] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (id) {
       fetchQuestions(id);
@@ -55,9 +56,8 @@ const ExamEditPage: React.FC = () => {
         onSave={handleSaveQuestion}
         examId={exam?.examId || ""}
       />
-
-      <DashboardPaper>
-        <Stack spacing={4} mt={2} px={3} pb={8}>
+      <DashboardPaper sx={{ height: "calc(100vh - 100px)", overflowY: "auto" }}>
+        <Stack spacing={4} mt={2} px={3} pb={10}>
           <Typography variant="h6" fontWeight={700}>
             Edit Exam: {exam?.name}
           </Typography>
@@ -115,7 +115,23 @@ const ExamEditPage: React.FC = () => {
           </Box>
         </Stack>
       </DashboardPaper>
-
+      <Zoom in>
+        <Box
+          position="fixed"
+          bottom={24}
+          left={"calc(var(--dashboard-navigation-width) + 24px)"}
+          zIndex={1300}
+        >
+          <PrimaryFab
+            size="small"
+            variant="extended"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowBackIcon sx={{ mr: 1 }} />
+            Go Back
+          </PrimaryFab>
+        </Box>
+      </Zoom>
       <Zoom in>
         <Box position="fixed" bottom={24} right={24} zIndex={1300}>
           <PrimaryFab
