@@ -13,7 +13,7 @@ class ExamService {
   }
   async createExam(exam: ExamCreate): Promise<Exam> {
     try {
-      const res = await examSystemApi.post("/exam", exam);
+      const res = await examSystemApi.post("/exam/", exam);
       return res.data;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Exam not created");

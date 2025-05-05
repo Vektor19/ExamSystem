@@ -18,15 +18,18 @@ const CreateExamPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleCreateExam = async (data: ExamCreate) => {
-    const examResult = await ExamService.createExam(data);
-    if (!examResult) {
+    try {
+      const examResult = await ExamService.createExam(data);
+      setExam(examResult);
+    } catch (err) {
+      console.error(err);
+    }
+    if (!exam) {
       setIsCreated(false);
-      setExam(null);
       navigate("/dashboard/exam-management");
       return;
     }
     setIsCreated(true);
-    setExam(examResult);
   };
 
   const handleSaveQuestion = (question: QuestionCreate) => {
