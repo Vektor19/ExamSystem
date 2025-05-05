@@ -55,7 +55,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> Create([FromBody] ExamCreateDto examDto)
         {
             var result = await _examService.CreateAsync(examDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.Success ? Ok(result.Data) : BadRequest(result.ErrorMessage);
         }
 
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]

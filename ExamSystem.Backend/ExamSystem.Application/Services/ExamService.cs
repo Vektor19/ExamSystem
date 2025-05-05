@@ -20,13 +20,13 @@ namespace ExamSystem.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OperationResult> CreateAsync(ExamCreateDto examCreateDto)
+        public async Task<OperationResult<ExamDto>> CreateAsync(ExamCreateDto examCreateDto)
         {
             var existingUserResult = await _userRepository.GetByIdAsync(examCreateDto.CreatedByUserId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return OperationResult.Fail("User who creates exam not found.");
+                return OperationResult<ExamDto>.Fail("User who creates exam not found.");
             if (string.IsNullOrWhiteSpace(examCreateDto.Name))
-                return OperationResult.Fail("Exam name is required.");
+                return OperationResult<ExamDto>.Fail("Exam name is required.");
 
             var exam = _mapper.Map<Exam>(examCreateDto);
             exam.ExamId = Guid.NewGuid();
@@ -35,9 +35,13 @@ namespace ExamSystem.Application.Services
             exam.CreatedDate = DateTime.UtcNow;
 
             var result = await _examRepository.AddAsync(exam);
-            return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create exam.");
+            if (!result.Success)
+                return OperationResult<ExamDto>.Fail(result.ErrorMessage!);
+            var examResult = await _examRepository.GetByIdAsync(exam.ExamId);
+            if (!examResult.Success || examResult.Data == null)
+                return OperationResult<ExamDto>.Fail("Created exam not found");
+            var examDto = _mapper.Map<ExamDto>(examResult.Data);
+            return OperationResult<ExamDto>.Ok(examDto);
         }
 
 
