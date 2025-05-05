@@ -61,7 +61,7 @@ const ExaminatorExamsBody: React.FC = () => {
             right: 24,
             zIndex: 1000,
           }}
-          onClick={() => navigate("/create-exam")}
+          onClick={() => navigate("/dashboard/create-exam")}
         >
           <AddIcon />
         </PrimaryFab>
