@@ -14,6 +14,7 @@ import UserGuardRoute from "./Routes/UserGuardRoute.tsx";
 import Profile from "./Dashboard/Profile.tsx";
 import { ExamsProvider } from "../Providers/ExamsProvider.tsx";
 import Exams from "./Dashboard/Exams.tsx";
+import CreateExamPage from "./Dashboard/CreateExamPage.tsx";
 
 const App = () => {
   return (
@@ -54,6 +55,7 @@ const App = () => {
                 <Route index element={<Dashboard />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="exam-management" element={<Exams />} />
+                <Route path="create-exam" element={<CreateExamPage />} />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
               <Route path="/logout" element={<LogoutRoute />} />
