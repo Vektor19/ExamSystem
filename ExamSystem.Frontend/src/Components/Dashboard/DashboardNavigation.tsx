@@ -12,7 +12,7 @@ const DashboardNavigation = () => {
     setMode(event.target.checked ? "examinator" : "student");
   };
 
-  const examsLink = mode === "student" ? "/my-exams" : "/exam-management";
+  const examsLink = "/dashboard/exam-management";
 
   return (
     <div className={`${styles["dashboard-navigation-container"]}`}>

@@ -2,7 +2,7 @@ import { Exam } from "../../Models/Exam";
 import { useExams } from "../../Providers/ExamsProvider";
 import DashboardPaper from "../Papers/DashboardPaper";
 
-const ExaminatorsExamsBody: React.FC = () => {
+const ExaminatorExamsBody: React.FC = () => {
   const { examinatorExams } = useExams();
 
   return (
@@ -30,4 +30,4 @@ const ExaminatorsExamsBody: React.FC = () => {
   );
 };
 
-export default ExaminatorsExamsBody;
+export default ExaminatorExamsBody;

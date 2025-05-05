@@ -1,4 +1,3 @@
-import { Paper } from "@mui/material";
 import studentDashboardStyles from "../../Styles/StudentDashboardBody.module.css";
 import DashboardPaper from "../Papers/DashboardPaper";
 const StudentDashboardBody = () => {

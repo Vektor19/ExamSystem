@@ -12,48 +12,53 @@ import LogoutRoute from "./Routes/LogoutRoute.tsx";
 import { UserProvider } from "../Providers/UserProvider.tsx";
 import UserGuardRoute from "./Routes/UserGuardRoute.tsx";
 import Profile from "./Dashboard/Profile.tsx";
+import { ExamsProvider } from "../Providers/ExamsProvider.tsx";
+import Exams from "./Dashboard/Exams.tsx";
 
 const App = () => {
   return (
     <>
       <AuthProvider>
         <UserProvider>
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
+          <ExamsProvider>
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route
+                  path="/login"
+                  element={
+                    <AuthRoute>
+                      <LoginPage />
+                    </AuthRoute>
+                  }
+                />
+                <Route
+                  path="/register"
+                  element={
+                    <AuthRoute>
+                      <RegisterPage />
+                    </AuthRoute>
+                  }
+                />
+              </Route>
               <Route
-                path="/login"
+                path="/dashboard"
                 element={
-                  <AuthRoute>
-                    <LoginPage />
-                  </AuthRoute>
+                  <PrivateRoute>
+                    <UserGuardRoute>
+                      <DashboardLayout />
+                    </UserGuardRoute>
+                  </PrivateRoute>
                 }
-              />
-              <Route
-                path="/register"
-                element={
-                  <AuthRoute>
-                    <RegisterPage />
-                  </AuthRoute>
-                }
-              />
-            </Route>
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <UserGuardRoute>
-                    <DashboardLayout />
-                  </UserGuardRoute>
-                </PrivateRoute>
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="profile" element={<Profile />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" />} />
-            <Route path="/logout" element={<LogoutRoute />} />
-          </Routes>
+              >
+                <Route index element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="exam-management" element={<Exams />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="/logout" element={<LogoutRoute />} />
+            </Routes>
+          </ExamsProvider>
         </UserProvider>
       </AuthProvider>
     </>

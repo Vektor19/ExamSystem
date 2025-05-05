@@ -27,11 +27,7 @@ const ExamsGuardRoute = ({ children }: { children: React.ReactNode }) => {
     isStudentExamsLoading,
   ]);
   if (isStudentExamsLoading || isExaminatorExamsLoading) return <LoadingPage />;
-  return studentExams && examinatorExams ? (
-    <>{children}</>
-  ) : (
-    <Navigate to="/login" />
-  );
+  return <>{children}</>
 };
 
 export default ExamsGuardRoute;
