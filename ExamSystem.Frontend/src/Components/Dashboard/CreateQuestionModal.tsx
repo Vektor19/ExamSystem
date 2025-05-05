@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  Button,
   Stack,
   Checkbox,
   FormControlLabel,

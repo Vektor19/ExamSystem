@@ -8,14 +8,19 @@ import {
 import TokenParser from "../Services/TokenParser";
 import { Exam } from "../Models/Exam";
 import ExamService from "../Services/ExamService";
+import { Question } from "../Models/Question";
+import QuestionService from "../Services/QuestionService";
 
 type ExamsContextType = {
   studentExams: Exam[] | null;
   examinatorExams: Exam[] | null;
+  questions: Question[] | null;
   fetchStudentExams: () => Promise<void>;
   fetchExaminatorExams: () => Promise<void>;
+  fetchQuestions: (examId: string) => Promise<void>;
   isStudentExamsLoading: boolean;
   isExaminatorExamsLoading: boolean;
+  isQuestionsLoading: boolean;
 };
 
 const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
@@ -26,7 +31,8 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
   const [isStudentExamsLoading, setIsStudentExamsLoading] = useState(true);
   const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] =
     useState(true);
-
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [isQuestionsLoading, setIsQuestionsLoading] = useState(true);
   useEffect(() => {
     fetchStudentExams();
     fetchExaminatorExams();
@@ -80,6 +86,19 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fetchQuestions = async (examId: string) => {
+    setIsQuestionsLoading(true);
+    try {
+      const questionData = await QuestionService.getAllByExamId(examId);
+      setQuestions(questionData);
+    } catch (err) {
+      setQuestions(null);
+      console.error(err);
+    } finally {
+      setIsQuestionsLoading(false);
+    }
+  };
+
   return (
     <ExamsContext.Provider
       value={{
@@ -89,6 +108,9 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
         fetchExaminatorExams,
         isStudentExamsLoading,
         isExaminatorExamsLoading,
+        questions,
+        fetchQuestions,
+        isQuestionsLoading,
       }}
     >
       {children}
