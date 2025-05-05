@@ -32,7 +32,7 @@ const statusOptions = ["NotStarted", "Started", "Finished"];
 
 const ExamEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { examinatorExams, questions, fetchQuestions } = useExams();
+  const { examinatorExams, questions, fetchQuestions, fetchExaminatorExams } = useExams();
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formValues, setFormValues] = useState({
@@ -66,17 +66,18 @@ const ExamEditPage: React.FC = () => {
   const handleSaveField = async (field: keyof typeof formValues) => {
     if (!exam) return;
     try {
-      //   await ExamService.updateExam({
-      //     name: formValues.name,
-      //     startDate: new Date(formValues.startDate),
-      //     endDate: new Date(formValues.endDate),
-      //     status: formValues.status,
-      //   });
-      setEditingField(null);
+      await ExamService.updateExam(exam.examId, {
+        name: formValues.name,
+        startDate: new Date(formValues.startDate).toISOString(),
+        endDate: new Date(formValues.endDate).toISOString(),
+        status: formValues.status,
+      });
+      await fetchExaminatorExams();
     } catch (error) {
       console.error("Failed to update exam:", error);
     } finally {
       setFormValues(exam);
+      setEditingField(null);
     }
   };
 

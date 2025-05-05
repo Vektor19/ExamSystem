@@ -1,6 +1,6 @@
 export interface ExamUpdate {
   name: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   status: string;
 }
