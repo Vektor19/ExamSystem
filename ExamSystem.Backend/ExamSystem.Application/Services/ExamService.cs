@@ -113,7 +113,7 @@ namespace ExamSystem.Application.Services
             exam.Name = updateDto.Name;
             exam.StartDate = updateDto.StartDate;
             exam.EndDate = updateDto.EndDate;
-            exam.Status = updateDto.Status;
+            exam.Status = Enum.TryParse<ExamStatus>(updateDto.Status, out var status) ? status : ExamStatus.NotStarted;
 
             var updateResult = await _examRepository.UpdateAsync(exam);
             return updateResult.Success
