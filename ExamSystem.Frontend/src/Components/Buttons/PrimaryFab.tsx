@@ -7,7 +7,7 @@ const PrimaryFab = styled((props: FabProps) => (
   fontFamily: '"Lato", sans-serif',
   textTransform: "none",
   transition: "all 0.3s ease-in-out",
-  "&.MuiFab-circular": {
+  "&.MuiFab-circular, &.MuiFab-extended": {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.light,
 
@@ -16,6 +16,7 @@ const PrimaryFab = styled((props: FabProps) => (
       color: theme.palette.hoverTextPrimaryColor.main,
     },
   },
+  
   "&.MuiFab-sizeLarge": {
     fontSize: "1.5em",
     padding: "1.5em",
