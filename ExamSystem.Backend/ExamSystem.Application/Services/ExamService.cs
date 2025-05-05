@@ -33,6 +33,7 @@ namespace ExamSystem.Application.Services
             exam.Status = ExamStatus.NotStarted;
             exam.UserCreatedBy = existingUserResult.Data;
             exam.CreatedDate = DateTime.UtcNow;
+            exam.JoinCode = Guid.NewGuid().ToString();
 
             var result = await _examRepository.AddAsync(exam);
             if (!result.Success)

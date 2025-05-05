@@ -11,6 +11,7 @@ namespace ExamSystem.Core.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public ExamStatus Status { get; set; }
+        public string JoinCode { get; set; } = string.Empty;
         public User UserCreatedBy { get; set; } = null!;
         public List<ExamUser> ExamUsers { get; set; } = [];
         public List<Question> Questions { get; set; } = [];
