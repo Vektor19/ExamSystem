@@ -5,14 +5,18 @@ import {
   Paper,
   Typography,
   Box,
-  Stack,
-  Card,
-  CardContent,
-  Fab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import styles from "../../Styles/ExaminatorExamsBody.module.css";
 import PrimaryFab from "../Buttons/PrimaryFab";
+import styles from "../../Styles/ExaminatorExamsBody.module.css";
 
 const ExaminatorExamsBody: React.FC = () => {
   const { examinatorExams } = useExams();
@@ -22,40 +26,58 @@ const ExaminatorExamsBody: React.FC = () => {
     <div className={styles["exams-page-container"]}>
       <Box minHeight="80vh">
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
-
-          <Stack spacing={2}>
-            {examinatorExams?.length ? (
-              examinatorExams.map(
-                (exam: Exam | null) =>
-                  exam && (
-                    <Card key={exam.examId} variant="outlined">
-                      <CardContent>
-                        <Typography variant="h6" gutterBottom>
-                          {exam.name}
-                        </Typography>
-                        <Typography>Status: {exam.status}</Typography>
-                        <Typography>Start Date: {exam.startDate}</Typography>
-                        <Typography>End Date: {exam.endDate}</Typography>
-                        <Typography>Questions: {exam.questionCount}</Typography>
-                        <Typography>
-                          Participants: {exam.participantCount}
-                        </Typography>
-                        <Typography>Join Code: {exam.joinCode}</Typography>
-                      </CardContent>
-                    </Card>
-                  )
-              )
-            ) : (
-              <Typography variant="body1" color="text.secondary">
-                No exams found.
-              </Typography>
-            )}
-          </Stack>
+          {examinatorExams?.length ? (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Start Date</TableCell>
+                    <TableCell>End Date</TableCell>
+                    <TableCell>Questions</TableCell>
+                    <TableCell>Participants</TableCell>
+                    <TableCell>Join Code</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {examinatorExams.map(
+                    (exam) =>
+                      exam && (
+                        <TableRow key={exam.examId}>
+                          <TableCell>{exam.name}</TableCell>
+                          <TableCell>{exam.status}</TableCell>
+                          <TableCell>{exam.startDate}</TableCell>
+                          <TableCell>{exam.endDate}</TableCell>
+                          <TableCell>{exam.questionCount}</TableCell>
+                          <TableCell>{exam.participantCount}</TableCell>
+                          <TableCell>{exam.joinCode}</TableCell>
+                          <TableCell align="right">
+                            <IconButton
+                              onClick={() => navigate(`/dashboard/edit-exam/${exam.examId}`)}
+                              color="primary"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body1" color="text.secondary">
+              No exams found.
+            </Typography>
+          )}
         </Paper>
+
         <PrimaryFab
           color="primary"
           aria-label="add"
-          size ="large"
+          size="large"
           sx={{
             position: "fixed",
             bottom: 24,

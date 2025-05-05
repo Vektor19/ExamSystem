@@ -22,8 +22,6 @@ const ExamsGuardRoute = ({ children }: { children: React.ReactNode }) => {
   }, [
     studentExams,
     examinatorExams,
-    isExaminatorExamsLoading,
-    isStudentExamsLoading,
   ]);
   if (isStudentExamsLoading || isExaminatorExamsLoading) return <LoadingPage />;
   return <>{children}</>
