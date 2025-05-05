@@ -8,10 +8,16 @@ import {
   Stack,
   Checkbox,
   FormControlLabel,
+  Typography,
+  Divider,
+  Paper,
+  Box,
 } from "@mui/material";
 import { useState } from "react";
 import { QuestionCreate } from "../../Models/QuestionCreate";
 import { QuestionOptionCreate } from "../../Models/QuestionOptionCreate";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import SecondaryButton from "../Buttons/SecondaryButton";
 
 interface Props {
   open: boolean;
@@ -53,11 +59,13 @@ const CreateQuestionModal: React.FC<Props> = ({
   };
 
   const addOption = () => {
-    setQuestion((prev) => ({
-      ...prev,
-      options: [...prev.options, option],
-    }));
-    setOption({ label: "", optionText: "", isCorrect: false });
+    if (option.label.trim() && option.optionText.trim()) {
+      setQuestion((prev) => ({
+        ...prev,
+        options: [...prev.options, option],
+      }));
+      setOption({ label: "", optionText: "", isCorrect: false });
+    }
   };
 
   const saveQuestion = () => {
@@ -76,64 +84,115 @@ const CreateQuestionModal: React.FC<Props> = ({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Create Question</DialogTitle>
       <DialogContent>
-        <Stack spacing={2} mt={1}>
-          <TextField
-            label="Question Text"
-            name="questionText"
-            fullWidth
-            onChange={handleQuestionChange}
-          />
-          <TextField
-            label="Type"
-            name="type"
-            fullWidth
-            onChange={handleQuestionChange}
-          />
-          <TextField
-            label="Image URL"
-            name="imageUrl"
-            fullWidth
-            onChange={handleQuestionChange}
-          />
+        <Box display="flex" gap={3}>
+          <Box flex={1}>
+            <Stack spacing={3}>
+              <Stack spacing={2}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Question Info
+                </Typography>
+                <TextField
+                  label="Question Text"
+                  name="questionText"
+                  fullWidth
+                  value={question.questionText}
+                  onChange={handleQuestionChange}
+                />
+                <TextField
+                  label="Type"
+                  name="type"
+                  fullWidth
+                  value={question.type}
+                  onChange={handleQuestionChange}
+                />
+                <TextField
+                  label="Image URL"
+                  name="imageUrl"
+                  fullWidth
+                  value={question.imageUrl}
+                  onChange={handleQuestionChange}
+                />
+              </Stack>
 
-          <TextField
-            label="Option Label"
-            name="label"
-            fullWidth
-            value={option.label}
-            onChange={handleOptionChange}
-          />
-          <TextField
-            label="Option Text"
-            name="optionText"
-            fullWidth
-            value={option.optionText}
-            onChange={handleOptionChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={option.isCorrect}
-                onChange={handleOptionChange}
-                name="isCorrect"
-              />
-            }
-            label="Correct Answer"
-          />
-          <Button onClick={addOption}>Add Option</Button>
+              <Divider />
 
-          {question.options.map((opt, index) => (
-            <div key={index}>
-              {opt.label}: {opt.optionText} {opt.isCorrect ? "(correct)" : ""}
-            </div>
-          ))}
-        </Stack>
+              <Stack spacing={2}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Add Option
+                </Typography>
+                <TextField
+                  label="Option Label"
+                  name="label"
+                  fullWidth
+                  value={option.label}
+                  onChange={handleOptionChange}
+                />
+                <TextField
+                  label="Option Text"
+                  name="optionText"
+                  fullWidth
+                  value={option.optionText}
+                  onChange={handleOptionChange}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={option.isCorrect}
+                      onChange={handleOptionChange}
+                      name="isCorrect"
+                    />
+                  }
+                  label="Correct Answer"
+                />
+                <PrimaryButton variant="contained" onClick={addOption}>
+                  Add Option
+                </PrimaryButton>
+              </Stack>
+            </Stack>
+          </Box>
+
+          {/* Right side: Current options */}
+          <Box
+            flex={1}
+            maxHeight="500px"
+            overflow="auto"
+            borderLeft="1px solid #ccc"
+            pl={2}
+          >
+            <Typography variant="subtitle1" fontWeight="bold" mb={2}>
+              Current Options
+            </Typography>
+            <Stack spacing={1}>
+              {question.options.map((opt, index) => (
+                <Paper
+                  key={index}
+                  variant="outlined"
+                  sx={{ p: 1.5, backgroundColor: "#f9f9f9" }}
+                >
+                  <Typography>
+                    <strong>{opt.label}:</strong> {opt.optionText}{" "}
+                    {opt.isCorrect && (
+                      <Typography
+                        component="span"
+                        color="success.main"
+                        fontWeight="bold"
+                      >
+                        (Correct)
+                      </Typography>
+                    )}
+                  </Typography>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
+        </Box>
       </DialogContent>
+
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={saveQuestion}>
+        <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
+        <PrimaryButton variant="contained" onClick={saveQuestion}>
           Save Question
-        </Button>
+        </PrimaryButton>
       </DialogActions>
     </Dialog>
   );
