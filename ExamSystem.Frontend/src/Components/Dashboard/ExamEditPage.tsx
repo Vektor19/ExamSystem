@@ -11,28 +11,37 @@ import {
   Zoom,
 } from "@mui/material";
 import { QuestionCreate } from "../../Models/QuestionCreate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateQuestionModal from "./CreateQuestionModal";
 import DashboardPaper from "../Papers/DashboardPaper";
 import LoadingPage from "../Extra/LoadingPage";
 import AddIcon from "@mui/icons-material/Add";
 import PrimaryFab from "../Buttons/PrimaryFab";
+import QuestionService from "../../Services/QuestionService";
 
 const ExamEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { examinatorExams } = useExams();
-
-  const [questions, setQuestions] = useState<QuestionCreate[]>([]);
+  const { examinatorExams, questions, fetchQuestions } = useExams();
   const [showQuestionModal, setShowQuestionModal] = useState(false);
 
-  const handleSaveQuestion = (question: QuestionCreate) => {
-    setQuestions((prev) => [...prev, question]);
-    // TODO: API call here
+  useEffect(() => {
+    if (id) {
+      fetchQuestions(id);
+    }
+  }, []);
+
+  const handleSaveQuestion = async (question: QuestionCreate) => {
+    try {
+      const result = await QuestionService.createQuestion(question);
+      await fetchQuestions(question.examId);
+    } catch (error) {
+      console.error("Error creating question:", error);
+    } finally {
+      setShowQuestionModal(false);
+    }
   };
 
-  const exam: Exam | undefined = examinatorExams?.find(
-    (e) => e?.examId === id
-  );
+  const exam: Exam | undefined = examinatorExams?.find((e) => e?.examId === id);
 
   if (!exam) {
     return <LoadingPage />;
@@ -54,32 +63,50 @@ const ExamEditPage: React.FC = () => {
           </Typography>
 
           <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
-            <Typography><strong>Start Date:</strong> {exam?.startDate}</Typography>
-            <Typography><strong>End Date:</strong> {exam?.endDate}</Typography>
-            <Typography><strong>Questions:</strong> {exam?.questionCount}</Typography>
-            <Typography><strong>Participants:</strong> {exam?.participantCount}</Typography>
-            <Typography><strong>Status:</strong> {exam?.status}</Typography>
-            <Typography><strong>Join Code:</strong> {exam?.joinCode}</Typography>
+            <Typography>
+              <strong>Start Date:</strong> {exam?.startDate}
+            </Typography>
+            <Typography>
+              <strong>End Date:</strong> {exam?.endDate}
+            </Typography>
+            <Typography>
+              <strong>Questions:</strong> {exam?.questionCount}
+            </Typography>
+            <Typography>
+              <strong>Participants:</strong> {exam?.participantCount}
+            </Typography>
+            <Typography>
+              <strong>Status:</strong> {exam?.status}
+            </Typography>
+            <Typography>
+              <strong>Join Code:</strong> {exam?.joinCode}
+            </Typography>
           </Box>
 
           <Divider />
 
           <Box>
             <Typography variant="subtitle1" fontWeight={600} mb={2}>
-              Created Questions ({questions.length})
+              Questions ({questions?.length})
             </Typography>
             <Stack spacing={2}>
-              {questions.map((q, i) => (
+              {questions?.map((q, i) => (
                 <Paper key={i} sx={{ p: 2 }}>
                   <Typography variant="subtitle1" fontWeight={500}>
                     {i + 1}. {q.questionText}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Type: {q.type} — {q.options.length} option(s)
-                  </Typography>
+                  <Stack component="ul" pl={2} spacing={0.5}>
+                    {q.options.map((option, idx) => (
+                      <li key={idx}>
+                        <Typography variant="body2">
+                          {option?.label}: {option?.optionText}
+                        </Typography>
+                      </li>
+                    ))}
+                  </Stack>
                 </Paper>
               ))}
-              {questions.length === 0 && (
+              {questions?.length === 0 && (
                 <Typography color="text.secondary">
                   No questions created yet.
                 </Typography>
@@ -89,14 +116,8 @@ const ExamEditPage: React.FC = () => {
         </Stack>
       </DashboardPaper>
 
-      {/* Floating Action Button */}
       <Zoom in>
-        <Box
-          position="fixed"
-          bottom={24}
-          right={24}
-          zIndex={1300}
-        >
+        <Box position="fixed" bottom={24} right={24} zIndex={1300}>
           <PrimaryFab
             size="small"
             variant="extended"
