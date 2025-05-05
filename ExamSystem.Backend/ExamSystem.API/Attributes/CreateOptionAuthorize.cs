@@ -18,7 +18,7 @@ public class CreateOptionAuthorize : Attribute, IAsyncAuthorizationFilter
         var user = context.HttpContext.User;
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userRole))
+        if (string.IsNullOrEmpty(userId))
         {
             context.Result = new UnauthorizedResult();
             return;
