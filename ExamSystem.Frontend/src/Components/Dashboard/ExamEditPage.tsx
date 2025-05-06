@@ -26,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import QuestionService from "../../Services/QuestionService";
 import ExamService from "../../Services/ExamService";
+import AddParticipantModal from "./AddParticipantModal";
 
 const statusOptions = ["NotStarted", "Started", "Finished"];
 
@@ -34,6 +35,7 @@ const ExamEditPage: React.FC = () => {
   const { examinatorExams, questions, fetchQuestions, fetchExaminatorExams } =
     useExams();
   const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [showParticipantModal, setShowParticipantModal] = useState(false);
   const [editingField, setEditingField] = useState<string | null>(null);
   const [formValues, setFormValues] = useState({
     name: "",
@@ -169,6 +171,20 @@ const ExamEditPage: React.FC = () => {
         examId={exam?.examId || ""}
       />
 
+      <AddParticipantModal
+        open={showParticipantModal}
+        onClose={() => setShowParticipantModal(false)}
+        onSave={async (participantEmail: string) => {
+          if (!id) return;
+          try {
+            // await ExamService.addParticipant(id, participantEmail);
+            await fetchExaminatorExams();
+          } catch (error) {
+            console.error("Failed to add participant:", error);
+          }
+        }}
+      />
+
       <DashboardPaper sx={{ height: "calc(100vh - 100px)", overflowY: "auto" }}>
         <Stack spacing={4} mt={2} px={3} pb={10}>
           <Typography variant="h6" fontWeight={700}>
@@ -276,10 +292,9 @@ const ExamEditPage: React.FC = () => {
                 </Typography>
                 <PrimaryFab
                   size="small"
-                  
                   variant="extended"
                   onClick={() => {
-                    /* тут логіка додавання */
+                    setShowParticipantModal(true);
                   }}
                 >
                   <AddIcon />
