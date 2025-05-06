@@ -42,6 +42,7 @@ const ExamEditPage: React.FC = () => {
     status: "",
   });
 
+  const [participants, setParticipants] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -192,58 +193,127 @@ const ExamEditPage: React.FC = () => {
 
           <Divider />
 
-          <Box>
-            <Typography variant="subtitle1" fontWeight={600} mb={2}>
-              Questions ({questions?.length})
-            </Typography>
-            <Stack spacing={2}>
-              {questions?.map((q, i) => (
-                <Paper
-                  key={i}
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                  }}
+          <Box display="grid" gridTemplateColumns="1fr 1fr" gap={4}>
+            {/* Questions Section (Left) */}
+            <Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Questions ({questions?.length})
+                </Typography>
+                <PrimaryFab
+                  size="small"
+                  variant="extended"
+                  onClick={() => setShowQuestionModal(true)}
                 >
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={500}>
-                      {i + 1}. {q.questionText}
-                    </Typography>
-                    <Stack component="ul" pl={2} spacing={0.5}>
-                      {q.options.map((option, idx) => (
-                        <li key={idx}>
-                          <Typography variant="body2">
-                            {option?.label}: {option?.optionText}
-                          </Typography>
-                        </li>
-                      ))}
-                    </Stack>
-                  </Box>
-
-                  <IconButton
-                    color="error"
-                    onClick={async () => {
-                      if (!id) return;
-                      try {
-                        await QuestionService.deleteQuestion(q.questionId);
-                        await fetchQuestions(id);
-                      } catch (err) {
-                        console.error("Failed to delete question:", err);
-                      }
+                  <AddIcon sx={{ mr: 1 }} />
+                  Add Question
+                </PrimaryFab>
+              </Box>
+              <Stack spacing={2}>
+                {questions?.map((q, i) => (
+                  <Paper
+                    key={i}
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
                     }}
                   >
-                    <DeleteIcon />
-                  </IconButton>
-                </Paper>
-              ))}
-              {questions?.length === 0 && (
-                <Typography color="text.secondary">
-                  No questions created yet.
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={500}>
+                        {i + 1}. {q.questionText}
+                      </Typography>
+                      <Stack component="ul" pl={2} spacing={0.5}>
+                        {q.options.map((option, idx) => (
+                          <li key={idx}>
+                            <Typography variant="body2">
+                              {option?.label}: {option?.optionText}
+                            </Typography>
+                          </li>
+                        ))}
+                      </Stack>
+                    </Box>
+                    <IconButton
+                      color="error"
+                      onClick={async () => {
+                        if (!id) return;
+                        try {
+                          await QuestionService.deleteQuestion(q.questionId);
+                          await fetchQuestions(id);
+                        } catch (err) {
+                          console.error("Failed to delete question:", err);
+                        }
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Paper>
+                ))}
+                {(questions?.length === 0 || !questions) && (
+                  <Typography color="text.secondary">
+                    No questions created yet.
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
+
+            {/* Participants Section (Right) */}
+            <Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Participants ({participants.length})
                 </Typography>
-              )}
-            </Stack>
+                <PrimaryFab
+                  size="small"
+                  
+                  variant="extended"
+                  onClick={() => {
+                    /* тут логіка додавання */
+                  }}
+                >
+                  <AddIcon />
+                  Add Participant
+                </PrimaryFab>
+              </Box>
+              <Stack spacing={2}>
+                {participants.map((p, i) => (
+                  <Paper
+                    key={p.participantId}
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={500}>
+                        {i + 1}. {p.name} ({p.email})
+                      </Typography>
+                    </Box>
+                    <IconButton color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Paper>
+                ))}
+                {participants.length === 0 && (
+                  <Typography color="text.secondary">
+                    No participants added yet.
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
           </Box>
         </Stack>
       </DashboardPaper>
