@@ -155,5 +155,52 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to add participant.");
         }
+
+        public async Task<OperationResult> RemoveParticipantAsync(Guid examId, Guid userId)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+            var existingUserResult = await _userRepository.GetByIdAsync(userId);
+            if (!existingUserResult.Success || existingUserResult.Data == null)
+                return OperationResult.Fail("User not found.");
+            var exam = existingExamResult.Data;
+            var user = existingUserResult.Data;
+            var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
+            if (examUser != null)
+            {
+                exam.ExamUsers.Remove(examUser);
+                var result = await _examRepository.UpdateAsync(exam);
+                return result.Success
+                    ? OperationResult.Ok()
+                    : OperationResult.Fail("Failed to remove participant.");
+            }
+            return OperationResult.Fail("Participant not found in the exam.");
+        }
+
+        public async Task<OperationResult> AddParticipantByEmailAsync(Guid examId, string email)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+            var existingUserResult = await _userRepository.GetByEmailAsync(email);
+            if (!existingUserResult.Success || existingUserResult.Data == null)
+                return OperationResult.Fail("User not found.");
+            var exam = existingExamResult.Data;
+            var user = existingUserResult.Data;
+            exam.ExamUsers.Add(new ExamUser
+            {
+                ExamId = examId,
+                UserId = user.UserId
+               ,
+                User = user,
+                Exam = exam,
+                CompleteStatus = false
+            });
+            var result = await _examRepository.UpdateAsync(exam);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to add participant.");
+        }
     }
 }

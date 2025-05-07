@@ -80,5 +80,13 @@ namespace ExamSystem.API.Controllers
             return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
         }
 
+        [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
+        [HttpPost("{id}/participants/by-email")]
+        public async Task<IActionResult> AddParticipantByEmail(Guid id, [FromBody] AddParticipantByEmailDto dto)
+        {
+            var result = await _examService.AddParticipantByEmailAsync(id, dto.Email);
+            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+        }
+
     }
 }
