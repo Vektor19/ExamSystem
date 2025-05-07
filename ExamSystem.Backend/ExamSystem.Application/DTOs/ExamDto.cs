@@ -13,7 +13,6 @@ namespace ExamSystem.Application.DTOs
         public DateTime CreatedDate { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string JoinCode { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public UserDto CreatedBy { get; set; } = null!;
         public int QuestionCount { get; set; }

@@ -20,13 +20,13 @@ namespace ExamSystem.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OperationResult<ExamDto>> CreateAsync(ExamCreateDto examCreateDto)
+        public async Task<OperationResult<ExamForExaminatorDto>> CreateAsync(ExamCreateDto examCreateDto)
         {
             var existingUserResult = await _userRepository.GetByIdAsync(examCreateDto.CreatedByUserId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return OperationResult<ExamDto>.Fail("User who creates exam not found.");
+                return OperationResult<ExamForExaminatorDto>.Fail("User who creates exam not found.");
             if (string.IsNullOrWhiteSpace(examCreateDto.Name))
-                return OperationResult<ExamDto>.Fail("Exam name is required.");
+                return OperationResult<ExamForExaminatorDto>.Fail("Exam name is required.");
 
             var exam = _mapper.Map<Exam>(examCreateDto);
             exam.ExamId = Guid.NewGuid();
@@ -37,12 +37,12 @@ namespace ExamSystem.Application.Services
 
             var result = await _examRepository.AddAsync(exam);
             if (!result.Success)
-                return OperationResult<ExamDto>.Fail(result.ErrorMessage!);
+                return OperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!);
             var examResult = await _examRepository.GetByIdAsync(exam.ExamId);
             if (!examResult.Success || examResult.Data == null)
-                return OperationResult<ExamDto>.Fail("Created exam not found");
-            var examDto = _mapper.Map<ExamDto>(examResult.Data);
-            return OperationResult<ExamDto>.Ok(examDto);
+                return OperationResult<ExamForExaminatorDto>.Fail("Created exam not found");
+            var examDto = _mapper.Map<ExamForExaminatorDto>(examResult.Data);
+            return OperationResult<ExamForExaminatorDto>.Ok(examDto);
         }
 
 
@@ -54,29 +54,29 @@ namespace ExamSystem.Application.Services
                 : OperationResult.Fail("Failed to delete exam.");
         }
 
-        public async Task<OperationResult<IEnumerable<ExamDto>>> GetAllAsync()
+        public async Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync()
         {
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<ExamDto>>.Fail(result.ErrorMessage!);
+                return OperationResult<IEnumerable<ExamForExaminatorDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return OperationResult<IEnumerable<ExamDto>>.Fail("No exams found.");
+                return OperationResult<IEnumerable<ExamForExaminatorDto>>.Fail("No exams found.");
 
-            var examDtos = _mapper.Map<IEnumerable<ExamDto>>(result.Data);
-            return OperationResult<IEnumerable<ExamDto>>.Ok(examDtos);
+            var examDtos = _mapper.Map<IEnumerable<ExamForExaminatorDto>>(result.Data);
+            return OperationResult<IEnumerable<ExamForExaminatorDto>>.Ok(examDtos);
         }
 
-        public async Task<OperationResult<IEnumerable<ExamDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId)
+        public async Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId)
         {
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<ExamDto>>.Fail(result.ErrorMessage!);
+                return OperationResult<IEnumerable<ExamForExaminatorDto>>.Fail(result.ErrorMessage!);
             var exams = result.Data!;
             var filteredExams = exams.Where(e => e.CreatedByUserId == createdByUserId).ToList();
             if (!filteredExams.Any())
-                return OperationResult<IEnumerable<ExamDto>>.Fail("No exams found for this user.");
-            var examDtos = _mapper.Map<IEnumerable<ExamDto>>(filteredExams);
-            return OperationResult<IEnumerable<ExamDto>>.Ok(examDtos);
+                return OperationResult<IEnumerable<ExamForExaminatorDto>>.Fail("No exams found for this user.");
+            var examDtos = _mapper.Map<IEnumerable<ExamForExaminatorDto>>(filteredExams);
+            return OperationResult<IEnumerable<ExamForExaminatorDto>>.Ok(examDtos);
         }
 
         public async Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId)
@@ -92,14 +92,14 @@ namespace ExamSystem.Application.Services
             return OperationResult<IEnumerable<ExamDto>>.Ok(examDtos);
         }
 
-        public async Task<OperationResult<ExamDto>> GetByIdAsync(Guid id)
+        public async Task<OperationResult<ExamForExaminatorDto>> GetByIdAsync(Guid id)
         {
             var result = await _examRepository.GetByIdAsync(id);
             if (!result.Success)
-                return OperationResult<ExamDto>.Fail(result.ErrorMessage!);
+                return OperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!);
 
-            var examDto = _mapper.Map<ExamDto>(result.Data);
-            return OperationResult<ExamDto>.Ok(examDto);
+            var examDto = _mapper.Map<ExamForExaminatorDto>(result.Data);
+            return OperationResult<ExamForExaminatorDto>.Ok(examDto);
         }
 
         public async Task<OperationResult> UpdateAsync(Guid examId, ExamUpdateDto updateDto)
