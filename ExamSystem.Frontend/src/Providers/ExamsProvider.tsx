@@ -6,14 +6,15 @@ import {
   ReactNode,
 } from "react";
 import TokenParser from "../Services/TokenParser";
-import { Exam } from "../Models/Exam";
 import ExamService from "../Services/ExamService";
 import { Question } from "../Models/Question";
 import QuestionService from "../Services/QuestionService";
+import { StudentExam } from "../Models/StudentExam";
+import { ExaminatorExam } from "../Models/ExaminatorExam";
 
 type ExamsContextType = {
-  studentExams: Exam[] | null;
-  examinatorExams: Exam[] | null;
+  studentExams: StudentExam[] | null;
+  examinatorExams: ExaminatorExam[] | null;
   questions: Question[] | null;
   fetchStudentExams: () => Promise<void>;
   fetchExaminatorExams: () => Promise<void>;
@@ -26,8 +27,8 @@ type ExamsContextType = {
 const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
 
 export const ExamsProvider = ({ children }: { children: ReactNode }) => {
-  const [studentExams, setStudentExams] = useState<Exam[] | null>(null);
-  const [examinatorExams, setExaminatorExams] = useState<Exam[] | null>(null);
+  const [studentExams, setStudentExams] = useState<StudentExam[] | null>(null);
+  const [examinatorExams, setExaminatorExams] = useState<ExaminatorExam[] | null>(null);
   const [isStudentExamsLoading, setIsStudentExamsLoading] = useState(true);
   const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] =
     useState(true);

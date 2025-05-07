@@ -1,10 +1,11 @@
 import examSystemApi from "../Api/examSystemApi";
-import { Exam } from "../Models/Exam";
 import { ExamCreate } from "../Models/ExamCreate";
+import { ExaminatorExam } from "../Models/ExaminatorExam";
 import { ExamUpdate } from "../Models/ExamUpdate";
+import { StudentExam } from "../Models/StudentExam";
 
 class ExamService {
-  async getExamById(id: string): Promise<Exam> {
+  async getExamById(id: string): Promise<ExaminatorExam> {
     try {
       const res = await examSystemApi.get("/exam/" + id);
       return res.data;
@@ -12,7 +13,7 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Exam not found");
     }
   }
-  async createExam(exam: ExamCreate): Promise<Exam> {
+  async createExam(exam: ExamCreate): Promise<ExaminatorExam> {
     try {
       const res = await examSystemApi.post("/exam/", exam);
       return res.data;
@@ -20,7 +21,7 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Exam not created");
     }
   }
-  async getExamsByParticipantId(id: string): Promise<Exam[]> {
+  async getExamsByParticipantId(id: string): Promise<StudentExam[]> {
     try {
       const res = await examSystemApi.get("/exam/by-participant/" + id);
       return res.data;
@@ -28,7 +29,7 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Exams not found");
     }
   }
-  async getExamsByCreatedUserId(id: string): Promise<Exam[]> {
+  async getExamsByCreatedUserId(id: string): Promise<ExaminatorExam[]> {
     try {
       const res = await examSystemApi.get("/exam/by-me/" + id);
       return res.data;

@@ -1,6 +1,7 @@
+import { Participant } from "./Participant";
 import { User } from "./User";
 
-export interface Exam {
+export interface ExaminatorExam {
   examId: string;
   name: string;
   createdDate: string;
@@ -11,4 +12,5 @@ export interface Exam {
   createdBy: User;
   questionCount: number;
   participantCount: number;
+  participants: Participant[];
 }
