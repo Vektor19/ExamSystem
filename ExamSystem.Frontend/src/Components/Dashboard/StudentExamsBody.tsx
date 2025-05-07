@@ -3,17 +3,24 @@ import {
   Typography,
   Stack,
   Paper,
-  Button,
   Chip,
   Divider,
+  Zoom,
 } from "@mui/material";
 import { StudentExam } from "../../Models/StudentExam";
 import { useExams } from "../../Providers/ExamsProvider";
 import DashboardPaper from "../Papers/DashboardPaper";
 import { useNavigate } from "react-router-dom";
+import PrimaryButton from "../Buttons/PrimaryButton";
+import PrimaryFab from "../Buttons/PrimaryFab";
+import { useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import JoinExamModal from "./JoinExamModal";
+import ExamService from "../../Services/ExamService";
 
 const StudentExamsBody: React.FC = () => {
-  const { examinatorExams } = useExams();
+  const { studentExams, fetchStudentExams } = useExams();
+  const [showJoinExamModal, setShowJoinExamModal] = useState(false);
   const navigate = useNavigate();
 
   const formatDuration = (start: string, end: string) => {
@@ -25,13 +32,24 @@ const StudentExamsBody: React.FC = () => {
   };
 
   return (
+    <>
+    <JoinExamModal
+        open={showJoinExamModal}
+        onClose={() => setShowJoinExamModal(false)}
+        onSave={async (joinCode: string) => {
+          try {
+            await ExamService.joinExam(joinCode);
+            await fetchStudentExams();
+          } catch (error) {
+            console.error("Failed to join exam:", error);
+          }
+        }}
+      />
+
     <DashboardPaper sx={{ p: 3 }}>
-      <Typography variant="h5" fontWeight={600} mb={3}>
-        Доступні іспити
-      </Typography>
 
       <Stack spacing={2}>
-        {examinatorExams?.map(
+        {studentExams?.map(
           (exam: StudentExam | null) =>
             exam && (
               <Paper
@@ -58,15 +76,26 @@ const StudentExamsBody: React.FC = () => {
 
                   <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
                     <Typography variant="body2" color="text.secondary">
-                      Питань: {exam.questionCount}
+                      Questions: {exam.questionCount}
                     </Typography>
                     <Divider orientation="vertical" flexItem />
                     <Typography variant="body2" color="text.secondary">
-                      Час: {formatDuration(exam.startDate, exam.endDate)}
+                      Time provided: {formatDuration(exam.startDate, exam.endDate)}
                     </Typography>
                     <Divider orientation="vertical" flexItem />
                     <Typography variant="body2" color="error">
-                      Дедлайн:{" "}
+                      Start Date:{" "}
+                      {new Date(exam.startDate).toLocaleString("uk-UA", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </Typography>
+
+                    <Divider orientation="vertical" flexItem />
+                    <Typography variant="body2" color="error">
+                      Deadline:{" "}
                       {new Date(exam.endDate).toLocaleString("uk-UA", {
                         day: "2-digit",
                         month: "2-digit",
@@ -89,19 +118,30 @@ const StudentExamsBody: React.FC = () => {
                   </Stack>
                 </Box>
 
-                <Button
-                  variant="contained"
-                  sx={{ ml: 3 }}
+                <PrimaryButton
                   disabled={exam.status !== "NotStarted"}
-                  onClick={() => navigate(`/exam/${exam.examId}/start`)}
+                  onClick={() => navigate(`/exam/start/${exam.examId}`)}
                 >
                   Start
-                </Button>
+                </PrimaryButton>
               </Paper>
             )
         )}
       </Stack>
     </DashboardPaper>
+    <Zoom in>
+    <Box position="fixed" left={"50%"} bottom={24} zIndex={1300}>
+      <PrimaryFab
+        size="small"
+        variant="extended"
+        onClick={() => setShowJoinExamModal(true)}
+      >
+        <AddIcon sx={{ mr: 1 }} />
+        Join Exam
+      </PrimaryFab>
+    </Box>
+  </Zoom>
+  </>
   );
 };
 

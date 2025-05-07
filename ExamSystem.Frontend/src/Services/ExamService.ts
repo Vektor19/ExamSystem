@@ -68,6 +68,17 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Participant not added");
     }
   }
+
+  async joinExam(joinCode: string): Promise<boolean> {
+    try {
+      const res = await examSystemApi.post("/exam/join", {
+        joinCode,
+      });
+      return res.data.success;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Not joined to exam");
+    }
+  }
 }
 
 export default new ExamService();
