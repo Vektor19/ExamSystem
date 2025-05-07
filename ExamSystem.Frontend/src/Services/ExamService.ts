@@ -69,9 +69,10 @@ class ExamService {
     }
   }
 
-  async joinExam(joinCode: string): Promise<boolean> {
+  async joinExam(userId: string,joinCode: string): Promise<boolean> {
     try {
       const res = await examSystemApi.post("/exam/join", {
+        userId,
         joinCode,
       });
       return res.data.success;

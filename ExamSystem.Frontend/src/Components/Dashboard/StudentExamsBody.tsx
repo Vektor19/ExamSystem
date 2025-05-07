@@ -17,9 +17,11 @@ import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import JoinExamModal from "./JoinExamModal";
 import ExamService from "../../Services/ExamService";
+import { useUser } from "../../Providers/UserProvider";
 
 const StudentExamsBody: React.FC = () => {
   const { studentExams, fetchStudentExams } = useExams();
+  const { user } = useUser();
   const [showJoinExamModal, setShowJoinExamModal] = useState(false);
   const navigate = useNavigate();
 
@@ -33,12 +35,12 @@ const StudentExamsBody: React.FC = () => {
 
   return (
     <>
-    <JoinExamModal
+      <JoinExamModal
         open={showJoinExamModal}
         onClose={() => setShowJoinExamModal(false)}
         onSave={async (joinCode: string) => {
           try {
-            await ExamService.joinExam(joinCode);
+            await ExamService.joinExam(user?.userId ?? "", joinCode);
             await fetchStudentExams();
           } catch (error) {
             console.error("Failed to join exam:", error);
@@ -46,102 +48,102 @@ const StudentExamsBody: React.FC = () => {
         }}
       />
 
-    <DashboardPaper sx={{ p: 3 }}>
-
-      <Stack spacing={2}>
-        {studentExams?.map(
-          (exam: StudentExam | null) =>
-            exam && (
-              <Paper
-                key={exam.examId}
-                elevation={3}
-                sx={{
-                  p: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  borderLeft: `6px solid ${
-                    exam.status === "Finished"
-                      ? "#9e9e9e"
-                      : exam.status === "Started"
-                      ? "#1976d2"
-                      : "#4caf50"
-                  }`,
-                }}
-              >
-                <Box sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" fontWeight={600}>
-                    {exam.name}
-                  </Typography>
-
-                  <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
-                    <Typography variant="body2" color="text.secondary">
-                      Questions: {exam.questionCount}
-                    </Typography>
-                    <Divider orientation="vertical" flexItem />
-                    <Typography variant="body2" color="text.secondary">
-                      Time provided: {formatDuration(exam.startDate, exam.endDate)}
-                    </Typography>
-                    <Divider orientation="vertical" flexItem />
-                    <Typography variant="body2" color="error">
-                      Start Date:{" "}
-                      {new Date(exam.startDate).toLocaleString("uk-UA", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Typography>
-
-                    <Divider orientation="vertical" flexItem />
-                    <Typography variant="body2" color="error">
-                      Deadline:{" "}
-                      {new Date(exam.endDate).toLocaleString("uk-UA", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Typography>
-                    <Divider orientation="vertical" flexItem />
-                    <Chip
-                      size="small"
-                      label={exam.status}
-                      color={
-                        exam.status === "Finished"
-                          ? "default"
-                          : exam.status === "Started"
-                          ? "primary"
-                          : "success"
-                      }
-                    />
-                  </Stack>
-                </Box>
-
-                <PrimaryButton
-                  disabled={exam.status !== "NotStarted"}
-                  onClick={() => navigate(`/exam/start/${exam.examId}`)}
+      <DashboardPaper sx={{ p: 3 }}>
+        <Stack spacing={2}>
+          {studentExams?.map(
+            (exam: StudentExam | null) =>
+              exam && (
+                <Paper
+                  key={exam.examId}
+                  elevation={3}
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderLeft: `6px solid ${
+                      exam.status === "Finished"
+                        ? "#9e9e9e"
+                        : exam.status === "Started"
+                        ? "#1976d2"
+                        : "#4caf50"
+                    }`,
+                  }}
                 >
-                  Start
-                </PrimaryButton>
-              </Paper>
-            )
-        )}
-      </Stack>
-    </DashboardPaper>
-    <Zoom in>
-    <Box position="fixed" left={"50%"} bottom={24} zIndex={1300}>
-      <PrimaryFab
-        size="small"
-        variant="extended"
-        onClick={() => setShowJoinExamModal(true)}
-      >
-        <AddIcon sx={{ mr: 1 }} />
-        Join Exam
-      </PrimaryFab>
-    </Box>
-  </Zoom>
-  </>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" fontWeight={600}>
+                      {exam.name}
+                    </Typography>
+
+                    <Stack direction="row" spacing={2} mt={1} flexWrap="wrap">
+                      <Typography variant="body2" color="text.secondary">
+                        Questions: {exam.questionCount}
+                      </Typography>
+                      <Divider orientation="vertical" flexItem />
+                      <Typography variant="body2" color="text.secondary">
+                        Time provided:{" "}
+                        {formatDuration(exam.startDate, exam.endDate)}
+                      </Typography>
+                      <Divider orientation="vertical" flexItem />
+                      <Typography variant="body2" color="error">
+                        Start Date:{" "}
+                        {new Date(exam.startDate).toLocaleString("uk-UA", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </Typography>
+
+                      <Divider orientation="vertical" flexItem />
+                      <Typography variant="body2" color="error">
+                        Deadline:{" "}
+                        {new Date(exam.endDate).toLocaleString("uk-UA", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </Typography>
+                      <Divider orientation="vertical" flexItem />
+                      <Chip
+                        size="small"
+                        label={exam.status}
+                        color={
+                          exam.status === "Finished"
+                            ? "default"
+                            : exam.status === "Started"
+                            ? "primary"
+                            : "success"
+                        }
+                      />
+                    </Stack>
+                  </Box>
+
+                  <PrimaryButton
+                    disabled={exam.status !== "NotStarted"}
+                    onClick={() => navigate(`/exam/start/${exam.examId}`)}
+                  >
+                    Start
+                  </PrimaryButton>
+                </Paper>
+              )
+          )}
+        </Stack>
+      </DashboardPaper>
+      <Zoom in>
+        <Box position="fixed" left={"50%"} bottom={24} zIndex={1300}>
+          <PrimaryFab
+            size="small"
+            variant="extended"
+            onClick={() => setShowJoinExamModal(true)}
+          >
+            <AddIcon sx={{ mr: 1 }} />
+            Join Exam
+          </PrimaryFab>
+        </Box>
+      </Zoom>
+    </>
   );
 };
 
