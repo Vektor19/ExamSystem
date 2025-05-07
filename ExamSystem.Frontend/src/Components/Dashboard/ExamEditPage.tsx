@@ -125,7 +125,7 @@ const ExamEditPage: React.FC = () => {
           ) : (
             <TextField
               size="small"
-              type="datetime-local"
+              type={isDate ? "datetime-local" : "text"}
               value={isDate ? toDateTimeLocal(value) : value}
               onChange={(e) =>
                 setFormValues((prev) => ({
