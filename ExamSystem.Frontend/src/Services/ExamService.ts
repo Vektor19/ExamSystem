@@ -45,6 +45,29 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Exam not updated");
     }
   }
+  async addParticipantToExam(
+    id: string,
+    participantId: string
+  ): Promise<boolean> {
+    try {
+      const res = await examSystemApi.post("/exam/" + id + "/participants", {
+        participantId,
+      });
+      return res.data.success;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Participant not added");
+    }
+  }
+  async addParticipantToExamByEmail(id: string, email: string): Promise<boolean> {
+    try {
+      const res = await examSystemApi.post("/exam/" + id + "/participants/by-email", {
+        email,
+      });
+      return res.data.success;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Participant not added");
+    }
+  }
 }
 
 export default new ExamService();
