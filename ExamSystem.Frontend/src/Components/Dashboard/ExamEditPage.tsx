@@ -48,13 +48,23 @@ const ExamEditPage: React.FC = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
 
+  // Функція для форматування у datetime-local
+  const toDateTimeLocal = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60 * 1000);
+    return local.toISOString().slice(0, 16); // "yyyy-MM-ddTHH:mm"
+  };
+
   useEffect(() => {
     if (id) {
       fetchQuestions(id);
     }
   }, []);
 
-  const exam: ExaminatorExam | undefined = examinatorExams?.find((e) => e?.examId === id);
+  const exam: ExaminatorExam | undefined = examinatorExams?.find(
+    (e) => e?.examId === id
+  );
 
   useEffect(() => {
     if (exam) {
@@ -73,8 +83,8 @@ const ExamEditPage: React.FC = () => {
     try {
       await ExamService.updateExam(exam.examId, {
         name: formValues.name,
-        startDate: new Date(formValues.startDate).toISOString(),
-        endDate: new Date(formValues.endDate).toISOString(),
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
         status: formValues.status,
       });
       await fetchExaminatorExams();
@@ -115,15 +125,27 @@ const ExamEditPage: React.FC = () => {
           ) : (
             <TextField
               size="small"
-              type={isDate ? "date" : "text"}
-              value={isDate ? value.slice(0, 10) : value}
+              type="datetime-local"
+              value={isDate ? toDateTimeLocal(value) : value}
               onChange={(e) =>
-                setFormValues((prev) => ({ ...prev, [field]: e.target.value }))
+                setFormValues((prev) => ({
+                  ...prev,
+                  [field]: e.target.value,
+                }))
               }
             />
           )
         ) : (
-          <Typography>{exam?.[field]}</Typography>
+          <Typography>
+            {isDate
+              ? new Date(exam?.[field] ?? "").toLocaleDateString("uk-UA", {
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : exam?.[field]}
+          </Typography>
         )}
         {isEditing ? (
           <>
