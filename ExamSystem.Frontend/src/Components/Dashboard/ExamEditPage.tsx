@@ -352,19 +352,6 @@ const ExamEditPage: React.FC = () => {
           </PrimaryFab>
         </Box>
       </Zoom>
-
-      <Zoom in>
-        <Box position="fixed" bottom={24} right={24} zIndex={1300}>
-          <PrimaryFab
-            size="small"
-            variant="extended"
-            onClick={() => setShowQuestionModal(true)}
-          >
-            <AddIcon sx={{ mr: 1 }} />
-            Add Question
-          </PrimaryFab>
-        </Box>
-      </Zoom>
     </>
   );
 };
