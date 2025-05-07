@@ -210,7 +210,7 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("No exams found.");
             var exam = examsResult.Data.FirstOrDefault(e => e.JoinCode == joinExamDto.JoinCode);
             if (exam == null)
-                return OperationResult.Fail("Exam not found.");
+                return OperationResult.Fail("Wrong join code.");
             var userResult = await _userRepository.GetByIdAsync(joinExamDto.UserId);
             if (!userResult.Success || userResult.Data == null)
                 return OperationResult.Fail("User not found.");
@@ -219,9 +219,9 @@ namespace ExamSystem.Application.Services
             var user = userResult.Data;
             exam.ExamUsers.Add(new ExamUser
             {
-                ExamUserId = Guid.NewGuid(),
                 ExamId = exam.ExamId,
-                UserId = user.UserId,
+                UserId = user.UserId
+               ,
                 User = user,
                 Exam = exam,
                 CompleteStatus = false
