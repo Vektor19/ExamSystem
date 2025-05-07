@@ -202,5 +202,34 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to add participant.");
         }
+
+        public async Task<OperationResult> JoinExam(JoinExamDto joinExamDto)
+        {
+            var examsResult = await _examRepository.GetAllAsync();
+            if (!examsResult.Success || examsResult.Data == null)
+                return OperationResult.Fail("No exams found.");
+            var exam = examsResult.Data.FirstOrDefault(e => e.JoinCode == joinExamDto.JoinCode);
+            if (exam == null)
+                return OperationResult.Fail("Exam not found.");
+            var userResult = await _userRepository.GetByIdAsync(joinExamDto.UserId);
+            if (!userResult.Success || userResult.Data == null)
+                return OperationResult.Fail("User not found.");
+            if (exam.ExamUsers.Any(eu => eu.UserId == joinExamDto.UserId))
+                return OperationResult.Fail("User already joined the exam.");
+            var user = userResult.Data;
+            exam.ExamUsers.Add(new ExamUser
+            {
+                ExamUserId = Guid.NewGuid(),
+                ExamId = exam.ExamId,
+                UserId = user.UserId,
+                User = user,
+                Exam = exam,
+                CompleteStatus = false
+            });
+            var result = await _examRepository.UpdateAsync(exam);
+            if (!result.Success)
+                return OperationResult.Fail("Failed to join exam.");
+            return OperationResult.Ok();
+        }
     }
 }

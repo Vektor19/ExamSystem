@@ -88,5 +88,12 @@ namespace ExamSystem.API.Controllers
             return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
         }
 
+        [HttpPost("join")]
+        public async Task<IActionResult> JoinExam([FromBody] JoinExamDto dto)
+        {
+            var result = await _examService.JoinExam(dto);
+            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+        }
+
     }
 }
