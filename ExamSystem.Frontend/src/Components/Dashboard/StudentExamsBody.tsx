@@ -1,4 +1,4 @@
-import { Exam } from "../../Models/Exam";
+import { StudentExam } from "../../Models/StudentExam";
 import { useExams } from "../../Providers/ExamsProvider";
 import DashboardPaper from "../Papers/DashboardPaper";
 
@@ -11,7 +11,7 @@ const StudentExamsBody: React.FC = () => {
         <h1 className="student-exams-title">Student Exams</h1>
         <div className="student-exams-list">
           {examinatorExams?.map(
-            (exam: Exam | null) =>
+            (exam: StudentExam | null) =>
               exam && (
                 <div key={exam.examId} className="student-exam-item">
                   <h2>{exam.name}</h2>

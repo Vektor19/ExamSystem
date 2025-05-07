@@ -18,7 +18,7 @@ interface Props {
   onSave: (participantEmail: string) => void;
 }
 
-const AddParticipantModal: React.FC<Props> = ({ open, onClose }) => {
+const AddParticipantModal: React.FC<Props> = ({ open, onClose, onSave }) => {
   const [participantEmail, setParticipantEmail] = useState<string>("");
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +27,7 @@ const AddParticipantModal: React.FC<Props> = ({ open, onClose }) => {
 
   const addParticipant = () => {
     if (participantEmail.trim()) {
+      onSave(participantEmail);
       setParticipantEmail("");
       onClose();
     } else {

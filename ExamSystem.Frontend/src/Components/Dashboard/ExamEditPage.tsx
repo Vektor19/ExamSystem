@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useExams } from "../../Providers/ExamsProvider";
-import { Exam } from "../../Models/Exam";
 import {
   Stack,
   Typography,
@@ -27,6 +26,8 @@ import PrimaryFab from "../Buttons/PrimaryFab";
 import QuestionService from "../../Services/QuestionService";
 import ExamService from "../../Services/ExamService";
 import AddParticipantModal from "./AddParticipantModal";
+import { ExaminatorExam } from "../../Models/ExaminatorExam";
+import { Participant } from "../../Models/Participant";
 
 const statusOptions = ["NotStarted", "Started", "Finished"];
 
@@ -44,7 +45,7 @@ const ExamEditPage: React.FC = () => {
     status: "",
   });
 
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +54,7 @@ const ExamEditPage: React.FC = () => {
     }
   }, []);
 
-  const exam: Exam | undefined = examinatorExams?.find((e) => e?.examId === id);
+  const exam: ExaminatorExam | undefined = examinatorExams?.find((e) => e?.examId === id);
 
   useEffect(() => {
     if (exam) {
@@ -63,6 +64,7 @@ const ExamEditPage: React.FC = () => {
         endDate: exam.endDate,
         status: exam.status,
       });
+      setParticipants(exam.participants || []);
     }
   }, [exam]);
 
@@ -177,7 +179,7 @@ const ExamEditPage: React.FC = () => {
         onSave={async (participantEmail: string) => {
           if (!id) return;
           try {
-            // await ExamService.addParticipant(id, participantEmail);
+            await ExamService.addParticipantToExamByEmail(id, participantEmail);
             await fetchExaminatorExams();
           } catch (error) {
             console.error("Failed to add participant:", error);
@@ -304,7 +306,7 @@ const ExamEditPage: React.FC = () => {
               <Stack spacing={2}>
                 {participants.map((p, i) => (
                   <Paper
-                    key={p.participantId}
+                    key={p.userId}
                     sx={{
                       p: 2,
                       display: "flex",
@@ -314,7 +316,7 @@ const ExamEditPage: React.FC = () => {
                   >
                     <Box>
                       <Typography variant="subtitle1" fontWeight={500}>
-                        {i + 1}. {p.name} ({p.email})
+                        {i + 1}. {p.firstName} ({p.email})
                       </Typography>
                     </Box>
                     <IconButton color="error">

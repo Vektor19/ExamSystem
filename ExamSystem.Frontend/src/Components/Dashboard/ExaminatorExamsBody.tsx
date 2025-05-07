@@ -1,4 +1,3 @@
-import { Exam } from "../../Models/Exam";
 import { useExams } from "../../Providers/ExamsProvider";
 import { useNavigate } from "react-router-dom";
 import {
