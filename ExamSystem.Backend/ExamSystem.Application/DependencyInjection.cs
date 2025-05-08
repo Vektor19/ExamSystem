@@ -17,6 +17,7 @@ namespace ExamSystem.Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IExamService, ExamService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnswerService, AnswerService>();
 
             return services;
         }
