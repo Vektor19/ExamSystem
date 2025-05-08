@@ -25,6 +25,8 @@ namespace ExamSystem.Persistence.Configurations
             builder.HasMany(e => e.Answers)
                 .WithOne(a => a.Exam)
                 .HasForeignKey(e => e.ExamId);
+
+            builder.Ignore(e => e.Status);
         }
     }
 }

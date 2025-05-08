@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
+using ExamSystem.Application.Utils.Validators;
 using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
@@ -30,10 +31,13 @@ namespace ExamSystem.Application.Services
 
             var exam = _mapper.Map<Exam>(examCreateDto);
             exam.ExamId = Guid.NewGuid();
-            exam.Status = ExamStatus.NotStarted;
             exam.UserCreatedBy = existingUserResult.Data;
             exam.CreatedDate = DateTime.UtcNow;
             exam.JoinCode = Guid.NewGuid().ToString();
+
+            var dateValidationResult = ExamValidator.ValidateDates(exam);
+            if (!dateValidationResult.Success)
+                return OperationResult<ExamForExaminatorDto>.Fail(dateValidationResult.ErrorMessage!);
 
             var result = await _examRepository.AddAsync(exam);
             if (!result.Success)
@@ -48,6 +52,15 @@ namespace ExamSystem.Application.Services
 
         public async Task<OperationResult> DeleteAsync(Guid id)
         {
+            var existingExamResult = await _examRepository.GetByIdAsync(id);
+
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+
+            var modifyAllowedResult = ExamValidator.IsModifyAllowed(existingExamResult.Data);
+            if (!modifyAllowedResult.Success)
+                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+
             var result = await _examRepository.DeleteAsync(id);
             return result.Success
                 ? OperationResult.Ok()
@@ -110,10 +123,18 @@ namespace ExamSystem.Application.Services
 
             var exam = existingExamResult.Data;
 
+            var isAllowedResult = ExamValidator.IsModifyAllowed(exam);
+
+            if (!isAllowedResult.Success)
+                return OperationResult.Fail(isAllowedResult.ErrorMessage!);
+
             exam.Name = updateDto.Name;
             exam.StartDate = updateDto.StartDate;
             exam.EndDate = updateDto.EndDate;
-            exam.Status = Enum.TryParse<ExamStatus>(updateDto.Status, out var status) ? status : ExamStatus.NotStarted;
+
+            var dateValidationResult = ExamValidator.ValidateDates(exam);
+            if (!dateValidationResult.Success)
+                return OperationResult.Fail(dateValidationResult.ErrorMessage!);
 
             var updateResult = await _examRepository.UpdateAsync(exam);
             return updateResult.Success
@@ -140,6 +161,11 @@ namespace ExamSystem.Application.Services
             if (!existingUserResult.Success || existingUserResult.Data == null)
                 return OperationResult.Fail("User not found.");
             var exam = existingExamResult.Data;
+
+            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
+            if (!modifyAllowedResult.Success)
+                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+
             var user = existingUserResult.Data;
             exam.ExamUsers.Add(new ExamUser
             {
@@ -165,6 +191,11 @@ namespace ExamSystem.Application.Services
             if (!existingUserResult.Success || existingUserResult.Data == null)
                 return OperationResult.Fail("User not found.");
             var exam = existingExamResult.Data;
+
+            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
+            if (!modifyAllowedResult.Success)
+                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+
             var user = existingUserResult.Data;
             var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
             if (examUser != null)
@@ -187,6 +218,11 @@ namespace ExamSystem.Application.Services
             if (!existingUserResult.Success || existingUserResult.Data == null)
                 return OperationResult.Fail("User not found.");
             var exam = existingExamResult.Data;
+
+            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
+            if (!modifyAllowedResult.Success)
+                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+
             var user = existingUserResult.Data;
             exam.ExamUsers.Add(new ExamUser
             {
@@ -211,6 +247,11 @@ namespace ExamSystem.Application.Services
             var exam = examsResult.Data.FirstOrDefault(e => e.JoinCode == joinExamDto.JoinCode);
             if (exam == null)
                 return OperationResult.Fail("Wrong join code.");
+
+            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
+            if (!modifyAllowedResult.Success)
+                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+
             var userResult = await _userRepository.GetByIdAsync(joinExamDto.UserId);
             if (!userResult.Success || userResult.Data == null)
                 return OperationResult.Fail("User not found.");

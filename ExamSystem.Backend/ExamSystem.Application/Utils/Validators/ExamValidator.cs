@@ -11,7 +11,7 @@ namespace ExamSystem.Application.Utils.Validators
 {
     public static class ExamValidator
     {
-        public static OperationResult ValidateNotStarted(Exam exam)
+        public static OperationResult IsModifyAllowed(Exam exam)
         {
             return exam.Status == ExamStatus.NotStarted
                 ? OperationResult.Ok()
