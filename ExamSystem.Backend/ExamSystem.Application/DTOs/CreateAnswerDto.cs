@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.DTOs
 {
-    public class AnswerDto
+    public class CreateAnswerDto
     {
-        public Guid AnswerId { get; set; }
         public Guid UserId { get; set; }
         public Guid QuestionId { get; set; }
         public Guid ExamId { get; set; }

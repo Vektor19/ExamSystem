@@ -18,11 +18,26 @@ namespace ExamSystem.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OperationResult> CreateAsync(AnswerDto createAnswerDto)
+        public async Task<OperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
         {
-            var answer = _mapper.Map<Answer>(createAnswerDto);
+            if (createAnswerDto is not CreateOpenAnswerDto openAnswerDto)
+                return OperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
+            var answer = _mapper.Map<Answer>(openAnswerDto);
             answer.AnswerId = Guid.NewGuid();
 
+            var result = await _answerRepository.AddAsync(answer);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to create answer.");
+        }
+
+        public async Task<OperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
+        {
+            if (createAnswerDto is not CreateOptionAnswerDto optionAnswerDto)
+                return OperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
+
+            var answer = _mapper.Map<Answer>(optionAnswerDto);
+            answer.AnswerId = Guid.NewGuid();
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
                 ? OperationResult.Ok()

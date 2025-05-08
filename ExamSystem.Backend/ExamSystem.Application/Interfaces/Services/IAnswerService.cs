@@ -12,6 +12,8 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId);
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId);
         Task<OperationResult> DeleteAsync(Guid answerId);
-        Task<OperationResult> CreateAsync(AnswerDto createAnswerDto);
+        Task<OperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto);
+        Task<OperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto);
+
     }
 }
