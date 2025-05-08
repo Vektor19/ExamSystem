@@ -10,10 +10,13 @@ namespace ExamSystem.Core.Entities
     {
         public Guid AnswerId { get; set; }
         public Guid UserId { get; set; }
-        public Guid QuestionOptionId { get; set; }
         public Guid ExamId { get; set; }
+        public Guid QuestionId { get; set; }
+        public Guid? QuestionOptionId { get; set; }
+        public string AnswerText { get; set; } = string.Empty;
         public User User { get; set; } = null!;
-        public QuestionOption QuestionOption { get; set; } = null!;
+        public Question Question { get; set; } = null!;
+        public QuestionOption? QuestionOption { get; set; }
         public Exam Exam { get; set; } = null!;
     }
 }

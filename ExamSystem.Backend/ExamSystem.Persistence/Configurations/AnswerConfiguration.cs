@@ -13,17 +13,25 @@ namespace ExamSystem.Persistence.Configurations
             builder.HasOne(a => a.User)
                 .WithMany(u => u.Answers)
                 .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Restrict); ;
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(a => a.QuestionOption)
                 .WithMany(qo => qo.Answers)
                 .HasForeignKey(a => a.QuestionOptionId)
-                .OnDelete(DeleteBehavior.Restrict); ;
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
+
+            builder.HasOne(a => a.Question)
+                .WithMany(q => q.Answers)
+                .HasForeignKey(a => a.QuestionId);
 
             builder.HasOne(a => a.Exam)
                 .WithMany(e => e.Answers)
                 .HasForeignKey(a => a.ExamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(a => a.AnswerText)
+                .IsRequired(false);
         }
     }
 }
