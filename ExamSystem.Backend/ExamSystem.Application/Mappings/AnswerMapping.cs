@@ -13,15 +13,7 @@ namespace ExamSystem.Application.Mappings
     {
         public AnswerMapping()
         {
-            CreateMap<Answer, OptionAnswerDto>().ReverseMap();
-            CreateMap<OpenAnswerDto, Answer>()
-                .ForMember(dest => dest.AnswerText, opt => opt.MapFrom(src => src.AnswerText))
-                .ForMember(dest => dest.QuestionOptionId, opt => opt.Ignore());
-
-            CreateMap<OptionAnswerDto, Answer>()
-                .ForMember(dest => dest.QuestionOptionId, opt => opt.MapFrom(src => src.QuestionOptionId))
-                .ForMember(dest => dest.AnswerText, opt => opt.Ignore());
-
+            CreateMap<Answer, AnswerDto>().ReverseMap();
             CreateMap<CreateOpenAnswerDto, Answer>()
                 .ForMember(dest => dest.AnswerText, opt => opt.MapFrom(src => src.AnswerText))
                 .ForMember(dest => dest.QuestionOptionId, opt => opt.Ignore());
