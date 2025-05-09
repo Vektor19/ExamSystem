@@ -14,16 +14,27 @@ type DashboardContextType = {
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
 export const DashboardProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<"student" | "examinator">("student");
+  const [mode, setModeState] = useState<"student" | "examinator">("student");
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem("dashboardMode");
+    if (savedMode === "student" || savedMode === "examinator") {
+      setModeState(savedMode);
+    }
+  }, []);
+
+  const setMode = (mode: "student" | "examinator") => {
+    localStorage.setItem("dashboardMode", mode);
+    setModeState(mode);
+  };
 
   return (
-    <DashboardContext.Provider
-      value={{ mode, setMode }}
-    >
+    <DashboardContext.Provider value={{ mode, setMode }}>
       {children}
     </DashboardContext.Provider>
   );
 };
+
 
 export const useDashboardContext = () => {
   const context = useContext(DashboardContext);
