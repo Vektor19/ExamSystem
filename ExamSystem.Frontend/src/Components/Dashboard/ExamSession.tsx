@@ -4,6 +4,7 @@ import LoadingPage from "../Extra/LoadingPage";
 import ExamSessionQuestionBody from "./ExamSessionQuestionBody";
 import { Question } from "../../Models/Question";
 import { useNavigate } from "react-router";
+import examsStyles from "../../Styles/Exams.module.css";
 
 const ExamSession: React.FC = () => {
   const {
@@ -32,7 +33,7 @@ const ExamSession: React.FC = () => {
 
   const handleSubmitAnswer = async (answer: {
     text?: string;
-    optionId?: string;
+    optionIds?: string[];
   }) => {
     if (!currentQuestion) return;
     setIsSubmitting(true);
@@ -40,11 +41,12 @@ const ExamSession: React.FC = () => {
     try {
       if (currentQuestion.type === "Text" && answer.text) {
         await makeOpenAnswer(currentQuestion.questionId, answer.text);
-      } else if (answer.optionId) {
-        await makeOptionAnswer(currentQuestion.questionId, answer.optionId);
+      } else if (answer.optionIds) {
+        for (const optionId of answer.optionIds) {
+          await makeOptionAnswer(currentQuestion.questionId, optionId);
+        }
       }
-
-      await fetchNotCompletedQuestions(); // Оновлюємо список після відповіді
+      await fetchNotCompletedQuestions();
     } catch (err) {
       console.error("Answer submission failed:", err);
     } finally {
@@ -71,7 +73,8 @@ const ExamSession: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <>
+      <h1 className={`${examsStyles["exams-title"]}`}>{studentExam.name}</h1>
       {currentQuestion && (
         <ExamSessionQuestionBody
           question={currentQuestion}
@@ -79,7 +82,7 @@ const ExamSession: React.FC = () => {
           isSubmitting={isSubmitting}
         />
       )}
-    </div>
+    </>
   );
 };
 

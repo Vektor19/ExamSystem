@@ -8,12 +8,16 @@ import {
   FormControlLabel,
   TextField,
   Typography,
+  Checkbox,
+  FormGroup,
 } from "@mui/material";
 import { Question } from "../../Models/Question";
+import DashboardPaper from "../Papers/DashboardPaper";
+import PrimaryButton from "../Buttons/PrimaryButton";
 
 type Props = {
   question: Question;
-  onSubmit: (answer: { text?: string; optionId?: string }) => void;
+  onSubmit: (answer: { text?: string; optionIds?: string[] }) => void;
   isSubmitting: boolean;
 };
 
@@ -22,21 +26,22 @@ const ExamSessionQuestionBody: React.FC<Props> = ({
   onSubmit,
   isSubmitting,
 }) => {
-  const [selectedOptionId, setSelectedOptionId] = useState<string>("");
+  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [textAnswer, setTextAnswer] = useState<string>("");
 
   const handleNextClick = () => {
-    if (question.type === "Text") {
-      if (!textAnswer.trim()) return;
-      onSubmit({ text: textAnswer });
-    } else {
-      if (!selectedOptionId) return;
-      onSubmit({ optionId: selectedOptionId });
-    }
-  };
+  if (question.type === "Text") {
+    if (!textAnswer.trim()) return;
+    onSubmit({ text: textAnswer });
+  } else {
+    if (selectedOptionIds.length === 0) return;
+    onSubmit({ optionIds: selectedOptionIds });
+  }
+};
+
 
   return (
-    <Paper
+    <DashboardPaper
       elevation={3}
       style={{ padding: 24, maxWidth: 800, margin: "0 auto" }}
     >
@@ -55,32 +60,40 @@ const ExamSessionQuestionBody: React.FC<Props> = ({
           label="Your answer"
         />
       ) : (
-        <RadioGroup
-          value={selectedOptionId}
-          onChange={(e) => setSelectedOptionId(e.target.value)}
-        >
+        <FormGroup>
           {question.options.map((option) => (
             <FormControlLabel
               key={option.questionOptionId}
-              value={option.questionOptionId}
-              control={<Radio />}
+              control={
+                <Checkbox
+                  checked={selectedOptionIds.includes(option.questionOptionId)}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    setSelectedOptionIds((prev) =>
+                      isChecked
+                        ? [...prev, option.questionOptionId]
+                        : prev.filter((id) => id !== option.questionOptionId)
+                    );
+                  }}
+                />
+              }
               label={option.optionText}
             />
           ))}
-        </RadioGroup>
+        </FormGroup>
       )}
 
       <div style={{ marginTop: 20 }}>
-        <Button
+        <PrimaryButton
           variant="contained"
           color="primary"
           onClick={handleNextClick}
           disabled={isSubmitting}
         >
           {isSubmitting ? <CircularProgress size={24} /> : "Next"}
-        </Button>
+        </PrimaryButton>
       </div>
-    </Paper>
+    </DashboardPaper>
   );
 };
 

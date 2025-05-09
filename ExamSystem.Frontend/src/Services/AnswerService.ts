@@ -13,7 +13,7 @@ class AnswerService {
   
   async createOptionAnswer(answer: OptionAnswerCreate): Promise<boolean> {
     try {
-      const res = await examSystemApi.post("/answer/open-type", answer);
+      const res = await examSystemApi.post("/answer/option-type", answer);
       return res.data.success;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Answer not created");

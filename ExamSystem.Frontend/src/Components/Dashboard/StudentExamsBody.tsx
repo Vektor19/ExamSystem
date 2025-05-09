@@ -132,7 +132,7 @@ const StudentExamsBody: React.FC = () => {
                     </PrimaryButton>
                   )}
                   {exam.status === "NotStarted" && (<SecondaryButton
-                    disabled
+                    
                     
                     onClick={() =>
                       navigate(`/dashboard/exam-session/${exam.examId}`)
