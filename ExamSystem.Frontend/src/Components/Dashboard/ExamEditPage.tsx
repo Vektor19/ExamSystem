@@ -48,12 +48,11 @@ const ExamEditPage: React.FC = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
 
-  // Функція для форматування у datetime-local
   const toDateTimeLocal = (dateStr: string) => {
     const date = new Date(dateStr);
     const offset = date.getTimezoneOffset();
     const local = new Date(date.getTime() - offset * 60 * 1000);
-    return local.toISOString().slice(0, 16); // "yyyy-MM-ddTHH:mm"
+    return local.toISOString().slice(0, 16);
   };
 
   useEffect(() => {
