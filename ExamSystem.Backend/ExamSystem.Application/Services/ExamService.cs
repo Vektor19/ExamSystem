@@ -97,20 +97,24 @@ namespace ExamSystem.Application.Services
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
                 return OperationResult<IEnumerable<ExamForStudentDto>>.Fail(result.ErrorMessage!);
+
             var exams = result.Data!;
-            foreach (var exam in exams)
-            {
-                exam.ExamUsers = exam.ExamUsers
-                                     .Where(eu => eu.UserId == participantUserId)
-                                     .ToList();
-            }
 
             var filteredExams = exams
-                .Where(e => e.ExamUsers.Any())
+                .Where(e => e.ExamUsers.Any(eu => eu.UserId == participantUserId))
                 .ToList();
+
             if (!filteredExams.Any())
                 return OperationResult<IEnumerable<ExamForStudentDto>>.Fail("No exams found for this user.");
-            var examDtos = _mapper.Map<IEnumerable<ExamForStudentDto>>(filteredExams);
+
+            var examDtos = _mapper.Map<List<ExamForStudentDto>>(filteredExams);
+
+            for (int i = 0; i < examDtos.Count; i++)
+            {
+                var exam = filteredExams[i];
+                var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == participantUserId);
+                examDtos[i].ExamUser = _mapper.Map<ExamUserDto>(examUser);
+            }
 
             return OperationResult<IEnumerable<ExamForStudentDto>>.Ok(examDtos);
         }

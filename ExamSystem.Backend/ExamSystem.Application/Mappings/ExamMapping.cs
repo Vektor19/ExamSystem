@@ -53,7 +53,17 @@ namespace ExamSystem.Application.Mappings
             CreateMap<ExamCreateDto, Exam>();
             CreateMap<ExamUpdateDto, Exam>();
 
-            CreateMap<ExamUser, ExamUserDto>();
+            CreateMap<ExamUser, ExamUserDto>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.Violations, opt => opt.MapFrom(src => src.Violations.Select(v => new ViolationDto
+                {
+                    ExamUserId = v.ExamUserId,
+                    ViolationId = v.ViolationId,
+                    Description = v.Description,
+                    ViolationType = v.ViolationType.ToString()
+                })));
         }
     }
 }
