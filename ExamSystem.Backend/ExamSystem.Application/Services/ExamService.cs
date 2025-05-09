@@ -98,9 +98,16 @@ namespace ExamSystem.Application.Services
             if (!result.Success)
                 return OperationResult<IEnumerable<ExamForStudentDto>>.Fail(result.ErrorMessage!);
             var exams = result.Data!;
-            var filteredExams = exams.Where(e => e.ExamUsers.Any(eu => eu.UserId == participantUserId))
-                                     .Select(e => e.ExamUsers.RemoveAll(eu => eu.UserId != participantUserId))
+            foreach (var exam in exams)
+            {
+                exam.ExamUsers = exam.ExamUsers
+                                     .Where(eu => eu.UserId == participantUserId)
                                      .ToList();
+            }
+
+            var filteredExams = exams
+                .Where(e => e.ExamUsers.Any())
+                .ToList();
             if (!filteredExams.Any())
                 return OperationResult<IEnumerable<ExamForStudentDto>>.Fail("No exams found for this user.");
             var examDtos = _mapper.Map<IEnumerable<ExamForStudentDto>>(filteredExams);
