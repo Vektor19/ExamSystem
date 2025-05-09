@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import JoinExamModal from "./JoinExamModal";
 import ExamService from "../../Services/ExamService";
 import { useUser } from "../../Providers/UserProvider";
+import SecondaryButton from "../Buttons/SecondaryButton";
 
 const StudentExamsBody: React.FC = () => {
   const { studentExams, fetchStudentExams } = useExams();
@@ -107,10 +108,11 @@ const StudentExamsBody: React.FC = () => {
                       </Typography>
                       <Divider orientation="vertical" flexItem />
                       <Chip
+                        sx={{ borderRadius: 1 }}
                         size="small"
                         label={exam.status}
                         color={
-                          exam.status === "Finished"
+                          exam.status === "Closed"
                             ? "default"
                             : exam.status === "Started"
                             ? "primary"
@@ -119,18 +121,44 @@ const StudentExamsBody: React.FC = () => {
                       />
                     </Stack>
                   </Box>
+                  {(Boolean(exam.examUser.completeStatus) && exam.status !== "NotStarted") && (
+                    <PrimaryButton
 
-                  <PrimaryButton
-                    disabled={
-                      exam.status !== "NotStarted" ||
-                      Boolean(exam?.examUser?.isBlocked??false)
-                    }
+                      onClick={() =>
+                        navigate(`/dashboard/exam-result/${exam.examId}`)
+                      }
+                    >
+                      Results
+                    </PrimaryButton>
+                  )}
+                  {exam.status === "NotStarted" && (<SecondaryButton
+                    disabled
+                    
                     onClick={() =>
                       navigate(`/dashboard/exam-session/${exam.examId}`)
                     }
                   >
                     Start
-                  </PrimaryButton>
+                  </SecondaryButton>
+                  )}
+                  {(!Boolean(exam.examUser.completeStatus) && exam.status === "Started") && (
+                    <PrimaryButton
+                      onClick={() =>
+                        navigate(`/dashboard/exam-session/${exam.examId}`)
+                      }
+                    >
+                      Start
+                    </PrimaryButton>
+                  )}
+                  {exam.status === "Closed" && (
+                    <PrimaryButton
+                      onClick={() =>
+                        navigate(`/dashboard/exam-result/${exam.examId}`)
+                      }
+                    >
+                      Results
+                    </PrimaryButton>
+                  )}
                 </Paper>
               )
           )}
