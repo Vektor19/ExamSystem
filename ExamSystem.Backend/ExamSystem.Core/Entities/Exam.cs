@@ -22,7 +22,7 @@ namespace ExamSystem.Core.Entities
                 if (DateTime.UtcNow < StartDate)
                     return ExamStatus.NotStarted;
                 if (DateTime.UtcNow > EndDate)
-                    return ExamStatus.Finished;
+                    return ExamStatus.Closed;
                 return ExamStatus.Started;
             }
         }
