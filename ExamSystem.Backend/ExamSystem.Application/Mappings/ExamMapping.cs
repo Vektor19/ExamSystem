@@ -31,11 +31,22 @@ namespace ExamSystem.Application.Mappings
                     FirstName = eu.User.FirstName,
                     LastName = eu.User.LastName,
                     Email = eu.User.Email,
-                    CompleteStatus = eu.CompleteStatus.ToString()
+                    CompleteStatus = eu.CompleteStatus,
+                    Grade = eu.Grade,
+                    IsBlocked = eu.IsBlocked,
+                    Violations = eu.Violations.Select(v => new ViolationDto
+                    {
+                        ExamUserId = v.ExamUserId,
+                        ViolationId = v.ViolationId,
+                        Description = v.Description,
+                        ViolationType = v.ViolationType.ToString()
+                    }).ToList()
                 })));
 
             CreateMap<ExamCreateDto, Exam>();
             CreateMap<ExamUpdateDto, Exam>();
+
+            CreateMap<ExamUser, ExamUserDto>();
         }
     }
 }

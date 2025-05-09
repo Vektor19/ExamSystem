@@ -6,6 +6,7 @@ namespace ExamSystem.Application.Interfaces.Services
     public interface IExamService
     {
         Task<OperationResult<ExamForExaminatorDto>> GetByIdAsync(Guid examId);
+        Task<OperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId);
         Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
         Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);

@@ -114,7 +114,14 @@ namespace ExamSystem.Application.Services
             var examDto = _mapper.Map<ExamForExaminatorDto>(result.Data);
             return OperationResult<ExamForExaminatorDto>.Ok(examDto);
         }
-
+        public async Task<OperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId) 
+        {
+            var result = await _examRepository.GetExamUserByIdAsync(examUserId);
+            if (!result.Success)
+                return OperationResult<ExamUserDto>.Fail(result.ErrorMessage!);
+            var examUserDto = _mapper.Map<ExamUserDto>(result.Data);
+            return OperationResult<ExamUserDto>.Ok(examUserDto);
+        }
         public async Task<OperationResult> UpdateAsync(Guid examId, ExamUpdateDto updateDto)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
@@ -174,7 +181,9 @@ namespace ExamSystem.Application.Services
                ,
                 User = user,
                 Exam = exam,
-                CompleteStatus = false
+                CompleteStatus = false,
+                IsBlocked = false,
+                Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
@@ -231,7 +240,9 @@ namespace ExamSystem.Application.Services
                ,
                 User = user,
                 Exam = exam,
-                CompleteStatus = false
+                CompleteStatus = false,
+                IsBlocked = false,
+                Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
@@ -265,7 +276,9 @@ namespace ExamSystem.Application.Services
                ,
                 User = user,
                 Exam = exam,
-                CompleteStatus = false
+                CompleteStatus = false,
+                IsBlocked = false,
+                Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
             if (!result.Success)
