@@ -11,5 +11,5 @@ export interface StudentExam {
   createdBy: User;
   questionCount: number;
   participantCount: number;
-  participant: Participant;
+  examUser: Participant;
 }
