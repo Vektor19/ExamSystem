@@ -18,6 +18,7 @@ import CreateExamPage from "./Dashboard/CreateExamPage.tsx";
 import ExamEditPage from "./Dashboard/ExamEditPage.tsx";
 import { ExamSessionProvider } from "../Providers/ExamSessionProvider.tsx";
 import ExamSession from "./Dashboard/ExamSession.tsx";
+import { AntiCheatingProvider } from "./Dashboard/AntiCheatingProvider.tsx";
 
 const App = () => {
   return (
@@ -63,9 +64,11 @@ const App = () => {
                 <Route
                   path="exam-session/:id"
                   element={
-                    <ExamSessionProvider>
-                      <ExamSession />
-                    </ExamSessionProvider>
+                    <AntiCheatingProvider>
+                      <ExamSessionProvider>
+                        <ExamSession />
+                      </ExamSessionProvider>
+                    </AntiCheatingProvider>
                   }
                 />
               </Route>
