@@ -43,6 +43,13 @@ namespace ExamSystem.Application.Mappings
                     }).ToList()
                 })));
 
+            CreateMap<Exam, ExamForStudentDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.UserCreatedBy))
+                .ForMember(dest => dest.QuestionCount, opt => opt.MapFrom(src => src.Questions.Count))
+                .ForMember(dest => dest.ParticipantCount, opt => opt.MapFrom(src => src.ExamUsers.Count));
+
+
             CreateMap<ExamCreateDto, Exam>();
             CreateMap<ExamUpdateDto, Exam>();
 

@@ -92,17 +92,20 @@ namespace ExamSystem.Application.Services
             return OperationResult<IEnumerable<ExamForExaminatorDto>>.Ok(examDtos);
         }
 
-        public async Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId)
+        public async Task<OperationResult<IEnumerable<ExamForStudentDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId)
         {
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<ExamDto>>.Fail(result.ErrorMessage!);
+                return OperationResult<IEnumerable<ExamForStudentDto>>.Fail(result.ErrorMessage!);
             var exams = result.Data!;
-            var filteredExams = exams.Where(e => e.ExamUsers.Any(eu => eu.UserId == participantUserId));
+            var filteredExams = exams.Where(e => e.ExamUsers.Any(eu => eu.UserId == participantUserId))
+                                     .Select(e => e.ExamUsers.RemoveAll(eu => eu.UserId != participantUserId))
+                                     .ToList();
             if (!filteredExams.Any())
-                return OperationResult<IEnumerable<ExamDto>>.Fail("No exams found for this user.");
-            var examDtos = _mapper.Map<IEnumerable<ExamDto>>(filteredExams);
-            return OperationResult<IEnumerable<ExamDto>>.Ok(examDtos);
+                return OperationResult<IEnumerable<ExamForStudentDto>>.Fail("No exams found for this user.");
+            var examDtos = _mapper.Map<IEnumerable<ExamForStudentDto>>(filteredExams);
+
+            return OperationResult<IEnumerable<ExamForStudentDto>>.Ok(examDtos);
         }
 
         public async Task<OperationResult<ExamForExaminatorDto>> GetByIdAsync(Guid id)

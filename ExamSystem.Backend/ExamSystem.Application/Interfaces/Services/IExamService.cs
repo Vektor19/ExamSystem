@@ -9,7 +9,7 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId);
         Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
-        Task<OperationResult<IEnumerable<ExamDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
+        Task<OperationResult<IEnumerable<ExamForStudentDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
         Task<OperationResult> AddParticipantAsync(Guid examId, Guid userId);
         Task<OperationResult> RemoveParticipantAsync(Guid examId, Guid userId);
         Task<OperationResult> AddParticipantByEmailAsync(Guid examId, string email);
