@@ -28,7 +28,10 @@ const ExamSession: React.FC = () => {
     setCurrentQuestion(questions[randomIndex]);
   };
 
-  const handleSubmitAnswer = async (answer: { text?: string; optionId?: string }) => {
+  const handleSubmitAnswer = async (answer: {
+    text?: string;
+    optionId?: string;
+  }) => {
     if (!currentQuestion) return;
     setIsSubmitting(true);
 
@@ -48,7 +51,11 @@ const ExamSession: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!isSubmitting && notCompletedQuestions && notCompletedQuestions.length > 0) {
+    if (
+      !isSubmitting &&
+      notCompletedQuestions &&
+      notCompletedQuestions.length > 0
+    ) {
       pickRandomQuestion(notCompletedQuestions);
     }
   }, [isSubmitting, notCompletedQuestions]);
@@ -58,9 +65,11 @@ const ExamSession: React.FC = () => {
   }
 
   if (notCompletedQuestions.length === 0) {
-    return <div style={{ textAlign: "center", marginTop: "2rem" }}>
-      <h2>Exam is completed ✅</h2>
-    </div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <h2>Exam is completed ✅</h2>
+      </div>
+    );
   }
 
   return (

@@ -17,7 +17,11 @@ type Props = {
   isSubmitting: boolean;
 };
 
-const ExamSessionQuestionBody: React.FC<Props> = ({ question, onSubmit, isSubmitting }) => {
+const ExamSessionQuestionBody: React.FC<Props> = ({
+  question,
+  onSubmit,
+  isSubmitting,
+}) => {
   const [selectedOptionId, setSelectedOptionId] = useState<string>("");
   const [textAnswer, setTextAnswer] = useState<string>("");
 
@@ -32,7 +36,10 @@ const ExamSessionQuestionBody: React.FC<Props> = ({ question, onSubmit, isSubmit
   };
 
   return (
-    <Paper elevation={3} style={{ padding: 24, maxWidth: 800, margin: "0 auto" }}>
+    <Paper
+      elevation={3}
+      style={{ padding: 24, maxWidth: 800, margin: "0 auto" }}
+    >
       <Typography variant="h6" gutterBottom>
         {question.questionText}
       </Typography>
