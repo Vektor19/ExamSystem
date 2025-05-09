@@ -16,6 +16,8 @@ import { ExamsProvider } from "../Providers/ExamsProvider.tsx";
 import Exams from "./Dashboard/Exams.tsx";
 import CreateExamPage from "./Dashboard/CreateExamPage.tsx";
 import ExamEditPage from "./Dashboard/ExamEditPage.tsx";
+import { ExamSessionProvider } from "../Providers/ExamSessionProvider.tsx";
+import ExamSession from "./Dashboard/ExamSession.tsx";
 
 const App = () => {
   return (
@@ -58,6 +60,14 @@ const App = () => {
                 <Route path="exam-management" element={<Exams />} />
                 <Route path="create-exam" element={<CreateExamPage />} />
                 <Route path="edit-exam/:id" element={<ExamEditPage />} />
+                <Route
+                  path="exam-session/:id"
+                  element={
+                    <ExamSessionProvider>
+                      <ExamSession />
+                    </ExamSessionProvider>
+                  }
+                />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
               <Route path="/logout" element={<LogoutRoute />} />
