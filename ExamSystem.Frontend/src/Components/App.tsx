@@ -64,11 +64,11 @@ const App = () => {
                 <Route
                   path="exam-session/:id"
                   element={
-                    <AntiCheatingProvider>
-                      <ExamSessionProvider>
+                    <ExamSessionProvider>
+                      <AntiCheatingProvider>
                         <ExamSession />
-                      </ExamSessionProvider>
-                    </AntiCheatingProvider>
+                      </AntiCheatingProvider>
+                    </ExamSessionProvider>
                   }
                 />
               </Route>

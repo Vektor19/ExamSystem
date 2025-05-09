@@ -16,6 +16,9 @@ class QuestionService {
       const res = await examSystemApi.get("/question/not-completed/by-user/"+userId+"/exam/" + examId);
       return res.data;
     } catch (err: any) {
+      if (err?.response?.status === 404) {
+        return [];
+      }
       throw new Error(err?.response?.data?.message || "Questions not found");
     }
   }

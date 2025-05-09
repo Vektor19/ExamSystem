@@ -121,8 +121,13 @@ const StudentExamsBody: React.FC = () => {
                   </Box>
 
                   <PrimaryButton
-                    disabled={exam.status !== "NotStarted"}
-                    onClick={() => navigate(`/exam/start/${exam.examId}`)}
+                    disabled={
+                      exam.status !== "NotStarted" ||
+                      Boolean(exam?.examUser?.isBlocked??false)
+                    }
+                    onClick={() =>
+                      navigate(`/dashboard/exam-session/${exam.examId}`)
+                    }
                   >
                     Start
                   </PrimaryButton>

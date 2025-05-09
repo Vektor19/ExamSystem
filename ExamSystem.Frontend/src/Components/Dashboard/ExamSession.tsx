@@ -3,6 +3,7 @@ import { useExamSession } from "../../Providers/ExamSessionProvider";
 import LoadingPage from "../Extra/LoadingPage";
 import ExamSessionQuestionBody from "./ExamSessionQuestionBody";
 import { Question } from "../../Models/Question";
+import { useNavigate } from "react-router";
 
 const ExamSession: React.FC = () => {
   const {
@@ -16,6 +17,7 @@ const ExamSession: React.FC = () => {
 
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (notCompletedQuestions && notCompletedQuestions.length > 0) {
@@ -65,11 +67,7 @@ const ExamSession: React.FC = () => {
   }
 
   if (notCompletedQuestions.length === 0) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        <h2>Exam is completed ✅</h2>
-      </div>
-    );
+    navigate("/dashboard/exam-management");
   }
 
   return (
