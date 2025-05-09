@@ -11,6 +11,15 @@ class QuestionService {
       throw new Error(err?.response?.data?.message || "Questions not found");
     }
   }
+  async getAllNotCompletedByExamUserId(examUserId: string): Promise<Question[]> {
+    try {
+      const res = await examSystemApi.get("/question/not-completed/" + examUserId);
+      return res.data;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Questions not found");
+    }
+  }
+
   async createQuestion(question: QuestionCreate): Promise<boolean> {
     try {
       const res = await examSystemApi.post("/question/", question);
