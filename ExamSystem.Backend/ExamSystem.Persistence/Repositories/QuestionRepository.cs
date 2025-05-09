@@ -59,5 +59,19 @@ namespace ExamSystem.Persistence.Repositories
                 return OperationResult.Fail("Failed to delete question.");
             return OperationResult.Ok();
         }
+        public async Task<OperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId)
+        {
+            var questions = await _dbContext.Questions
+                .Include(q => q.QuestionOptions)
+                .Where(q => q.ExamId == examId)
+                .Where(q => !_dbContext.Answers
+                    .Any(a => a.QuestionId == q.QuestionId && a.UserId == userId))
+                .ToListAsync();
+
+            if (!questions.Any())
+                return OperationResult<IEnumerable<Question>>.Fail("User has answered all questions for this exam.");
+
+            return OperationResult<IEnumerable<Question>>.Ok(questions);
+        }
     }
 }

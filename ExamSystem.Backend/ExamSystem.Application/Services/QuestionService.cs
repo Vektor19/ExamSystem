@@ -12,11 +12,13 @@ namespace ExamSystem.Application.Services
     {
         private readonly IExamRepository _examRepository;
         private readonly IQuestionRepository _questionRepository;
+        private readonly IAnswerRepository _answerRepository;
         private readonly IMapper _mapper;
-        public QuestionService(IExamRepository examRepository, IMapper mapper, IQuestionRepository questionRepository)
+        public QuestionService(IExamRepository examRepository, IMapper mapper, IQuestionRepository questionRepository, IAnswerRepository answerRepository)
         {
             _examRepository = examRepository;
             _questionRepository = questionRepository;
+            _answerRepository = answerRepository;
             _mapper = mapper;
         }
 
@@ -119,6 +121,17 @@ namespace ExamSystem.Application.Services
             return updateResult.Success
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to update question.");
+        }
+        public async Task<OperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId)
+        {
+            var result = await _questionRepository.GetUnansweredByUserAsync(examId, userId);
+            if (!result.Success)
+                return OperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+            var questions = result.Data!;
+            if (!questions.Any())
+                return OperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam and user.");
+            var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(questions);
+            return OperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
     }
 }

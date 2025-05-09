@@ -34,6 +34,14 @@ namespace ExamSystem.API.Controllers
             return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
         }
 
+        [TypeFilter(typeof(SelfOrAdminAuthorize))]
+        [HttpGet("not-completed/by-user/{id}/exam/{examId}")]
+        public async Task<IActionResult> GetAllUnansweredByUser(Guid id, Guid examId)
+        {
+            var result = await _questionService.GetAllUnansweredByUserAsync(id, examId);
+            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+        }
+
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
