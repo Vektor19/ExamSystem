@@ -1,6 +1,7 @@
 import { Violation } from './Violation';
 
 export interface Participant {
+  examUserId: string;
   userId: string;
   firstName: string;
   lastName: string;
