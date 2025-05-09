@@ -1,3 +1,4 @@
+import { Participant } from "./Participant";
 import { User } from "./User";
 
 export interface StudentExam {
@@ -10,4 +11,5 @@ export interface StudentExam {
   createdBy: User;
   questionCount: number;
   participantCount: number;
+  participant: Participant;
 }
