@@ -8,5 +8,8 @@
         public Guid ExamId { get; set; }
         public Exam Exam { get; set; } = null!;
         public bool CompleteStatus { get; set; }
+        public bool IsBlocked { get; set; }
+        public int Grade { get; set; }
+        public List<Violation> Violations { get; set; } = [];
     }
 }
