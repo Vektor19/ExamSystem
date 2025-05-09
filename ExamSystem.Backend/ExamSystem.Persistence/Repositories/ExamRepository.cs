@@ -65,5 +65,16 @@ namespace ExamSystem.Persistence.Repositories
                 return OperationResult.Fail("Failed to delete exam.");
             return OperationResult.Ok();
         }
+
+        public async Task<OperationResult<ExamUser>> GetExamUserByIdAsync(Guid id)
+        {
+            var examUser = await _dbContext.ExamUsers.Include(eu => eu.User)
+                                                     .Include(eu => eu.Exam)
+                                                     .Include(eu => eu.Violations)
+                                                     .FirstOrDefaultAsync(eu => eu.ExamUserId == id);
+            if (examUser == null)
+                return OperationResult<ExamUser>.Fail("Exam user not found.");
+            return OperationResult<ExamUser>.Ok(examUser);
+        }
     }
 }

@@ -20,6 +20,11 @@ namespace ExamSystem.Persistence.Configurations
                 .HasForeignKey(eu => eu.ExamId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(eu => eu.Violations)
+                .WithOne(v => v.ExamUser)
+                .HasForeignKey(v => v.ExamUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasIndex(eu => new { eu.UserId, eu.ExamId })
                 .IsUnique();
         }

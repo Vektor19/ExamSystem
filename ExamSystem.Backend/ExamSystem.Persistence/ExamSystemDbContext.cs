@@ -20,6 +20,7 @@ namespace ExamSystem.Persistence
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<QuestionOption> QuestionOptions { get; set; } = null!;
         public DbSet<Answer> Answers { get; set; } = null!;
+        public DbSet<Violation> Violations { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,7 @@ namespace ExamSystem.Persistence
             modelBuilder.ApplyConfiguration(new QuestionConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionOptionConfiguration());
             modelBuilder.ApplyConfiguration(new AnswerConfiguration());
+            modelBuilder.ApplyConfiguration(new ViolationConfiguration());
             base.OnModelCreating(modelBuilder);
         }
     }
