@@ -9,6 +9,7 @@ import TokenParser from "../Services/TokenParser";
 import { Question } from "../Models/Question";
 import QuestionService from "../Services/QuestionService";
 import { StudentExam } from "../Models/StudentExam";
+import AnswerService from "../Services/AnswerService";
 
 type ExamSessionContextType = {
   studentExam: StudentExam | null;
@@ -16,6 +17,12 @@ type ExamSessionContextType = {
   setStudentExam: (exam: StudentExam) => void;
   fetchNotCompletedQuestions: () => Promise<void>;
   isQuestionsLoading: boolean;
+  makeOpenAnswer: (questionId: string, answerText: string) => Promise<void>;
+  makeOptionAnswer: (
+    questionId: string,
+    questionOptionId: string,
+    answerText: string
+  ) => Promise<void>;
 };
 
 const ExamSessionContext = createContext<ExamSessionContextType | undefined>(
@@ -43,8 +50,9 @@ export const ExamSessionProvider = ({ children }: { children: ReactNode }) => {
           setIsQuestionsLoading(false);
           return;
         }
-        const questionsData = await QuestionService.getAllByExamId(
-          studentExam!.examUser.examUserId
+        const questionsData = await QuestionService.getAllNotCompletedByUserId(
+          userId,
+          studentExam?.examId || ""
         );
         setNotCompletedQuestions(questionsData);
       } else {
@@ -57,6 +65,45 @@ export const ExamSessionProvider = ({ children }: { children: ReactNode }) => {
       setIsQuestionsLoading(false);
     }
   };
+  const makeOpenAnswer = async (questionId: string, answerText: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const userId = TokenParser.parseIdFromToken(token);
+        if (!userId) return;
+        await AnswerService.createOpenAnswer({
+          userId,
+          questionId,
+          examId: studentExam?.examId || "",
+          answerText,
+        });
+        fetchNotCompletedQuestions();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const makeOptionAnswer = async (
+    questionId: string,
+    questionOptionId: string
+  ) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const userId = TokenParser.parseIdFromToken(token);
+        if (!userId) return;
+        await AnswerService.createOptionAnswer({
+          userId,
+          questionId,
+          examId: studentExam?.examId || "",
+          questionOptionId,
+        });
+        fetchNotCompletedQuestions();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <ExamSessionContext.Provider
@@ -66,6 +113,8 @@ export const ExamSessionProvider = ({ children }: { children: ReactNode }) => {
         notCompletedQuestions,
         fetchNotCompletedQuestions,
         isQuestionsLoading,
+        makeOpenAnswer,
+        makeOptionAnswer,
       }}
     >
       {children}
@@ -76,7 +125,9 @@ export const ExamSessionProvider = ({ children }: { children: ReactNode }) => {
 export const useExamSession = () => {
   const context = useContext(ExamSessionContext);
   if (!context) {
-    throw new Error("useExamSession must be used within an ExamSessionProvider");
+    throw new Error(
+      "useExamSession must be used within an ExamSessionProvider"
+    );
   }
   return context;
 };
