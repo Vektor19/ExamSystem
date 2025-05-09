@@ -13,11 +13,15 @@ namespace ExamSystem.API.Controllers
     {
         private readonly ILogger<AnswerController> _logger;
         private readonly IAnswerService _answerService;
+        private readonly IExamService _examService;
+        private readonly IQuestionService _questionService;
 
-        public AnswerController(ILogger<AnswerController> logger, IAnswerService examService)
+        public AnswerController(ILogger<AnswerController> logger, IAnswerService answerService, IExamService examService, IQuestionService questionService)
         {
             _logger = logger;
-            _answerService = examService;
+            _answerService = answerService;
+            _examService = examService;
+            _questionService = questionService;
         }
         [Authorize(Roles = SystemRoles.Admin)]
         [HttpGet]
@@ -54,7 +58,15 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> CreateOpenAnswer([FromBody] CreateOpenAnswerDto answerDto)
         {
             var result = await _answerService.CreateOpenAnswerAsync(answerDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            if (result.Success)
+            {
+                if (!(await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId)).Success)
+                {
+                    await _examService.FinishExamAsync(answerDto.ExamId, answerDto.UserId);
+                };
+                return Ok(result);
+            }
+            return BadRequest(result.ErrorMessage);
         }
 
         [TypeFilter(typeof(CreateAnswerAuthorize))]
@@ -62,7 +74,15 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> CreateOptionAnswer([FromBody] CreateOptionAnswerDto answerDto)
         {
             var result = await _answerService.CreateOptionAnswerAsync(answerDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            if (result.Success)
+            {
+                if (!(await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId)).Success)
+                {
+                    await _examService.FinishExamAsync(answerDto.ExamId, answerDto.UserId);
+                };
+                return Ok(result);
+            }
+            return BadRequest(result.ErrorMessage);
         }
     }
 }

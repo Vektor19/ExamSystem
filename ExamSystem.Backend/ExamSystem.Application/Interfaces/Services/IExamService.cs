@@ -18,5 +18,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<ExamForExaminatorDto>> CreateAsync(ExamCreateDto createExamDto);
         Task<OperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId);
         Task<OperationResult> JoinExam(JoinExamDto joinExamDto);
+        Task<OperationResult> FinishExamAsync(Guid examId, Guid userId);
     }
 }

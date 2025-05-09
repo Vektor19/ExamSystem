@@ -128,7 +128,7 @@ namespace ExamSystem.Application.Services
             var examDto = _mapper.Map<ExamForExaminatorDto>(result.Data);
             return OperationResult<ExamForExaminatorDto>.Ok(examDto);
         }
-        public async Task<OperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId) 
+        public async Task<OperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId)
         {
             var result = await _examRepository.GetExamUserByIdAsync(examUserId);
             if (!result.Success)
@@ -298,6 +298,22 @@ namespace ExamSystem.Application.Services
             if (!result.Success)
                 return OperationResult.Fail("Failed to join exam.");
             return OperationResult.Ok();
+        }
+        public async Task<OperationResult> FinishExamAsync(Guid examId, Guid userId)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+            var exam = existingExamResult.Data;
+            var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
+            if (examUser == null)
+                return OperationResult.Fail("User not found in the exam.");
+            examUser.CompleteStatus = true;
+            examUser.Grade = exam.Questions.Sum(q => q.QuestionOptions.Count(o => o.Answers.Any(a => a.UserId == userId) && o.IsCorrect));
+            var result = await _examRepository.UpdateAsync(exam);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to finish exam.");
         }
     }
 }
