@@ -21,5 +21,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> FinishExamAsync(Guid examId, Guid userId);
         Task<OperationResult> BlockExamUserByIdAsync(Guid examUserId);
         Task<OperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId);
+        Task<OperationResult<bool>> IsExamInProgressAsync(Guid examId);
     }
 }

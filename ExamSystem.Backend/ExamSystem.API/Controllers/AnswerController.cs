@@ -57,6 +57,11 @@ namespace ExamSystem.API.Controllers
         [HttpPost("open-type")]
         public async Task<IActionResult> CreateOpenAnswer([FromBody] CreateOpenAnswerDto answerDto)
         {
+            var examInProgressResult = await _examService.IsExamInProgressAsync(answerDto.ExamId);
+            if (!examInProgressResult.Success || !examInProgressResult.Data)
+            {
+                return BadRequest("Exam is not in progress.");
+            }
             var isUserBlockedResult = await _examService.IsUserBlockedInExamAsync(answerDto.ExamId, answerDto.UserId);
             if (isUserBlockedResult.Success && isUserBlockedResult.Data)
             {
@@ -78,6 +83,11 @@ namespace ExamSystem.API.Controllers
         [HttpPost("option-type")]
         public async Task<IActionResult> CreateOptionAnswer([FromBody] CreateOptionAnswerDto answerDto)
         {
+            var examInProgressResult = await _examService.IsExamInProgressAsync(answerDto.ExamId);
+            if (!examInProgressResult.Success || !examInProgressResult.Data)
+            {
+                return BadRequest("Exam is not in progress.");
+            }
             var isUserBlockedResult = await _examService.IsUserBlockedInExamAsync(answerDto.ExamId, answerDto.UserId);
             if (isUserBlockedResult.Success && isUserBlockedResult.Data)
             {

@@ -354,5 +354,14 @@ namespace ExamSystem.Application.Services
                 return OperationResult<bool>.Fail("User not found in the exam.");
             return OperationResult<bool>.Ok(examUser.IsBlocked);
         }
+        public async Task<OperationResult<bool>> IsExamInProgressAsync(Guid examId)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult<bool>.Fail("Exam not found.");
+            var exam = existingExamResult.Data;
+            var isInProgress = exam.Status == ExamStatus.Started;
+            return OperationResult<bool>.Ok(isInProgress);
+        }
     }
 }
