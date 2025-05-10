@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from "react";
@@ -9,6 +10,8 @@ import { useExamSession } from "./ExamSessionProvider";
 import ViolationService from "../Services/ViolationService";
 import { Violation } from "../Models/Violation";
 import { ViolationType } from "../Models/ViolationType";
+import { useExams } from "./ExamsProvider";
+import { useNotification } from "./NotificationProvider";
 
 type AntiCheatingContextType = {
   violations: Violation[];
@@ -26,13 +29,17 @@ const AntiCheatingContext = createContext<AntiCheatingContextType | undefined>(
 );
 
 export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
-  const { studentExam } = useExamSession();
+  const { studentExam, setStudentExam } = useExamSession();
+  const { fetchStudentExams } = useExams();
   const [violations, setViolations] = useState<Violation[]>([]);
   const [isViolationsLoading, setIsViolationsLoading] = useState(true);
+  const violationsRef = useRef<Violation[]>([]);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
-    fetchViolations();
-  }, [studentExam]);
+    violationsRef.current = violations;
+    console.log("Actual violations:", violations);
+  }, [violations]);
 
   const fetchViolations = async () => {
     setIsViolationsLoading(true);
@@ -42,6 +49,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           studentExam.examUser.examUserId
         );
         setViolations(violationsData);
+        console.log("ViolationsFetch:", violationsData);
       } catch (err) {
         console.error("Error fetching violations:", err);
         setViolations([]);
@@ -57,19 +65,33 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     if (studentExam) {
       try {
+        const isNowCritical = violationsRef.current.length >= 2;
+
         const violation = await ViolationService.reportViolation({
           examUserId: studentExam.examUser.examUserId,
           violationType: type,
           description,
-          isCritical: violations.length >= 2 ? true : isCritical,
+          isCritical: isNowCritical ? true : isCritical,
         });
-
         setViolations((prev) => [...prev, violation]);
+        console.log("ViolationsAfterRegister:", [
+          ...violationsRef.current,
+          violation,
+        ]);
+        showNotification(
+          `Violation detected! ${violationsRef.current.length}/2`,
+          "error"
+        );
       } catch (err) {
         console.error("Error registering violation:", err);
       }
+      fetchStudentExams();
     }
   };
+
+  useEffect(() => {
+    fetchViolations();
+  }, [studentExam]);
 
   useEffect(() => {
     const handlePageOpenEvent = async () => {
@@ -82,7 +104,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const handleCopy = (e: ClipboardEvent) => {
+    const handleCopy = () => {
       registerViolation(ViolationType.CopyPaste, "User copied text", false);
     };
 

@@ -6,6 +6,8 @@ import { Question } from "../../Models/Question";
 import { useNavigate } from "react-router";
 import examsStyles from "../../Styles/Exams.module.css";
 import { useNotification } from "../../Providers/NotificationProvider";
+import { useAntiCheating } from "../../Providers/AntiCheatingProvider";
+import BlockingModal from "./BlockingModal";
 
 const ExamSession: React.FC = () => {
   const {
@@ -16,11 +18,22 @@ const ExamSession: React.FC = () => {
     makeOptionAnswer,
     fetchNotCompletedQuestions,
   } = useExamSession();
-
+  const { violations } = useAntiCheating();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [showBlockingModal, setShowBlockingModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+
+  useEffect(() => {
+    if (studentExam?.examUser.isBlocked) {
+      showNotification(
+        "You are blocked from this exam due to suspicious activity.",
+        "error"
+      );
+      setShowBlockingModal(true);
+    }
+  }, [studentExam]);
 
   useEffect(() => {
     if (notCompletedQuestions && notCompletedQuestions.length > 0) {
@@ -77,6 +90,7 @@ const ExamSession: React.FC = () => {
 
   return (
     <>
+      <BlockingModal open={showBlockingModal} />
       <h1 className={`${examsStyles["exams-title"]}`}>{studentExam.name}</h1>
       {currentQuestion && (
         <ExamSessionQuestionBody
