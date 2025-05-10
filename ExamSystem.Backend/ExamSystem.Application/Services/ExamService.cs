@@ -183,9 +183,6 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("User not found.");
             var exam = existingExamResult.Data;
 
-            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
-            if (!modifyAllowedResult.Success)
-                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
 
             var user = existingUserResult.Data;
             exam.ExamUsers.Add(new ExamUser
@@ -241,10 +238,6 @@ namespace ExamSystem.Application.Services
             if (!existingUserResult.Success || existingUserResult.Data == null)
                 return OperationResult.Fail("User not found.");
             var exam = existingExamResult.Data;
-
-            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
-            if (!modifyAllowedResult.Success)
-                return OperationResult.Fail(modifyAllowedResult.ErrorMessage!);
 
             var user = existingUserResult.Data;
             exam.ExamUsers.Add(new ExamUser
