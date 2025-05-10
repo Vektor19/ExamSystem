@@ -11,33 +11,46 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Stack,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import PrimaryFab from "../Buttons/PrimaryFab";
-import styles from "../../Styles/ExaminatorExamsBody.module.css";
+import TimeUtils from "../../Utils/TimeUtils";
+import DashboardPaper from "../Papers/DashboardPaper";
 
 const ExaminatorExamsBody: React.FC = () => {
   const { examinatorExams } = useExams();
   const navigate = useNavigate();
 
   return (
-    <div className={styles["exams-page-container"]}>
-      <Box minHeight="80vh">
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }}>
+    <>
+      <DashboardPaper elevation={3} sx={{ p: 4, borderRadius: 3, overflowY: "auto" }}>
+        <Stack spacing={2}>
           {examinatorExams?.length ? (
-            <TableContainer>
+            <TableContainer
+              sx={{
+                width: "100%",
+                overflowX: "auto",
+              }}
+            >
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Start Date</TableCell>
-                    <TableCell>End Date</TableCell>
-                    <TableCell>Questions</TableCell>
-                    <TableCell>Participants</TableCell>
-                    <TableCell>Join Code</TableCell>
-                    <TableCell align="right">Actions</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Start Date
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>End Date</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Questions</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Participants
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Join Code</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: "bold" }}>
+                      Actions
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -47,14 +60,20 @@ const ExaminatorExamsBody: React.FC = () => {
                         <TableRow key={exam.examId}>
                           <TableCell>{exam.name}</TableCell>
                           <TableCell>{exam.status}</TableCell>
-                          <TableCell>{exam.startDate}</TableCell>
-                          <TableCell>{exam.endDate}</TableCell>
+                          <TableCell>
+                            {TimeUtils.formatDate(exam.startDate)}
+                          </TableCell>
+                          <TableCell>
+                            {TimeUtils.formatDate(exam.endDate)}
+                          </TableCell>
                           <TableCell>{exam.questionCount}</TableCell>
                           <TableCell>{exam.participantCount}</TableCell>
                           <TableCell>{exam.joinCode}</TableCell>
                           <TableCell align="right">
                             <IconButton
-                              onClick={() => navigate(`/dashboard/edit-exam/${exam.examId}`)}
+                              onClick={() =>
+                                navigate(`/dashboard/edit-exam/${exam.examId}`)
+                              }
                               color="primary"
                             >
                               <EditIcon />
@@ -71,24 +90,24 @@ const ExaminatorExamsBody: React.FC = () => {
               No exams found.
             </Typography>
           )}
-        </Paper>
+        </Stack>
+      </DashboardPaper>
 
-        <PrimaryFab
-          color="primary"
-          aria-label="add"
-          size="large"
-          sx={{
-            position: "fixed",
-            bottom: 24,
-            right: 24,
-            zIndex: 1000,
-          }}
-          onClick={() => navigate("/dashboard/create-exam")}
-        >
-          <AddIcon />
-        </PrimaryFab>
-      </Box>
-    </div>
+      <PrimaryFab
+        color="primary"
+        aria-label="add"
+        size="large"
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          zIndex: 1000,
+        }}
+        onClick={() => navigate("/dashboard/create-exam")}
+      >
+        <AddIcon />
+      </PrimaryFab>
+    </>
   );
 };
 

@@ -31,6 +31,18 @@ class TimeUtils {
     const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
+  formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const userLocale = navigator.language || "en-US";
+
+    return new Intl.DateTimeFormat(userLocale, {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+  }
 }
 
 export default new TimeUtils();
