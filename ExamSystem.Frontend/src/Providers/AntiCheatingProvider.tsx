@@ -106,14 +106,14 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
       showNotification("You are away from the exam window GO BACK!!!", "error");
 
       violationTimeout = setTimeout(() => {
-        registerViolation(
-          ViolationType.NewPageOpen,
-          "User was away from the exam window for more than 5 seconds",
-          true
-        );
-        console.log(
-          "User was away from the exam window for more than 5 seconds"
-        );
+        // registerViolation(
+        //   ViolationType.NewPageOpen,
+        //   "User was away from the exam window for more than 5 seconds",
+        //   true
+        // );
+        // console.log(
+        //   "User was away from the exam window for more than 5 seconds"
+        // );
         violationTimeout = null;
         isWindowBlurred = false;
       }, 5000); // 5 секунд
@@ -139,7 +139,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
 
     const handleWindowFocus = () => {
       cancelViolationTimer();
-      registerViolation(ViolationType.NewPageOpen, "User lost focus", false);
+      //registerViolation(ViolationType.NewPageOpen, "User lost focus", false);
       console.log("User returned to window in time");
     };
 

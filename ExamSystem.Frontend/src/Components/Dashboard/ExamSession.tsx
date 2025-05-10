@@ -8,6 +8,9 @@ import examsStyles from "../../Styles/Exams.module.css";
 import { useNotification } from "../../Providers/NotificationProvider";
 import { useAntiCheating } from "../../Providers/AntiCheatingProvider";
 import BlockingModal from "./BlockingModal";
+import { Box, Snackbar, Typography, Zoom } from "@mui/material";
+import TimeUtils from "../../Utils/TimeUtils";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const ExamSession: React.FC = () => {
   const {
@@ -24,6 +27,7 @@ const ExamSession: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
     if (studentExam?.examUser.isBlocked) {
@@ -33,6 +37,20 @@ const ExamSession: React.FC = () => {
       );
       setShowBlockingModal(true);
     }
+  }, [studentExam]);
+
+  useEffect(() => {
+    if (!studentExam?.endDate) return;
+
+    const end = new Date(studentExam.endDate).getTime();
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const diff = Math.max(0, end - now);
+      setTimeLeft(diff);
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [studentExam]);
 
   useEffect(() => {
@@ -100,6 +118,37 @@ const ExamSession: React.FC = () => {
           isLastQuestion={notCompletedQuestions.length === 1}
         />
       )}
+      <Snackbar
+        open={true}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        slotProps={{
+          content: {
+            sx: {
+              ml: "calc(var(--dashboard-navigation-width))",
+              backgroundColor: "#fff",
+              color: "text.primary",
+              boxShadow: 2,
+              borderRadius: 2,maxWidth: "300px",
+            },
+          },
+        }}
+        message={
+          <Typography variant="h6">
+            Answered: {studentExam.questionCount - notCompletedQuestions.length}{" "}
+            / {studentExam.questionCount}
+          </Typography>
+        }
+      />
+      <Snackbar
+        open={true}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        message={
+          <Typography variant="h6">
+            Time Left:{" "}
+            {timeLeft !== null ? TimeUtils.formatTime(timeLeft) : "Loading..."}
+          </Typography>
+        }
+      />
     </>
   );
 };
