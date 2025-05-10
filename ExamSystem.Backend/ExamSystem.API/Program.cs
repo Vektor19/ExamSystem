@@ -42,7 +42,7 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowAllPolicy");
 app.UseAuthorization();
 app.MapControllers();
