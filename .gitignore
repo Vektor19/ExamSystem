@@ -937,3 +937,6 @@ $RECYCLE.BIN/
 
 
 *.db
+
+.vscode/
+.vite/
