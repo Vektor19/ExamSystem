@@ -61,7 +61,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           examUserId: studentExam.examUser.examUserId,
           violationType: type,
           description,
-          isCritical: violations.length == 2 ? true : isCritical,
+          isCritical: violations.length >= 2 ? true : isCritical,
         });
 
         setViolations((prev) => [...prev, violation]);
