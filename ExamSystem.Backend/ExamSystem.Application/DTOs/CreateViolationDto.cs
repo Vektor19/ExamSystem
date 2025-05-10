@@ -11,6 +11,7 @@ namespace ExamSystem.Application.DTOs
         public Guid ExamUserId { get; set; }
         public string ViolationType { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public bool IsCritical { get; set; }
     }
 
 }

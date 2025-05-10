@@ -315,5 +315,34 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to finish exam.");
         }
+        public async Task<OperationResult> BlockExamUserByIdAsync(Guid examUserId)
+        {
+            var existingExamUserResult = await _examRepository.GetExamUserByIdAsync(examUserId);
+            if (!existingExamUserResult.Success || existingExamUserResult.Data == null)
+                return OperationResult.Fail("Exam user not found.");
+
+            var examUser = existingExamUserResult.Data;
+            examUser.IsBlocked = true;
+            examUser.Grade = 0;
+
+            var existingExamResult = await _examRepository.GetByIdAsync(examUser.ExamId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult.Fail("Exam not found.");
+
+            var exam = existingExamResult.Data;
+
+            var examUserInExam = exam.ExamUsers.FirstOrDefault(eu => eu.ExamUserId == examUserId);
+            if (examUserInExam == null)
+                return OperationResult.Fail("Exam user not found in the exam.");
+
+            examUserInExam.IsBlocked = true;
+            examUserInExam.Grade = 0;
+
+            var result = await _examRepository.UpdateAsync(exam);
+            return result.Success
+                ? OperationResult.Ok()
+                : OperationResult.Fail("Failed to block exam user.");
+        }
+
     }
 }

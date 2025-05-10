@@ -13,11 +13,13 @@ namespace ExamSystem.API.Controllers
     {
         private readonly ILogger<ViolationController> _logger;
         private readonly IViolationService _violationService;
+        private readonly IExamService _examService;
 
-        public ViolationController(ILogger<ViolationController> logger, IViolationService violationService)
+        public ViolationController(ILogger<ViolationController> logger, IViolationService violationService, IExamService examService)
         {
             _logger = logger;
             _violationService = violationService;
+            _examService = examService;
         }
         [Authorize(Roles = SystemRoles.Admin)]
         [HttpGet]
@@ -46,7 +48,17 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> Create(Guid id, [FromBody] CreateViolationDto violationDto)
         {
             var result = await _violationService.CreateAsync(violationDto);
-            return result.Success ? Ok(result.Data) : BadRequest(result.ErrorMessage);
+            if (!result.Success)
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+            var blockingResult = await _examService.BlockExamUserByIdAsync(id);
+            if (!blockingResult.Success)
+            {
+                return BadRequest(blockingResult.ErrorMessage);
+            }
+            return Ok(result.Data);
+
         }
     }
 }
