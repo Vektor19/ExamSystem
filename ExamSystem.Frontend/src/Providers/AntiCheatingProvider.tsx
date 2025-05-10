@@ -94,97 +94,114 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
   }, [studentExam]);
 
   useEffect(() => {
-  let violationTimeout: ReturnType<typeof setTimeout> | null = null;
-  let isWindowBlurred = false;
+    let violationTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isWindowBlurred = false;
 
-  const startViolationTimer = () => {
-    if (violationTimeout || isWindowBlurred) return;
+    const startViolationTimer = () => {
+      if (violationTimeout || isWindowBlurred) return;
 
-    isWindowBlurred = true;
+      isWindowBlurred = true;
 
-    console.log("User is away from the exam window");
-    showNotification("You are away from the exam window GO BACK!!!", "error");
+      console.log("User is away from the exam window");
+      showNotification("You are away from the exam window GO BACK!!!", "error");
 
-    violationTimeout = setTimeout(() => {
-      registerViolation(
-        ViolationType.NewPageOpen,
-        "User was away from the exam window for more than 5 seconds",
-        true
-      );
-      console.log("User was away from the exam window for more than 5 seconds");
-      violationTimeout = null;
+      violationTimeout = setTimeout(() => {
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User was away from the exam window for more than 5 seconds",
+          true
+        );
+        console.log(
+          "User was away from the exam window for more than 5 seconds"
+        );
+        violationTimeout = null;
+        isWindowBlurred = false;
+      }, 5000); // 5 секунд
+    };
+
+    const cancelViolationTimer = () => {
+      if (violationTimeout) {
+        clearTimeout(violationTimeout);
+        violationTimeout = null;
+      }
       isWindowBlurred = false;
-    }, 5000); // 5 секунд
-  };
+    };
 
-  const cancelViolationTimer = () => {
-    if (violationTimeout) {
-      clearTimeout(violationTimeout);
-      violationTimeout = null;
-    }
-    isWindowBlurred = false;
-  };
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        startViolationTimer();
+      }
+    };
 
-  const handleVisibilityChange = () => {
-    if (document.hidden) {
+    const handleWindowBlur = () => {
       startViolationTimer();
-    }
-  };
+    };
 
-  const handleWindowBlur = () => {
-    startViolationTimer();
-  };
+    const handleWindowFocus = () => {
+      cancelViolationTimer();
+      registerViolation(ViolationType.NewPageOpen, "User lost focus", false);
+      console.log("User returned to window in time");
+    };
 
-  const handleWindowFocus = () => {
-    cancelViolationTimer();
-    registerViolation(
-        ViolationType.NewPageOpen,
-        "User lost focus",
-        false
-      );
-    console.log("User returned to window in time");
-  };
+    const handleCopy = () => {
+      registerViolation(ViolationType.CopyPaste, "User copied text", false);
+    };
 
-  const handleCopy = () => {
-    registerViolation(ViolationType.CopyPaste, "User copied text", false);
-  };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F12") {
+        console.log("F12 pressed");
+        registerViolation(ViolationType.DevToolsOpen, "DevTools opened", false);
+      }
+      if (e.altKey && e.key === "Tab") {
+        e.preventDefault();
+        console.log("Alt + Tab pressed");
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User switched tabs",
+          false
+        );
+      }
+      if (e.ctrlKey && (e.key === "T" || e.key === "t")) {
+        e.preventDefault();
+        console.log("Ctrl + T pressed");
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User opened a new tab",
+          false
+        );
+      }
+      if (e.key === "PrintScreen") {
+        console.log("PrintScreen pressed");
+        registerViolation(
+          ViolationType.Screenshot,
+          "User took a screenshot",
+          false
+        );
+      }
+      if (e.ctrlKey && (e.key === "S" || e.key === "s")) {
+        console.log("Ctrl + S pressed");
+        registerViolation(
+          ViolationType.Unregistered,
+          "User tried to save the page",
+          false
+        );
+      }
+    };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "F12") {
-      console.log("F12 pressed");
-    }
-    if (e.altKey && e.key === "Tab") {
-      e.preventDefault();
-      console.log("Alt + Tab pressed");
-    }
-    if (e.ctrlKey && (e.key === "T" || e.key === "t")) {
-      e.preventDefault();
-      console.log("Ctrl + T pressed");
-    }
-    if (e.key === "PrintScreen") {
-      console.log("PrintScreen pressed");
-    }
-    if (e.ctrlKey && (e.key === "S" || e.key === "s")) {
-      console.log("Ctrl + S pressed");
-    }
-  };
-
-  window.addEventListener("visibilitychange", handleVisibilityChange);
-  window.addEventListener("blur", handleWindowBlur);
-  window.addEventListener("focus", handleWindowFocus);
-  window.addEventListener("copy", handleCopy);
-  document.addEventListener("keydown", handleKeyDown);
-
-  return () => {
-    window.removeEventListener("visibilitychange", handleVisibilityChange);
-    window.removeEventListener("blur", handleWindowBlur);
-    window.removeEventListener("focus", handleWindowFocus);
-    window.removeEventListener("copy", handleCopy);
-    document.removeEventListener("keydown", handleKeyDown);
-    if (violationTimeout) clearTimeout(violationTimeout);
-  };
-}, [studentExam]);
-
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleWindowBlur);
+    window.addEventListener("focus", handleWindowFocus);
+    window.addEventListener("copy", handleCopy);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleWindowBlur);
+      window.removeEventListener("focus", handleWindowFocus);
+      window.removeEventListener("copy", handleCopy);
+      document.removeEventListener("keydown", handleKeyDown);
+      if (violationTimeout) clearTimeout(violationTimeout);
+    };
+  }, [studentExam]);
 
   return (
     <AntiCheatingContext.Provider
