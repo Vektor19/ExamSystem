@@ -75,7 +75,8 @@ const StudentExamsBody: React.FC = () => {
         onConfirm={handleConfirmStart}
       />
 
-      <DashboardPaper sx={{ p: 3 }}>
+      <DashboardPaper sx={{ p: 3, overflowY: 'auto' }}>
+
         <Stack spacing={2}>
           {studentExams?.map(
             (exam: StudentExam | null) =>
@@ -160,6 +161,12 @@ const StudentExamsBody: React.FC = () => {
                   {exam.status === "NotStarted" && (
                     <SecondaryButton
                       onClick={() => handleStartClick(exam.examId)}
+                      disabled={Boolean(exam.examUser.isBlocked)}
+                      title={
+                        exam.examUser.isBlocked
+                          ? "You have been blocked from this exam."
+                          : ""
+                      }
                     >
                       Start
                     </SecondaryButton>
@@ -169,6 +176,12 @@ const StudentExamsBody: React.FC = () => {
                     exam.status === "Started" && (
                       <PrimaryButton
                         onClick={() => handleStartClick(exam.examId)}
+                        disabled={Boolean(exam.examUser.isBlocked)}
+                        title={
+                          exam.examUser.isBlocked
+                            ? "You have been blocked from this exam."
+                            : ""
+                        }
                       >
                         Start
                       </PrimaryButton>
