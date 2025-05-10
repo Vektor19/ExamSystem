@@ -71,7 +71,7 @@ const ExamSession: React.FC = () => {
   }
 
   if (notCompletedQuestions.length === 0) {
-    showNotification("Ви успішно завершили іспит!", "success");
+    showNotification("You finished the exam!", "success");
     navigate("/dashboard/exam-management");
   }
 

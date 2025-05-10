@@ -19,11 +19,14 @@ import JoinExamModal from "./JoinExamModal";
 import ExamService from "../../Services/ExamService";
 import { useUser } from "../../Providers/UserProvider";
 import SecondaryButton from "../Buttons/SecondaryButton";
+import ExamConfirmationModal from "./ExamConfirmationModal"; // імпорт модального вікна
 
 const StudentExamsBody: React.FC = () => {
   const { studentExams, fetchStudentExams } = useExams();
   const { user } = useUser();
   const [showJoinExamModal, setShowJoinExamModal] = useState(false);
+  const [showExamConfirmationModal, setShowExamConfirmationModal] = useState(false);
+  const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const formatDuration = (start: string, end: string) => {
@@ -32,6 +35,18 @@ const StudentExamsBody: React.FC = () => {
     const diffMs = endDate.getTime() - startDate.getTime();
     const mins = Math.floor(diffMs / 60000);
     return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+  };
+
+  const handleStartClick = (examId: string) => {
+    setSelectedExamId(examId);
+    setShowExamConfirmationModal(true);
+  };
+
+  const handleConfirmStart = () => {
+    if (selectedExamId) {
+      setShowExamConfirmationModal(false);
+      navigate(`/dashboard/exam-session/${selectedExamId}`);
+    }
   };
 
   return (
@@ -47,6 +62,12 @@ const StudentExamsBody: React.FC = () => {
             console.error("Failed to join exam:", error);
           }
         }}
+      />
+
+      <ExamConfirmationModal
+        open={showExamConfirmationModal}
+        onClose={() => setShowExamConfirmationModal(false)}
+        onConfirm={handleConfirmStart}
       />
 
       <DashboardPaper sx={{ p: 3 }}>
@@ -121,9 +142,9 @@ const StudentExamsBody: React.FC = () => {
                       />
                     </Stack>
                   </Box>
-                  {(Boolean(exam.examUser.completeStatus) && exam.status !== "NotStarted") && (
-                    <PrimaryButton
 
+                  {Boolean(exam.examUser.completeStatus) && exam.status !== "NotStarted" && (
+                    <PrimaryButton
                       onClick={() =>
                         navigate(`/dashboard/exam-result/${exam.examId}`)
                       }
@@ -131,25 +152,19 @@ const StudentExamsBody: React.FC = () => {
                       Results
                     </PrimaryButton>
                   )}
-                  {exam.status === "NotStarted" && (<SecondaryButton
-                    
-                    
-                    onClick={() =>
-                      navigate(`/dashboard/exam-session/${exam.examId}`)
-                    }
-                  >
-                    Start
-                  </SecondaryButton>
+
+                  {exam.status === "NotStarted" && (
+                    <SecondaryButton onClick={() => handleStartClick(exam.examId)}>
+                      Start
+                    </SecondaryButton>
                   )}
-                  {(!Boolean(exam.examUser.completeStatus) && exam.status === "Started") && (
-                    <PrimaryButton
-                      onClick={() =>
-                        navigate(`/dashboard/exam-session/${exam.examId}`)
-                      }
-                    >
+
+                  {!exam.examUser.completeStatus && exam.status === "Started" && (
+                    <PrimaryButton onClick={() => handleStartClick(exam.examId)}>
                       Start
                     </PrimaryButton>
                   )}
+
                   {exam.status === "Closed" && (
                     <PrimaryButton
                       onClick={() =>
@@ -164,6 +179,7 @@ const StudentExamsBody: React.FC = () => {
           )}
         </Stack>
       </DashboardPaper>
+
       <Zoom in>
         <Box position="fixed" left={"50%"} bottom={24} zIndex={1300}>
           <PrimaryFab
