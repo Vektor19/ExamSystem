@@ -302,7 +302,25 @@ namespace ExamSystem.Application.Services
             if (examUser == null)
                 return OperationResult.Fail("User not found in the exam.");
             examUser.CompleteStatus = true;
-            examUser.Grade = exam.Questions.Sum(q => q.QuestionOptions.Count(o => o.Answers.Any(a => a.UserId == userId) && o.IsCorrect));
+
+            examUser.Grade = exam.Questions.Count(q =>
+            {
+                var correctOptionIds = q.QuestionOptions
+                    .Where(o => o.IsCorrect)
+                    .Select(o => o.QuestionOptionId)
+                    .OrderBy(id => id)
+                    .ToList();
+
+                List<Guid> userAnswerOptionIds = q.QuestionOptions
+                    .SelectMany(o => o.Answers)
+                    .Where(a => a.UserId == userId && a.QuestionOptionId.HasValue)
+                    .Select(a => a.QuestionOptionId.Value)
+                    .OrderBy(id => id)
+                    .ToList();
+
+                return correctOptionIds.SequenceEqual(userAnswerOptionIds);
+            });
+
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
                 ? OperationResult.Ok()
