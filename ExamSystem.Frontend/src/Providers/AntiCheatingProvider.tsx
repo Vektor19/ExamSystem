@@ -79,7 +79,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           violation,
         ]);
         showNotification(
-          `Violation detected! ${violationsRef.current.length}/2`,
+          `Violation detected! ${violationsRef.current.length+1}/2`,
           "error"
         );
       } catch (err) {
