@@ -5,6 +5,7 @@ import ExamSessionQuestionBody from "./ExamSessionQuestionBody";
 import { Question } from "../../Models/Question";
 import { useNavigate } from "react-router";
 import examsStyles from "../../Styles/Exams.module.css";
+import { useNotification } from "../../Providers/NotificationProvider";
 
 const ExamSession: React.FC = () => {
   const {
@@ -19,6 +20,7 @@ const ExamSession: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     if (notCompletedQuestions && notCompletedQuestions.length > 0) {
@@ -69,6 +71,7 @@ const ExamSession: React.FC = () => {
   }
 
   if (notCompletedQuestions.length === 0) {
+    showNotification("Ви успішно завершили іспит!", "success");
     navigate("/dashboard/exam-management");
   }
 
@@ -80,6 +83,7 @@ const ExamSession: React.FC = () => {
           question={currentQuestion}
           onSubmit={handleSubmitAnswer}
           isSubmitting={isSubmitting}
+          isLastQuestion={notCompletedQuestions.length === 1}
         />
       )}
     </>

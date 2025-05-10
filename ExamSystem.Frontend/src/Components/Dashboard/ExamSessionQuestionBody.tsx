@@ -15,26 +15,27 @@ type Props = {
   question: Question;
   onSubmit: (answer: { text?: string; optionIds?: string[] }) => void;
   isSubmitting: boolean;
+  isLastQuestion: boolean;
 };
 
 const ExamSessionQuestionBody: React.FC<Props> = ({
   question,
   onSubmit,
   isSubmitting,
+  isLastQuestion,
 }) => {
   const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
   const [textAnswer, setTextAnswer] = useState<string>("");
 
   const handleNextClick = () => {
-  if (question.type === "Text") {
-    if (!textAnswer.trim()) return;
-    onSubmit({ text: textAnswer });
-  } else {
-    if (selectedOptionIds.length === 0) return;
-    onSubmit({ optionIds: selectedOptionIds });
-  }
-};
-
+    if (question.type === "Text") {
+      if (!textAnswer.trim()) return;
+      onSubmit({ text: textAnswer });
+    } else {
+      if (selectedOptionIds.length === 0) return;
+      onSubmit({ optionIds: selectedOptionIds });
+    }
+  };
 
   return (
     <DashboardPaper
@@ -86,7 +87,13 @@ const ExamSessionQuestionBody: React.FC<Props> = ({
           onClick={handleNextClick}
           disabled={isSubmitting}
         >
-          {isSubmitting ? <CircularProgress size={24} /> : "Next"}
+          {isSubmitting ? (
+            <CircularProgress size={24} />
+          ) : isLastQuestion ? (
+            "Finish"
+          ) : (
+            "Next"
+          )}
         </PrimaryButton>
       </div>
     </DashboardPaper>

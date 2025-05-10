@@ -19,6 +19,7 @@ import ExamEditPage from "./Dashboard/ExamEditPage.tsx";
 import { ExamSessionProvider } from "../Providers/ExamSessionProvider.tsx";
 import ExamSession from "./Dashboard/ExamSession.tsx";
 import { AntiCheatingProvider } from "./Dashboard/AntiCheatingProvider.tsx";
+import { NotificationProvider } from "../Providers/NotificationProvider.tsx";
 
 const App = () => {
   return (
@@ -26,55 +27,57 @@ const App = () => {
       <AuthProvider>
         <UserProvider>
           <ExamsProvider>
-            <Routes>
-              <Route element={<PublicLayout />}>
-                <Route path="/" element={<Home />} />
+            <NotificationProvider>
+              <Routes>
+                <Route element={<PublicLayout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/login"
+                    element={
+                      <AuthRoute>
+                        <LoginPage />
+                      </AuthRoute>
+                    }
+                  />
+                  <Route
+                    path="/register"
+                    element={
+                      <AuthRoute>
+                        <RegisterPage />
+                      </AuthRoute>
+                    }
+                  />
+                </Route>
                 <Route
-                  path="/login"
+                  path="/dashboard"
                   element={
-                    <AuthRoute>
-                      <LoginPage />
-                    </AuthRoute>
+                    <PrivateRoute>
+                      <UserGuardRoute>
+                        <DashboardLayout />
+                      </UserGuardRoute>
+                    </PrivateRoute>
                   }
-                />
-                <Route
-                  path="/register"
-                  element={
-                    <AuthRoute>
-                      <RegisterPage />
-                    </AuthRoute>
-                  }
-                />
-              </Route>
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <UserGuardRoute>
-                      <DashboardLayout />
-                    </UserGuardRoute>
-                  </PrivateRoute>
-                }
-              >
-                <Route index element={<Dashboard />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="exam-management" element={<Exams />} />
-                <Route path="create-exam" element={<CreateExamPage />} />
-                <Route path="edit-exam/:id" element={<ExamEditPage />} />
-                <Route
-                  path="exam-session/:id"
-                  element={
-                    <ExamSessionProvider>
-                      <AntiCheatingProvider>
-                        <ExamSession />
-                      </AntiCheatingProvider>
-                    </ExamSessionProvider>
-                  }
-                />
-              </Route>
-              <Route path="*" element={<Navigate to="/" />} />
-              <Route path="/logout" element={<LogoutRoute />} />
-            </Routes>
+                >
+                  <Route index element={<Dashboard />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="exam-management" element={<Exams />} />
+                  <Route path="create-exam" element={<CreateExamPage />} />
+                  <Route path="edit-exam/:id" element={<ExamEditPage />} />
+                  <Route
+                    path="exam-session/:id"
+                    element={
+                      <ExamSessionProvider>
+                        <AntiCheatingProvider>
+                          <ExamSession />
+                        </AntiCheatingProvider>
+                      </ExamSessionProvider>
+                    }
+                  />
+                </Route>
+                <Route path="*" element={<Navigate to="/" />} />
+                <Route path="/logout" element={<LogoutRoute />} />
+              </Routes>
+            </NotificationProvider>
           </ExamsProvider>
         </UserProvider>
       </AuthProvider>
