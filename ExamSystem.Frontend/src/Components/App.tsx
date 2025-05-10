@@ -20,6 +20,7 @@ import { ExamSessionProvider } from "../Providers/ExamSessionProvider.tsx";
 import ExamSession from "./Dashboard/ExamSession.tsx";
 import { AntiCheatingProvider } from "../Providers/AntiCheatingProvider.tsx";
 import { NotificationProvider } from "../Providers/NotificationProvider.tsx";
+import StudentExamResult from "./Dashboard/StudentExamResult.tsx";
 
 const App = () => {
   return (
@@ -70,6 +71,14 @@ const App = () => {
                         <AntiCheatingProvider>
                           <ExamSession />
                         </AntiCheatingProvider>
+                      </ExamSessionProvider>
+                    }
+                  />
+                  <Route
+                    path="exam-result/:id"
+                    element={
+                      <ExamSessionProvider>
+                        <StudentExamResult />
                       </ExamSessionProvider>
                     }
                   />

@@ -25,7 +25,8 @@ const StudentExamsBody: React.FC = () => {
   const { studentExams, fetchStudentExams } = useExams();
   const { user } = useUser();
   const [showJoinExamModal, setShowJoinExamModal] = useState(false);
-  const [showExamConfirmationModal, setShowExamConfirmationModal] = useState(false);
+  const [showExamConfirmationModal, setShowExamConfirmationModal] =
+    useState(false);
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -47,6 +48,10 @@ const StudentExamsBody: React.FC = () => {
       setShowExamConfirmationModal(false);
       navigate(`/dashboard/exam-session/${selectedExamId}`);
     }
+  };
+
+  const handleShowExamResult = (examId: string) => {
+    navigate(`/dashboard/exam-result/${examId}`);
   };
 
   return (
@@ -143,33 +148,35 @@ const StudentExamsBody: React.FC = () => {
                     </Stack>
                   </Box>
 
-                  {Boolean(exam.examUser.completeStatus) && exam.status !== "NotStarted" && (
-                    <PrimaryButton
-                      onClick={() =>
-                        navigate(`/dashboard/exam-result/${exam.examId}`)
-                      }
-                    >
-                      Results
-                    </PrimaryButton>
-                  )}
+                  {Boolean(exam.examUser.completeStatus) &&
+                    exam.status !== "NotStarted" && (
+                      <PrimaryButton
+                        onClick={() => handleShowExamResult(exam.examId)}
+                      >
+                        Results
+                      </PrimaryButton>
+                    )}
 
                   {exam.status === "NotStarted" && (
-                    <SecondaryButton onClick={() => handleStartClick(exam.examId)}>
+                    <SecondaryButton
+                      onClick={() => handleStartClick(exam.examId)}
+                    >
                       Start
                     </SecondaryButton>
                   )}
 
-                  {!exam.examUser.completeStatus && exam.status === "Started" && (
-                    <PrimaryButton onClick={() => handleStartClick(exam.examId)}>
-                      Start
-                    </PrimaryButton>
-                  )}
+                  {!exam.examUser.completeStatus &&
+                    exam.status === "Started" && (
+                      <PrimaryButton
+                        onClick={() => handleStartClick(exam.examId)}
+                      >
+                        Start
+                      </PrimaryButton>
+                    )}
 
                   {exam.status === "Closed" && (
                     <PrimaryButton
-                      onClick={() =>
-                        navigate(`/dashboard/exam-result/${exam.examId}`)
-                      }
+                      onClick={() => handleShowExamResult(exam.examId)}
                     >
                       Results
                     </PrimaryButton>
