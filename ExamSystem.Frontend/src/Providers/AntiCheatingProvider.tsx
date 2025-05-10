@@ -5,7 +5,7 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { useExamSession } from "../../Providers/ExamSessionProvider";
+import { useExamSession } from "./ExamSessionProvider";
 
 type Violation = {
   type: string;

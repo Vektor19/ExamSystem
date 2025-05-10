@@ -18,7 +18,7 @@ import CreateExamPage from "./Dashboard/CreateExamPage.tsx";
 import ExamEditPage from "./Dashboard/ExamEditPage.tsx";
 import { ExamSessionProvider } from "../Providers/ExamSessionProvider.tsx";
 import ExamSession from "./Dashboard/ExamSession.tsx";
-import { AntiCheatingProvider } from "./Dashboard/AntiCheatingProvider.tsx";
+import { AntiCheatingProvider } from "../Providers/AntiCheatingProvider.tsx";
 import { NotificationProvider } from "../Providers/NotificationProvider.tsx";
 
 const App = () => {
