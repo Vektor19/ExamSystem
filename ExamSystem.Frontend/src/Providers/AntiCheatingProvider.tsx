@@ -37,10 +37,15 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
   const fetchViolations = async () => {
     setIsViolationsLoading(true);
     if (studentExam) {
-      const violationsData = await ViolationService.getAllByExamUserId(
-        studentExam.examUser.examUserId
-      );
-      setViolations(violationsData);
+      try {
+        const violationsData = await ViolationService.getAllByExamUserId(
+          studentExam.examUser.examUserId
+        );
+        setViolations(violationsData);
+      } catch (err) {
+        console.error("Error fetching violations:", err);
+        setViolations([]);
+      }
     }
     setIsViolationsLoading(false);
   };
@@ -51,13 +56,18 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
     isCritical: boolean
   ) => {
     if (studentExam) {
-      const violation = await ViolationService.reportViolation({
-        examUserId: studentExam.examUser.examUserId,
-        violationType: type,
-        description,
-        isCritical: violations.length == 2 ? true : isCritical,
-      });
-      setViolations((prev) => [...prev, violation]);
+      try {
+        const violation = await ViolationService.reportViolation({
+          examUserId: studentExam.examUser.examUserId,
+          violationType: type,
+          description,
+          isCritical: violations.length == 2 ? true : isCritical,
+        });
+
+        setViolations((prev) => [...prev, violation]);
+      } catch (err) {
+        console.error("Error registering violation:", err);
+      }
     }
   };
 
