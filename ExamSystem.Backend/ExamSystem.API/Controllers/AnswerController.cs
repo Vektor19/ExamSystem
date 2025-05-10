@@ -57,6 +57,11 @@ namespace ExamSystem.API.Controllers
         [HttpPost("open-type")]
         public async Task<IActionResult> CreateOpenAnswer([FromBody] CreateOpenAnswerDto answerDto)
         {
+            var isUserBlockedResult = await _examService.IsUserBlockedInExamAsync(answerDto.ExamId, answerDto.UserId);
+            if (isUserBlockedResult.Success && isUserBlockedResult.Data)
+            {
+                return Forbid("You are blocked from answering this exam.");
+            }
             var result = await _answerService.CreateOpenAnswerAsync(answerDto);
             if (result.Success)
             {
@@ -73,6 +78,11 @@ namespace ExamSystem.API.Controllers
         [HttpPost("option-type")]
         public async Task<IActionResult> CreateOptionAnswer([FromBody] CreateOptionAnswerDto answerDto)
         {
+            var isUserBlockedResult = await _examService.IsUserBlockedInExamAsync(answerDto.ExamId, answerDto.UserId);
+            if (isUserBlockedResult.Success && isUserBlockedResult.Data)
+            {
+                return Forbid("You are blocked from answering this exam.");
+            }
             var result = await _answerService.CreateOptionAnswerAsync(answerDto);
             if (result.Success)
             {

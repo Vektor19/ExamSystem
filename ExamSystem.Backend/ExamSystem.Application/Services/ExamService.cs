@@ -343,6 +343,16 @@ namespace ExamSystem.Application.Services
                 ? OperationResult.Ok()
                 : OperationResult.Fail("Failed to block exam user.");
         }
-
+        public async Task<OperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return OperationResult<bool>.Fail("Exam not found.");
+            var exam = existingExamResult.Data;
+            var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
+            if (examUser == null)
+                return OperationResult<bool>.Fail("User not found in the exam.");
+            return OperationResult<bool>.Ok(examUser.IsBlocked);
+        }
     }
 }

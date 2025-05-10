@@ -52,10 +52,13 @@ namespace ExamSystem.API.Controllers
             {
                 return BadRequest(result.ErrorMessage);
             }
-            var blockingResult = await _examService.BlockExamUserByIdAsync(id);
-            if (!blockingResult.Success)
+            if (violationDto.IsCritical)
             {
-                return BadRequest(blockingResult.ErrorMessage);
+                var blockingResult = await _examService.BlockExamUserByIdAsync(id);
+                if (!blockingResult.Success)
+                {
+                    return BadRequest(blockingResult.ErrorMessage);
+                }
             }
             return Ok(result.Data);
 

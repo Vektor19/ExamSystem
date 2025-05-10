@@ -20,5 +20,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> JoinExam(JoinExamDto joinExamDto);
         Task<OperationResult> FinishExamAsync(Guid examId, Guid userId);
         Task<OperationResult> BlockExamUserByIdAsync(Guid examUserId);
+        Task<OperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId);
     }
 }
