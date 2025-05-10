@@ -11,6 +11,7 @@ import { Question } from "../Models/Question";
 import QuestionService from "../Services/QuestionService";
 import { StudentExam } from "../Models/StudentExam";
 import { ExaminatorExam } from "../Models/ExaminatorExam";
+import TimeUtils from "../Utils/TimeUtils";
 
 type ExamsContextType = {
   studentExams: StudentExam[] | null;
@@ -28,7 +29,9 @@ const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
 
 export const ExamsProvider = ({ children }: { children: ReactNode }) => {
   const [studentExams, setStudentExams] = useState<StudentExam[] | null>(null);
-  const [examinatorExams, setExaminatorExams] = useState<ExaminatorExam[] | null>(null);
+  const [examinatorExams, setExaminatorExams] = useState<
+    ExaminatorExam[] | null
+  >(null);
   const [isStudentExamsLoading, setIsStudentExamsLoading] = useState(true);
   const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] =
     useState(true);
@@ -51,6 +54,12 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         const examData = await ExamService.getExamsByParticipantId(userId);
+        examData.forEach((exam) => {
+          console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+          exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
+          exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
+        });
         setStudentExams(examData);
       } else {
         setStudentExams(null);
@@ -75,6 +84,11 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         const examData = await ExamService.getExamsByCreatedUserId(userId);
+        examData.forEach((exam) => {
+          exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
+          exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
+          console.log(new Date(exam.startDate).toISOString());
+        });
         setExaminatorExams(examData);
       } else {
         setExaminatorExams(null);

@@ -75,8 +75,7 @@ const StudentExamsBody: React.FC = () => {
         onConfirm={handleConfirmStart}
       />
 
-      <DashboardPaper sx={{ p: 3, overflowY: 'auto' }}>
-
+      <DashboardPaper sx={{ p: 3, overflowY: "auto" }}>
         <Stack spacing={2}>
           {studentExams?.map(
             (exam: StudentExam | null) =>
@@ -148,52 +147,34 @@ const StudentExamsBody: React.FC = () => {
                       />
                     </Stack>
                   </Box>
-
-                  {Boolean(exam.examUser.completeStatus) &&
-                    exam.status !== "NotStarted" && (
+                  {exam.status === "NotStarted" && (
+                    <SecondaryButton
+                      onClick={() => handleStartClick(exam.examId)}
+                      disabled
+                    >
+                      Start
+                    </SecondaryButton>
+                  )}
+                  {exam.status === "Started" && !Boolean(exam.examUser.completeStatus) &&(
+                    <>
+                      <PrimaryButton
+                        onClick={() => handleStartClick(exam.examId)}
+                        disabled={Boolean(exam.examUser.isBlocked)}
+                      >
+                        {Boolean(exam.examUser.isBlocked)
+                          ? "Blocked"
+                          : "Start"}
+                      </PrimaryButton>
+                    </>
+                  )}
+                  {exam.examUser.completeStatus &&
+                    (exam.status === "Started" || exam.status == "Closed") && (
                       <PrimaryButton
                         onClick={() => handleShowExamResult(exam.examId)}
                       >
                         Results
                       </PrimaryButton>
                     )}
-
-                  {exam.status === "NotStarted" && (
-                    <SecondaryButton
-                      onClick={() => handleStartClick(exam.examId)}
-                      disabled={Boolean(exam.examUser.isBlocked)}
-                      title={
-                        exam.examUser.isBlocked
-                          ? "You have been blocked from this exam."
-                          : ""
-                      }
-                    >
-                      Start
-                    </SecondaryButton>
-                  )}
-
-                  {!exam.examUser.completeStatus &&
-                    exam.status === "Started" && (
-                      <PrimaryButton
-                        onClick={() => handleStartClick(exam.examId)}
-                        disabled={Boolean(exam.examUser.isBlocked)}
-                        title={
-                          exam.examUser.isBlocked
-                            ? "You have been blocked from this exam."
-                            : ""
-                        }
-                      >
-                        Start
-                      </PrimaryButton>
-                    )}
-
-                  {exam.status === "Closed" && (
-                    <PrimaryButton
-                      onClick={() => handleShowExamResult(exam.examId)}
-                    >
-                      Results
-                    </PrimaryButton>
-                  )}
                 </Paper>
               )
           )}

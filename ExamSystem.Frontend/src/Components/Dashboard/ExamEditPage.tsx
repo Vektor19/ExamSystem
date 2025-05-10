@@ -48,12 +48,14 @@ const ExamEditPage: React.FC = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
 
-  const toDateTimeLocal = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const offset = date.getTimezoneOffset();
-    const local = new Date(date.getTime() - offset * 60 * 1000);
-    return local.toISOString().slice(0, 16);
-  };
+  function toDatetimeLocalString(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   useEffect(() => {
     if (id) {
@@ -82,8 +84,8 @@ const ExamEditPage: React.FC = () => {
     try {
       await ExamService.updateExam(exam.examId, {
         name: formValues.name,
-        startDate: formValues.startDate,
-        endDate: formValues.endDate,
+        startDate: new Date(formValues.startDate).toISOString(),
+        endDate: new Date(formValues.endDate).toISOString(),
         status: formValues.status,
       });
       await fetchExaminatorExams();
@@ -125,7 +127,9 @@ const ExamEditPage: React.FC = () => {
             <TextField
               size="small"
               type={isDate ? "datetime-local" : "text"}
-              value={isDate ? toDateTimeLocal(value) : value}
+              value={
+                isDate && value ? toDatetimeLocalString(new Date(value)) : value
+              }
               onChange={(e) =>
                 setFormValues((prev) => ({
                   ...prev,
