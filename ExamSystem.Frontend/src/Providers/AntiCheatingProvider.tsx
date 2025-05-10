@@ -6,17 +6,19 @@ import React, {
   ReactNode,
 } from "react";
 import { useExamSession } from "./ExamSessionProvider";
-
-type Violation = {
-  type: string;
-  timestamp: string;
-};
+import ViolationService from "../Services/ViolationService";
+import { Violation } from "../Models/Violation";
+import { ViolationType } from "../Models/ViolationType";
 
 type AntiCheatingContextType = {
   violations: Violation[];
   isViolationsLoading: boolean;
   fetchViolations: () => Promise<void>;
-  registerViolation: (type: string) => void;
+  registerViolation: (
+    type: string,
+    description: string,
+    isCritical: boolean
+  ) => Promise<void>;
 };
 
 const AntiCheatingContext = createContext<AntiCheatingContextType | undefined>(
@@ -33,45 +35,52 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
   }, [studentExam]);
 
   const fetchViolations = async () => {
+    setIsViolationsLoading(true);
     if (studentExam) {
-      // const response = await ViolationService.getViolations(studentExam.examId);
-      // setViolations(response.data);
+      const violationsData = await ViolationService.getAllByExamUserId(
+        studentExam.examUser.examUserId
+      );
+      setViolations(violationsData);
     }
     setIsViolationsLoading(false);
   };
 
-  const registerViolation = (type: string) => {
-    const violation = {
-      type,
-      timestamp: new Date().toISOString(),
-    };
-    setViolations((prev) => [...prev, violation]);
-
+  const registerViolation = async (
+    type: string,
+    description: string,
+    isCritical: boolean
+  ) => {
     if (studentExam) {
-      // ViolationService.reportViolation({
-      //   examId: studentExam.examId,
-      //   type,
-      //   timestamp: violation.timestamp,
-      // });
+      const violation = await ViolationService.reportViolation({
+        examUserId: studentExam.examUser.examUserId,
+        violationType: type,
+        description,
+        isCritical: violations.length == 2 ? true : isCritical,
+      });
+      setViolations((prev) => [...prev, violation]);
     }
   };
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
+    const handlePageOpenEvent = async () => {
       if (document.hidden) {
-        registerViolation("TAB_SWITCH");
+        await registerViolation(
+          ViolationType.NewPageOpen,
+          "User opened new page",
+          false
+        );
       }
     };
 
     const handleCopy = (e: ClipboardEvent) => {
-      registerViolation("COPY_ATTEMPT");
+      registerViolation(ViolationType.CopyPaste, "User copied text", false);
     };
 
-    window.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("visibilitychange", handlePageOpenEvent);
     window.addEventListener("copy", handleCopy);
 
     return () => {
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("visibilitychange", handlePageOpenEvent);
       window.removeEventListener("copy", handleCopy);
     };
   }, [studentExam]);
