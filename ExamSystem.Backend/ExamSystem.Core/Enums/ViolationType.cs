@@ -6,6 +6,7 @@
         NewPageOpen,
         CopyPaste,
         Screenshot,
-        DevToolsOpen
+        DevToolsOpen,
+        SwitchTab
     }
 }
