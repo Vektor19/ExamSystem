@@ -28,6 +28,7 @@ import ExamService from "../../Services/ExamService";
 import AddParticipantModal from "./AddParticipantModal";
 import { ExaminatorExam } from "../../Models/ExaminatorExam";
 import { Participant } from "../../Models/Participant";
+import TimeUtils from "../../Utils/TimeUtils";
 
 const statusOptions = ["NotStarted", "Started", "Finished"];
 
@@ -47,15 +48,6 @@ const ExamEditPage: React.FC = () => {
 
   const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
-
-  function toDatetimeLocalString(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
 
   useEffect(() => {
     if (id) {
@@ -128,7 +120,7 @@ const ExamEditPage: React.FC = () => {
               size="small"
               type={isDate ? "datetime-local" : "text"}
               value={
-                isDate && value ? toDatetimeLocalString(new Date(value)) : value
+                isDate && value ? TimeUtils.toDatetimeLocalString(new Date(value)) : value
               }
               onChange={(e) =>
                 setFormValues((prev) => ({

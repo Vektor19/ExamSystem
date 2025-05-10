@@ -18,7 +18,7 @@ interface Props {
 }
 
 const CreateExamModal: React.FC<Props> = ({ open, onClose, onCreate }) => {
-  const {user} = useUser();
+  const { user } = useUser();
   const [form, setForm] = useState<ExamCreate>({
     createdByUserId: "",
     name: "",
@@ -30,11 +30,13 @@ const CreateExamModal: React.FC<Props> = ({ open, onClose, onCreate }) => {
     if (user) {
       setForm((prev) => ({ ...prev, createdByUserId: user.userId }));
     }
-  }
-, [user]);
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: new Date(e.target.value) });
   };
 
   const handleSubmit = () => {
@@ -58,14 +60,14 @@ const CreateExamModal: React.FC<Props> = ({ open, onClose, onCreate }) => {
             type="datetime-local"
             label="Start Date"
             InputLabelProps={{ shrink: true }}
-            onChange={handleChange}
+            onChange={handleDateChange}
           />
           <TextField
             name="endDate"
             type="datetime-local"
             label="End Date"
             InputLabelProps={{ shrink: true }}
-            onChange={handleChange}
+            onChange={handleDateChange}
           />
         </Stack>
       </DialogContent>
