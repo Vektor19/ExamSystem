@@ -246,42 +246,42 @@ const ParticipantAssessPage: React.FC = () => {
                               <strong>Answer:</strong> {ans.answerText || "—"}
                             </Typography>
 
-                            <Stack
-                              direction="row"
-                              alignItems="center"
-                              spacing={2}
-                            >
-                              <TextField
-                                type="number"
-                                label="Points"
-                                value={grade}
-                                onChange={(e) =>
-                                  setGrades((prev) => ({
-                                    ...prev,
-                                    [ans.answerId]: e.target.value,
-                                  }))
-                                }
-                                error={!!error}
-                                helperText={error}
-                                inputProps={{
-                                  min: 0,
-                                  max: question.maxPoints,
-                                }}
-                                sx={{ width: 120 }}
-                              />
-                              <PrimaryButton onClick={handleAssessClick}>
-                                Grade
-                              </PrimaryButton>
-
-                              {gradedAnswers.has(ans.answerId) ||
-                              ans.isGraded ? (
-                                <Chip
-                                  label="Оцінено"
-                                  color="success"
-                                  size="small"
+                            {ans.isGraded ? (
+                              <Typography
+                                color="success.main"
+                                fontWeight="bold"
+                              >
+                                Graded!
+                              </Typography>
+                            ) : (
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                                spacing={2}
+                              >
+                                <TextField
+                                  type="number"
+                                  label="Points"
+                                  value={grade}
+                                  onChange={(e) =>
+                                    setGrades((prev) => ({
+                                      ...prev,
+                                      [ans.answerId]: e.target.value,
+                                    }))
+                                  }
+                                  error={!!error}
+                                  helperText={error}
+                                  inputProps={{
+                                    min: 0,
+                                    max: question.maxPoints,
+                                  }}
+                                  sx={{ width: 120 }}
                                 />
-                              ) : null}
-                            </Stack>
+                                <PrimaryButton onClick={handleAssessClick}>
+                                  Grade
+                                </PrimaryButton>
+                              </Stack>
+                            )}
                           </Box>
                         );
                       })
