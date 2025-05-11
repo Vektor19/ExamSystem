@@ -23,7 +23,7 @@ namespace ExamSystem.Persistence.Repositories
         {
             var question = await _dbContext.Questions.Include(q => q.Exam)
                                                      .Include(q => q.QuestionOptions)
-                                                     .FirstOrDefaultAsync();
+                                                     .FirstOrDefaultAsync(q => q.QuestionId == id);
             if (question == null)
                 return OperationResult<Question>.Fail("Question not found.");
             return OperationResult<Question>.Ok(question);
