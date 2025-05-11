@@ -28,7 +28,10 @@ namespace ExamSystem.Persistence.Repositories
                                                 .ThenInclude(eu => eu.User)
                                              .Include(e => e.UserCreatedBy)
                                              .Include(e => e.Questions)
-                                             .Include(e => e.Answers)
+                                                .ThenInclude(q => q.QuestionOptions)
+                                             .Include(e => e.Questions)
+                                                .ThenInclude(q => q.Answers)
+                                                    .ThenInclude(a => a.QuestionOption)
                                              .FirstOrDefaultAsync(e => e.ExamId == id);
             if (exam == null)
                 return OperationResult<Exam>.Fail("Exam not found.");
