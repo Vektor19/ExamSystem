@@ -110,7 +110,7 @@ const ParticipantAssessPage: React.FC = () => {
     }
   };
 
-  if (!exam || !participant || !questions || !answers) {
+  if (!exam || !participant || !questions) {
     return <LoadingPage />;
   }
 
@@ -177,8 +177,10 @@ const ParticipantAssessPage: React.FC = () => {
                     Answered Questions:
                   </Typography>
                   <Typography>
-                    {new Set(answers.map((a) => a.questionId)).size} /{" "}
-                    {questions.length}
+                    {answers
+                      ? new Set(answers.map((a) => a.questionId)).size
+                      : "0"}{" "}
+                    / {questions.length}
                   </Typography>
                 </Grid>
                 <Grid size={{ xs: 4 }}>
@@ -197,119 +199,131 @@ const ParticipantAssessPage: React.FC = () => {
           </Paper>
           <Box mt={2} flexGrow={1} overflow="auto">
             <Stack spacing={3} p={2}>
-              {questions?.map((question) => {
-                const relatedAnswers = answers.filter(
-                  (a) => a.questionId === question.questionId
-                );
+              {!answers && (
+                <Paper sx={{ p: 2 }} elevation={2}>
+                  <Typography variant="h6" gutterBottom>
+                    No answers found for this participant.
+                  </Typography>
+                </Paper>
+              )}
+              {answers &&
+                questions?.map((question) => {
+                  const relatedAnswers = answers.filter(
+                    (a) => a.questionId === question.questionId
+                  );
 
-                return (
-                  <Paper key={question.questionId} sx={{ p: 2 }} elevation={2}>
-                    <Typography variant="h6" gutterBottom>
-                      {question.questionText}
-                    </Typography>
-                    <Divider sx={{ mb: 2 }} />
+                  return (
+                    <Paper
+                      key={question.questionId}
+                      sx={{ p: 2 }}
+                      elevation={2}
+                    >
+                      <Typography variant="h6" gutterBottom>
+                        {question.questionText}
+                      </Typography>
+                      <Divider sx={{ mb: 2 }} />
 
-                    {question.type === "Text" ? (
-                      relatedAnswers.map((ans) => {
-                        const grade = grades[ans.answerId] || "";
-                        const error = errors[ans.answerId] || "";
+                      {question.type === "Text" ? (
+                        relatedAnswers.map((ans) => {
+                          const grade = grades[ans.answerId] || "";
+                          const error = errors[ans.answerId] || "";
 
-                        const handleAssessClick = () => {
-                          const numeric = parseFloat(grade);
-                          if (
-                            isNaN(numeric) ||
-                            numeric < 0 ||
-                            numeric > question.maxPoints
-                          ) {
+                          const handleAssessClick = () => {
+                            const numeric = parseFloat(grade);
+                            if (
+                              isNaN(numeric) ||
+                              numeric < 0 ||
+                              numeric > question.maxPoints
+                            ) {
+                              setErrors((prev) => ({
+                                ...prev,
+                                [ans.answerId]: `Введіть число від 0 до ${question.maxPoints}`,
+                              }));
+                              return;
+                            }
+
                             setErrors((prev) => ({
                               ...prev,
-                              [ans.answerId]: `Введіть число від 0 до ${question.maxPoints}`,
+                              [ans.answerId]: "",
                             }));
-                            return;
-                          }
 
-                          setErrors((prev) => ({
-                            ...prev,
-                            [ans.answerId]: "",
-                          }));
-
-                          handleGradeQuestion(
-                            question.questionId,
-                            ans.answerId,
-                            numeric
-                          );
-                        };
-
-                        return (
-                          <Box key={ans.answerId} sx={{ mt: 1 }}>
-                            <Typography sx={{ mb: 1 }}>
-                              <strong>Answer:</strong> {ans.answerText || "—"}
-                            </Typography>
-
-                            {ans.isGraded ? (
-                              <Typography
-                                color="success.main"
-                                fontWeight="bold"
-                              >
-                                Graded!
-                              </Typography>
-                            ) : (
-                              <Stack
-                                direction="row"
-                                alignItems="center"
-                                spacing={2}
-                              >
-                                <TextField
-                                  type="number"
-                                  label="Points"
-                                  value={grade}
-                                  onChange={(e) =>
-                                    setGrades((prev) => ({
-                                      ...prev,
-                                      [ans.answerId]: e.target.value,
-                                    }))
-                                  }
-                                  error={!!error}
-                                  helperText={error}
-                                  inputProps={{
-                                    min: 0,
-                                    max: question.maxPoints,
-                                  }}
-                                  sx={{ width: 120 }}
-                                />
-                                <PrimaryButton onClick={handleAssessClick}>
-                                  Grade
-                                </PrimaryButton>
-                              </Stack>
-                            )}
-                          </Box>
-                        );
-                      })
-                    ) : (
-                      <>
-                        {question.options.map((opt) => {
-                          const ans = relatedAnswers.find(
-                            (a) => a.questionOptionId === opt.questionOptionId
-                          );
+                            handleGradeQuestion(
+                              question.questionId,
+                              ans.answerId,
+                              numeric
+                            );
+                          };
 
                           return (
-                            <FormControlLabel
-                              key={opt.questionOptionId}
-                              control={<Checkbox checked={!!ans} disabled />}
-                              label={`${opt.label}. ${opt.optionText}`}
-                              sx={{ display: "block", ml: 1 }}
-                            />
-                          );
-                        })}
+                            <Box key={ans.answerId} sx={{ mt: 1 }}>
+                              <Typography sx={{ mb: 1 }}>
+                                <strong>Answer:</strong> {ans.answerText || "—"}
+                              </Typography>
 
-                        <Typography variant="body2" sx={{ mt: 1 }}>
-                          Points: {relatedAnswers[0]?.answerText || "—"}
-                        </Typography>
-                      </>
-                    )}
-                  </Paper>
-                );
-              })}
+                              {ans.isGraded ? (
+                                <Typography
+                                  color="success.main"
+                                  fontWeight="bold"
+                                >
+                                  Graded!
+                                </Typography>
+                              ) : (
+                                <Stack
+                                  direction="row"
+                                  alignItems="center"
+                                  spacing={2}
+                                >
+                                  <TextField
+                                    type="number"
+                                    label="Points"
+                                    value={grade}
+                                    onChange={(e) =>
+                                      setGrades((prev) => ({
+                                        ...prev,
+                                        [ans.answerId]: e.target.value,
+                                      }))
+                                    }
+                                    error={!!error}
+                                    helperText={error}
+                                    inputProps={{
+                                      min: 0,
+                                      max: question.maxPoints,
+                                    }}
+                                    sx={{ width: 120 }}
+                                  />
+                                  <PrimaryButton onClick={handleAssessClick}>
+                                    Grade
+                                  </PrimaryButton>
+                                </Stack>
+                              )}
+                            </Box>
+                          );
+                        })
+                      ) : (
+                        <>
+                          {question.options.map((opt) => {
+                            const ans = relatedAnswers.find(
+                              (a) => a.questionOptionId === opt.questionOptionId
+                            );
+
+                            return (
+                              <FormControlLabel
+                                key={opt.questionOptionId}
+                                control={<Checkbox checked={!!ans} disabled />}
+                                label={`${opt.label}. ${opt.optionText}`}
+                                sx={{ display: "block", ml: 1 }}
+                              />
+                            );
+                          })}
+
+                          <Typography variant="body2" sx={{ mt: 1 }}>
+                            Points: {relatedAnswers[0]?.answerText || "—"}
+                          </Typography>
+                        </>
+                      )}
+                    </Paper>
+                  );
+                })}
             </Stack>
           </Box>
         </Box>
