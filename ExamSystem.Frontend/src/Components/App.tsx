@@ -21,6 +21,7 @@ import ExamSession from "./Dashboard/ExamSession.tsx";
 import { AntiCheatingProvider } from "../Providers/AntiCheatingProvider.tsx";
 import { NotificationProvider } from "../Providers/NotificationProvider.tsx";
 import StudentExamResult from "./Dashboard/StudentExamResult.tsx";
+import ParticipantAssessPage from "./Dashboard/ParticipantAssessPage.tsx";
 
 const App = () => {
   return (
@@ -62,6 +63,7 @@ const App = () => {
                   <Route index element={<Dashboard />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="exam-management" element={<Exams />} />
+                  <Route path="exam-assessment/:examId/:userId" element={<ParticipantAssessPage />} />
                   <Route path="create-exam" element={<CreateExamPage />} />
                   <Route path="edit-exam/:id" element={<ExamEditPage />} />
                   <Route
