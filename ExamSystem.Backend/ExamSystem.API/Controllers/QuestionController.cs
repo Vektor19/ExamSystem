@@ -70,5 +70,12 @@ namespace ExamSystem.API.Controllers
             var result = await _questionService.UpdateAsync(id, questionDto);
             return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
         }
+        [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
+        [HttpPost("{id}/grade-openanswer")]
+        public async Task<IActionResult> GradeTextQuestionAnswer(Guid id, [FromBody] GradeOpenAnswerDto gradeOpenAnswerDto)
+        {
+            var result = await _questionService.GradeTextQuestionAnswerAsync(id, gradeOpenAnswerDto);
+            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+        }
     }
 }
