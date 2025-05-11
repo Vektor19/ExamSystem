@@ -22,5 +22,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> BlockExamUserByIdAsync(Guid examUserId);
         Task<OperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId);
         Task<OperationResult<bool>> IsExamInProgressAsync(Guid examId);
+        Task<OperationResult<IEnumerable<ExamUserDto>>> GetExpiredNotFinishedExamUsersAsync(DateTime now);
     }
 }

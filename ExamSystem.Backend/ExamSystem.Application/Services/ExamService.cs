@@ -386,5 +386,13 @@ namespace ExamSystem.Application.Services
             var isInProgress = exam.Status == ExamStatus.Started;
             return OperationResult<bool>.Ok(isInProgress);
         }
+        public async Task<OperationResult<IEnumerable<ExamUserDto>>> GetExpiredNotFinishedExamUsersAsync(DateTime now)
+        {
+            var result = await _examRepository.GetExpiredNotFinishedExamUsersAsync(now);
+            if (!result.Success)
+                return OperationResult<IEnumerable<ExamUserDto>>.Fail(result.ErrorMessage!);
+            var examUserDtos = _mapper.Map<IEnumerable<ExamUserDto>>(result.Data);
+            return OperationResult<IEnumerable<ExamUserDto>>.Ok(examUserDtos);
+        }
     }
 }
