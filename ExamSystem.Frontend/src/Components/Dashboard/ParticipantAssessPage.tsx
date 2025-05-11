@@ -119,209 +119,199 @@ const ParticipantAssessPage: React.FC = () => {
       <DashboardPaper
         sx={{ height: "calc(100vh - 100px)", overflowY: "hidden" }}
       >
-        <Box display="flex" maxHeight="100%" width="100%" flexDirection={"column"}> 
-            <Paper sx={{ p: 2 }} elevation={2}>
-              <Grid container direction="column" spacing={2}>
-                {/* Row 1: Participant + Email */}
-                <Grid container spacing={2}>
-                  <Grid>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Participant:
-                    </Typography>
-                    <Typography>
-                      {participant.firstName} {participant.lastName}
-                    </Typography>
-                  </Grid>
-                  <Grid>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Email:
-                    </Typography>
-                    <Typography>{participant.email || "—"}</Typography>
-                  </Grid>
-                </Grid>
-
-                {/* Row 2: Status + Grade + Answer Count */}
-                <Grid container spacing={2}>
-                  <Grid>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Status:
-                    </Typography>
-                    <Chip
-                      sx={{ borderRadius: 1 }}
-                      size="small"
-                      label={
-                        participant.completeStatus
-                          ? "Completed"
-                          : "Not Completed"
-                      }
-                      color={participant.completeStatus ? "success" : "info"}
-                    />
-                  </Grid>
-                  <Grid>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Total Grade:
-                    </Typography>
-                    <Typography>
-                      {participant.grade.toString()} /{" "}
-                      {questions.reduce((t, q) => t + q.maxPoints, 0)}
-                    </Typography>
-                  </Grid>
-                  <Grid>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      Answered Questions:
-                    </Typography>
-                    <Typography>
-                      {new Set(answers.map((a) => a.questionId)).size} /{" "}
-                      {questions.length}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                {/* Row 3: Violations */}
-                <Grid>
-                  <Typography
-                    variant="subtitle2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Violations:
+        <Box
+          display="flex"
+          maxHeight="100%"
+          width="100%"
+          flexDirection={"column"}
+        >
+          <Paper sx={{ p: 2 }} elevation={2}>
+            <Grid
+              container
+              direction="column"
+              gridTemplateRows={"1fr 1fr 1fr"}
+              spacing={2}
+            >
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Participant:
                   </Typography>
-                  {participant.violations?.length ? (
-                    <Stack spacing={1}>
-                      {participant.violations.map((v, i) => (
-                        <Typography key={v.violationId}>
-                          {i + 1}. <strong>{v.violationType}</strong>:{" "}
-                          {v.description}
-                        </Typography>
-                      ))}
-                    </Stack>
-                  ) : (
-                    <Typography>No violations detected</Typography>
-                  )}
+                  <Typography>
+                    {participant.firstName} {participant.lastName}
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Email:
+                  </Typography>
+                  <Typography>{participant.email || "—"}</Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Status:
+                  </Typography>
+                  <Chip
+                    sx={{ borderRadius: 1 }}
+                    size="small"
+                    label={
+                      participant.completeStatus ? "Completed" : "Not Completed"
+                    }
+                    color={participant.completeStatus ? "success" : "info"}
+                  />
                 </Grid>
               </Grid>
-            </Paper>
-            <Box mt={2} flexGrow={1} overflow="auto">
-              <Stack spacing={3} p={2} >
-                {questions?.map((question) => {
-                  const relatedAnswers = answers.filter(
-                    (a) => a.questionId === question.questionId
-                  );
 
-                  return (
-                    <Paper
-                      key={question.questionId}
-                      sx={{ p: 2 }}
-                      elevation={2}
-                    >
-                      <Typography variant="h6" gutterBottom>
-                        {question.questionText}
-                      </Typography>
-                      <Divider sx={{ mb: 2 }} />
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Total Grade:
+                  </Typography>
+                  <Typography>
+                    {participant.grade.toString()} /{" "}
+                    {questions.reduce((t, q) => t + q.maxPoints, 0)}
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Answered Questions:
+                  </Typography>
+                  <Typography>
+                    {new Set(answers.map((a) => a.questionId)).size} /{" "}
+                    {questions.length}
+                  </Typography>
+                </Grid>
+                <Grid size={{ xs: 4 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Is Graded:
+                  </Typography>
+                  <Chip
+                    sx={{ borderRadius: 1 }}
+                    size="small"
+                    label={participant.isChecked ? "Yes" : "No"}
+                    color={participant.isChecked ? "success" : "info"}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+          <Box mt={2} flexGrow={1} overflow="auto">
+            <Stack spacing={3} p={2}>
+              {questions?.map((question) => {
+                const relatedAnswers = answers.filter(
+                  (a) => a.questionId === question.questionId
+                );
 
-                      {question.type === "Text" ? (
-                        relatedAnswers.map((ans) => {
-                          const grade = grades[ans.answerId] || "";
-                          const error = errors[ans.answerId] || "";
+                return (
+                  <Paper key={question.questionId} sx={{ p: 2 }} elevation={2}>
+                    <Typography variant="h6" gutterBottom>
+                      {question.questionText}
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
 
-                          const handleAssessClick = () => {
-                            const numeric = parseFloat(grade);
-                            if (
-                              isNaN(numeric) ||
-                              numeric < 0 ||
-                              numeric > question.maxPoints
-                            ) {
-                              setErrors((prev) => ({
-                                ...prev,
-                                [ans.answerId]: `Введіть число від 0 до ${question.maxPoints}`,
-                              }));
-                              return;
-                            }
+                    {question.type === "Text" ? (
+                      relatedAnswers.map((ans) => {
+                        const grade = grades[ans.answerId] || "";
+                        const error = errors[ans.answerId] || "";
 
+                        const handleAssessClick = () => {
+                          const numeric = parseFloat(grade);
+                          if (
+                            isNaN(numeric) ||
+                            numeric < 0 ||
+                            numeric > question.maxPoints
+                          ) {
                             setErrors((prev) => ({
                               ...prev,
-                              [ans.answerId]: "",
+                              [ans.answerId]: `Введіть число від 0 до ${question.maxPoints}`,
                             }));
+                            return;
+                          }
 
-                            handleGradeQuestion(
-                              question.questionId,
-                              ans.answerId,
-                              numeric
-                            );
-                          };
+                          setErrors((prev) => ({
+                            ...prev,
+                            [ans.answerId]: "",
+                          }));
+
+                          handleGradeQuestion(
+                            question.questionId,
+                            ans.answerId,
+                            numeric
+                          );
+                        };
+
+                        return (
+                          <Box key={ans.answerId} sx={{ mt: 1 }}>
+                            <Typography sx={{ mb: 1 }}>
+                              <strong>Answer:</strong> {ans.answerText || "—"}
+                            </Typography>
+
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={2}
+                            >
+                              <TextField
+                                type="number"
+                                label="Points"
+                                value={grade}
+                                onChange={(e) =>
+                                  setGrades((prev) => ({
+                                    ...prev,
+                                    [ans.answerId]: e.target.value,
+                                  }))
+                                }
+                                error={!!error}
+                                helperText={error}
+                                inputProps={{
+                                  min: 0,
+                                  max: question.maxPoints,
+                                }}
+                                sx={{ width: 120 }}
+                              />
+                              <PrimaryButton onClick={handleAssessClick}>
+                                Grade
+                              </PrimaryButton>
+
+                              {gradedAnswers.has(ans.answerId) ||
+                              ans.isGraded ? (
+                                <Chip
+                                  label="Оцінено"
+                                  color="success"
+                                  size="small"
+                                />
+                              ) : null}
+                            </Stack>
+                          </Box>
+                        );
+                      })
+                    ) : (
+                      <>
+                        {question.options.map((opt) => {
+                          const ans = relatedAnswers.find(
+                            (a) => a.questionOptionId === opt.questionOptionId
+                          );
 
                           return (
-                            <Box key={ans.answerId} sx={{ mt: 1 }}>
-                              <Typography sx={{ mb: 1 }}>
-                                <strong>Answer:</strong> {ans.answerText || "—"}
-                              </Typography>
-
-                              <Stack
-                                direction="row"
-                                alignItems="center"
-                                spacing={2}
-                              >
-                                <TextField
-                                  type="number"
-                                  label="Points"
-                                  value={grade}
-                                  onChange={(e) =>
-                                    setGrades((prev) => ({
-                                      ...prev,
-                                      [ans.answerId]: e.target.value,
-                                    }))
-                                  }
-                                  error={!!error}
-                                  helperText={error}
-                                  inputProps={{
-                                    min: 0,
-                                    max: question.maxPoints,
-                                  }}
-                                  sx={{ width: 120 }}
-                                />
-                                <PrimaryButton onClick={handleAssessClick}>
-                                  Grade
-                                </PrimaryButton>
-
-                                {gradedAnswers.has(ans.answerId) ||
-                                ans.isGraded ? (
-                                  <Chip
-                                    label="Оцінено"
-                                    color="success"
-                                    size="small"
-                                  />
-                                ) : null}
-                              </Stack>
-                            </Box>
+                            <FormControlLabel
+                              key={opt.questionOptionId}
+                              control={<Checkbox checked={!!ans} disabled />}
+                              label={`${opt.label}. ${opt.optionText}`}
+                              sx={{ display: "block", ml: 1 }}
+                            />
                           );
-                        })
-                      ) : (
-                        <>
-                          {question.options.map((opt) => {
-                            const ans = relatedAnswers.find(
-                              (a) => a.questionOptionId === opt.questionOptionId
-                            );
+                        })}
 
-                            return (
-                              <FormControlLabel
-                                key={opt.questionOptionId}
-                                control={<Checkbox checked={!!ans} disabled />}
-                                label={`${opt.label}. ${opt.optionText}`}
-                                sx={{ display: "block", ml: 1 }}
-                              />
-                            );
-                          })}
-
-                          <Typography variant="body2" sx={{ mt: 1 }}>
-                            Points: {relatedAnswers[0]?.answerText || "—"}
-                          </Typography>
-                        </>
-                      )}
-                    </Paper>
-                  );
-                })}
-              </Stack>
-            </Box>
+                        <Typography variant="body2" sx={{ mt: 1 }}>
+                          Points: {relatedAnswers[0]?.answerText || "—"}
+                        </Typography>
+                      </>
+                    )}
+                  </Paper>
+                );
+              })}
+            </Stack>
+          </Box>
         </Box>
       </DashboardPaper>
 
