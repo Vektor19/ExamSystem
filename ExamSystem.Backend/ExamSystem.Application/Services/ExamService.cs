@@ -306,11 +306,11 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("User not found in the exam.");
             examUser.CompleteStatus = true;
 
-            foreach (var question in exam.Questions.Where(q => q.Type == QuestionType.MultiChoice))
+            foreach (var question in exam.Questions.Where(q => q.Type == QuestionType.MultiChoice).ToList())
             {
                 double answerGrade = 0;
 
-                var userAnswers = question.Answers.Where(answer => answer.UserId == userId);
+                var userAnswers = question.Answers.Where(answer => answer.UserId == userId).ToList();
                 var correctAnswersCount = userAnswers.Select(a => a.QuestionOption).Count(qo => qo!.IsCorrect);
                 var InCorrectAnswersCount = userAnswers.Select(a => a.QuestionOption).Count(qo => !qo!.IsCorrect);
                 var questionOptionCount = question.QuestionOptions.Count();
@@ -326,7 +326,7 @@ namespace ExamSystem.Application.Services
 
                 examUser.Grade += (int)Math.Round(answerGrade, 0);
 
-                foreach(var answer in userAnswers)
+                foreach (var answer in userAnswers)
                 {
                     answer.IsGraded = true;
                 }
