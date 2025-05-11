@@ -10,6 +10,7 @@ builder.Services.AddPersistance(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHostedService<ExamExpirationChecker>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
