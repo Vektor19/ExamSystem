@@ -9,6 +9,7 @@ namespace ExamSystem.Core.Entities
         public string QuestionText { get; set; } = string.Empty;
         public QuestionType Type { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public double MaxPoints { get; set; }
         public List<QuestionOption> QuestionOptions { get; set; } = [];
         public List<Answer> Answers { get; set; } = [];
         public Exam Exam { get; set; } = null!;
