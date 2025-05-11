@@ -14,5 +14,6 @@ namespace ExamSystem.Application.DTOs
         public Guid ExamId { get; set; }
         public Guid? QuestionOptionId { get; set; }
         public string? AnswerText { get; set; }
+        public bool IsGraded { get; set; }
     }
 }

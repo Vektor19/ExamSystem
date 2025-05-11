@@ -14,6 +14,7 @@ namespace ExamSystem.Core.Entities
         public Guid QuestionId { get; set; }
         public Guid? QuestionOptionId { get; set; }
         public string AnswerText { get; set; } = string.Empty;
+        public bool IsGraded { get; set; }
         public User User { get; set; } = null!;
         public Question Question { get; set; } = null!;
         public QuestionOption? QuestionOption { get; set; }
