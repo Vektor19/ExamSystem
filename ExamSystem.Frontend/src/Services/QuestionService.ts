@@ -1,4 +1,5 @@
 import examSystemApi from "../Api/examSystemApi";
+import { GradeOpenAnswer } from "../Models/GradeOpenAnswer";
 import { Question } from "../Models/Question";
 import { QuestionCreate } from "../Models/QuestionCreate";
 
@@ -11,9 +12,14 @@ class QuestionService {
       throw new Error(err?.response?.data?.message || "Questions not found");
     }
   }
-  async getAllNotCompletedByUserId(userId: string, examId: string): Promise<Question[]> {
+  async getAllNotCompletedByUserId(
+    userId: string,
+    examId: string
+  ): Promise<Question[]> {
     try {
-      const res = await examSystemApi.get("/question/not-completed/by-user/"+userId+"/exam/" + examId);
+      const res = await examSystemApi.get(
+        "/question/not-completed/by-user/" + userId + "/exam/" + examId
+      );
       return res.data;
     } catch (err: any) {
       if (err?.response?.status === 404) {
@@ -37,6 +43,20 @@ class QuestionService {
       return res.data.success;
     } catch (err: any) {
       throw new Error(err?.response?.data?.message || "Question not deleted");
+    }
+  }
+  async gradeTextQuestion(
+    questionId: string,
+    gradeOpenAnswer: GradeOpenAnswer
+  ): Promise<boolean> {
+    try {
+      const res = await examSystemApi.post(
+        "/question/" + questionId + "/grade-openanswer",
+        gradeOpenAnswer
+      );
+      return res.data.success;
+    } catch (err: any) {
+      throw new Error(err?.response?.data?.message || "Question not graded");
     }
   }
 }
