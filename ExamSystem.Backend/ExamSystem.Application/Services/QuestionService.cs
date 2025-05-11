@@ -136,6 +136,11 @@ namespace ExamSystem.Application.Services
         }
         public async Task<OperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto)
         {
+            var answerResult = await _answerRepository.GetByIdAsync(gradeOpenAnswerDto.AnswerId);
+            if (!answerResult.Success || answerResult.Data == null)
+                return OperationResult.Fail("Answer not found.");
+            if (answerResult.Data.IsGraded)
+                return OperationResult.Fail("Answer is already graded.");
             var questionResult = await _questionRepository.GetByIdAsync(questionId);
             if (!questionResult.Success || questionResult.Data == null)
                 return OperationResult.Fail("Question not found.");
@@ -158,11 +163,22 @@ namespace ExamSystem.Application.Services
             var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == examUserResult.Data.UserId)!;
 
             examUser.Grade += (int)gradeOpenAnswerDto.Grade;
-
+            answerResult.Data.IsGraded = true;
+            var updateResult = await _answerRepository.UpdateAsync(answerResult.Data);
+            if (!updateResult.Success)
+                return OperationResult.Fail("Failed to update answer.");
+            var answersResult = await _answerRepository.GetAllByExamUserIdAsync(examUserResult.Data.ExamUserId);
+            if (!answersResult.Success)
+                return OperationResult.Fail("Failed to get answers.");
+            var answers = answersResult.Data!;
+            if (!answers.Any(a => !a.IsGraded))
+            {
+                examUser.IsChecked = true;
+            }
             var result = await _examRepository.UpdateAsync(exam);
-            return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to grade question.");
+            if (!result.Success)
+                return OperationResult.Fail("Failed to update exam user.");
+            return OperationResult.Ok();
         }
     }
 }
