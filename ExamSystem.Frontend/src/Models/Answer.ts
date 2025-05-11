@@ -5,5 +5,6 @@ export interface Answer {
   examId: string;
   questionOptionId: string;
   answerText: string;
+  isGraded: boolean;
 }
   

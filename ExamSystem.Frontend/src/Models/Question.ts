@@ -5,6 +5,7 @@ export interface Question {
     questionText: string;
     type: string;
     imageUrl: string;
+    maxPoints: number;
     options: QuestionOption[];
     exam: any;
   }

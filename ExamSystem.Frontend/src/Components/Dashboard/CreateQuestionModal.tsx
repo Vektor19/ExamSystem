@@ -38,6 +38,7 @@ const CreateQuestionModal: React.FC<Props> = ({
     questionText: "",
     type: "Text",
     imageUrl: "",
+    maxPoints: 0,
     options: [],
   });
 
@@ -129,6 +130,7 @@ const CreateQuestionModal: React.FC<Props> = ({
       questionText: "",
       type: "Text",
       imageUrl: "",
+      maxPoints: 0,
       options: [],
     });
   };
@@ -169,6 +171,13 @@ const CreateQuestionModal: React.FC<Props> = ({
                   name="imageUrl"
                   fullWidth
                   value={question.imageUrl}
+                  onChange={handleQuestionChange}
+                />
+                <TextField
+                  label="Max Points"
+                  name="maxPoints"
+                  fullWidth
+                  value={question.maxPoints}
                   onChange={handleQuestionChange}
                 />
               </Stack>

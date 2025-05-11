@@ -3,6 +3,7 @@ import { Violation } from './Violation';
 export interface Participant {
   examUserId: string;
   userId: string;
+  examId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -10,4 +11,5 @@ export interface Participant {
   isBlocked: string;
   grade: Number;
   violations: Violation[];
+  isChecked: boolean;
 }

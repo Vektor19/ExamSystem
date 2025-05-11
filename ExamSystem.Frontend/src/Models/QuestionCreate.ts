@@ -5,6 +5,7 @@ export interface QuestionCreate {
     questionText: string;
     type: string;
     imageUrl: string;
+    maxPoints: number;
     options: QuestionOptionCreate[];
   }
   
