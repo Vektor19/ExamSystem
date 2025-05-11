@@ -100,6 +100,7 @@ namespace ExamSystem.Application.Services
             question.QuestionText = updateDto.QuestionText;
             question.Type = Enum.Parse<QuestionType>(updateDto.Type);
             question.ImageUrl = updateDto.ImageUrl;
+            question.MaxPoints = updateDto.MaxPoints;
 
             if (updateDto.Options != null || updateDto!.Options!.Any())
             {

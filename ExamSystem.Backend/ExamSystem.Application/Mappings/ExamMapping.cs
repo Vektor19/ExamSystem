@@ -34,6 +34,7 @@ namespace ExamSystem.Application.Mappings
                     CompleteStatus = eu.CompleteStatus,
                     Grade = eu.Grade,
                     IsBlocked = eu.IsBlocked,
+                    IsChecked = eu.IsChecked,
                     Violations = eu.Violations.Select(v => new ViolationDto
                     {
                         ExamUserId = v.ExamUserId,

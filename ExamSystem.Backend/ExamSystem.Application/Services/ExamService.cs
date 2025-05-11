@@ -194,6 +194,7 @@ namespace ExamSystem.Application.Services
                 Exam = exam,
                 CompleteStatus = false,
                 IsBlocked = false,
+                IsChecked = false,
                 Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
@@ -249,6 +250,7 @@ namespace ExamSystem.Application.Services
                 Exam = exam,
                 CompleteStatus = false,
                 IsBlocked = false,
+                IsChecked = false,
                 Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
@@ -285,6 +287,7 @@ namespace ExamSystem.Application.Services
                 Exam = exam,
                 CompleteStatus = false,
                 IsBlocked = false,
+                IsChecked = false,
                 Grade = 0
             });
             var result = await _examRepository.UpdateAsync(exam);
