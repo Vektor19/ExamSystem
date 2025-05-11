@@ -10,6 +10,7 @@ namespace ExamSystem.Application.DTOs
     {
         public Guid ExamUserId { get; set; }
         public Guid UserId { get; set; }
+        public Guid ExamId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

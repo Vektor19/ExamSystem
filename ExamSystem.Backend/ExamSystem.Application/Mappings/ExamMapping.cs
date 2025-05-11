@@ -28,6 +28,8 @@ namespace ExamSystem.Application.Mappings
                 .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.ExamUsers.Select(eu => new ExamUserDto
                 {
                     UserId = eu.UserId,
+                    ExamUserId = eu.ExamUserId,
+                    ExamId = eu.ExamId,
                     FirstName = eu.User.FirstName,
                     LastName = eu.User.LastName,
                     Email = eu.User.Email,
