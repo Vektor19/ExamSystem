@@ -306,23 +306,32 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("User not found in the exam.");
             examUser.CompleteStatus = true;
 
-            examUser.Grade = exam.Questions.Count(q =>
+            foreach (var question in exam.Questions.Where(q => q.Type == QuestionType.MultiChoice))
             {
-                var correctOptionIds = q.QuestionOptions
-                    .Where(o => o.IsCorrect)
-                    .Select(o => o.QuestionOptionId)
-                    .OrderBy(id => id)
-                    .ToList();
+                double answerGrade = 0;
 
-                List<Guid> userAnswerOptionIds = q.QuestionOptions
-                    .SelectMany(o => o.Answers)
-                    .Where(a => a.UserId == userId && a.QuestionOptionId.HasValue)
-                    .Select(a => a.QuestionOptionId.Value)
-                    .OrderBy(id => id)
-                    .ToList();
+                var userAnswers = question.Answers.Where(answer => answer.UserId == userId);
+                var correctAnswersCount = userAnswers.Select(a => a.QuestionOption).Count(qo => qo!.IsCorrect);
+                var InCorrectAnswersCount = userAnswers.Select(a => a.QuestionOption).Count(qo => !qo!.IsCorrect);
+                var questionOptionCount = question.QuestionOptions.Count();
 
-                return correctOptionIds.SequenceEqual(userAnswerOptionIds);
-            });
+                var totalCorrectOptions = question.QuestionOptions.Count(o => o.IsCorrect);
+                if (totalCorrectOptions == 0) continue;
+
+                answerGrade =
+                    (double)question.MaxPoints * correctAnswersCount / totalCorrectOptions -
+                    (double)question.MaxPoints * InCorrectAnswersCount / totalCorrectOptions;
+
+                if (answerGrade < 0) answerGrade = 0;
+
+                examUser.Grade += (int)Math.Round(answerGrade, 0);
+            }
+
+            var containsOpenAnswers = exam.Questions
+                .Where(q => q.Type == QuestionType.Text)
+                .Any();
+            if (!containsOpenAnswers)
+                examUser.IsChecked = true;
 
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
