@@ -12,5 +12,6 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult> DeleteAsync(Guid questionId);
         Task<OperationResult> CreateAsync(QuestionCreateDto questionCreateDto);
         Task<OperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId);
+        Task<OperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto);
     }
 }
