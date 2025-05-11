@@ -10,6 +10,7 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<AnswerDto>> GetByIdAsync(Guid answerId);
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId);
+        Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId);
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId);
         Task<OperationResult> DeleteAsync(Guid answerId);
         Task<OperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto);

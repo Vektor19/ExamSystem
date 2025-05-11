@@ -104,5 +104,12 @@ namespace ExamSystem.API.Controllers
             }
             return BadRequest(result.ErrorMessage);
         }
+        [TypeFilter(typeof(ExamUserAuthorize))]
+        [HttpGet("by-examuser/{id}")]
+        public async Task<IActionResult> GetAllByExamUserId(Guid id)
+        {
+            var result = await _answerService.GetAllByExamUserIdAsync(id);
+            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+        }
     }
 }

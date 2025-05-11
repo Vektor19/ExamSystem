@@ -28,7 +28,7 @@ public class ExamUserAuthorize : Attribute, IAsyncAuthorizationFilter
 
         var roles = user.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
 
-        if (!roles.Contains(SystemRoles.Admin) && !roles.Contains(SystemRoles.Examinator))
+        if (!roles.Contains(SystemRoles.Admin) && !roles.Contains(SystemRoles.Examinator) && !roles.Contains(SystemRoles.Student))
         {
             context.Result = new ForbidResult();
             return;
@@ -42,8 +42,10 @@ public class ExamUserAuthorize : Attribute, IAsyncAuthorizationFilter
         }
 
         var result = await _examService.GetExamUserByIdAsync(examUserId);
+        var examResult = await _examService.GetByIdAsync(result.Data!.ExamId);
 
-        if (!result.Success || result.Data!.UserId.ToString() != userId)
+        if (!result.Success || result.Data!.UserId.ToString() != userId &&
+            (!examResult.Success || examResult.Data!.CreatedBy.UserId.ToString() != userId))
         {
             context.Result = new ForbidResult();
         }

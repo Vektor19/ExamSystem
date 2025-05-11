@@ -61,5 +61,27 @@ namespace ExamSystem.Persistence.Repositories
                 return OperationResult.Fail("Failed to delete answer.");
             return OperationResult.Ok();
         }
+        public async Task<OperationResult<IEnumerable<Answer>>> GetAllByExamUserIdAsync(Guid examUserId)
+        {
+            var examUser = await _dbContext.ExamUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(eu => eu.ExamUserId == examUserId);
+
+            if (examUser == null)
+                return OperationResult<IEnumerable<Answer>>.Fail("ExamUser not found.");
+
+            var answers = await _dbContext.Answers
+                .Include(a => a.QuestionOption)
+                .Include(a => a.User)
+                .Include(a => a.Exam)
+                .Where(a => a.UserId == examUser.UserId && a.ExamId == examUser.ExamId)
+                .ToListAsync();
+
+            if (!answers.Any())
+                return OperationResult<IEnumerable<Answer>>.Fail("No answers found for this exam user.");
+
+            return OperationResult<IEnumerable<Answer>>.Ok(answers);
+        }
+
     }
 }

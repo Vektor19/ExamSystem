@@ -101,5 +101,13 @@ namespace ExamSystem.Application.Services
             var answerDto = _mapper.Map<AnswerDto>(result.Data);
             return OperationResult<AnswerDto>.Ok(answerDto);
         }
+        public async Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId)
+        {
+            var result = await _answerRepository.GetAllByExamUserIdAsync(examUserId);
+            if (!result.Success)
+                return OperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+            var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(result.Data);
+            return OperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
+        }
     }
 }
