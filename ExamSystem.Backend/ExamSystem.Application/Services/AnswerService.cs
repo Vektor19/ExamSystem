@@ -24,6 +24,7 @@ namespace ExamSystem.Application.Services
                 return OperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
             var answer = _mapper.Map<Answer>(openAnswerDto);
             answer.AnswerId = Guid.NewGuid();
+            answer.IsGraded = false;
 
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
@@ -38,6 +39,7 @@ namespace ExamSystem.Application.Services
 
             var answer = _mapper.Map<Answer>(optionAnswerDto);
             answer.AnswerId = Guid.NewGuid();
+            answer.IsGraded = false;
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
                 ? OperationResult.Ok()

@@ -325,6 +325,11 @@ namespace ExamSystem.Application.Services
                 if (answerGrade < 0) answerGrade = 0;
 
                 examUser.Grade += (int)Math.Round(answerGrade, 0);
+
+                foreach(var answer in userAnswers)
+                {
+                    answer.IsGraded = true;
+                }
             }
 
             var containsOpenAnswers = exam.Questions
