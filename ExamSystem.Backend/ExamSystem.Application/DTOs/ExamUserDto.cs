@@ -16,6 +16,7 @@ namespace ExamSystem.Application.DTOs
         public bool CompleteStatus { get; set; }
         public bool IsBlocked { get; set; }
         public int Grade { get; set; }
+        public bool IsChecked { get; set; }
         public List<ViolationDto> Violations { get; set; } = [];
     }
 }
