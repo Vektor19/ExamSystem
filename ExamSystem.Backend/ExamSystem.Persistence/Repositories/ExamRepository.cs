@@ -76,5 +76,15 @@ namespace ExamSystem.Persistence.Repositories
                 return OperationResult<ExamUser>.Fail("Exam user not found.");
             return OperationResult<ExamUser>.Ok(examUser);
         }
+        public async Task<OperationResult<IEnumerable<ExamUser>>> GetExpiredNotFinishedExamUsersAsync(DateTime now)
+        {
+            var expiredExamUsers = await _dbContext.Exams
+                .Where(e => e.EndDate < now)
+                .SelectMany(e => e.ExamUsers
+                    .Where(eu => !eu.CompleteStatus))
+                .ToListAsync();
+
+            return OperationResult<IEnumerable<ExamUser>>.Ok(expiredExamUsers);
+        }
     }
 }
