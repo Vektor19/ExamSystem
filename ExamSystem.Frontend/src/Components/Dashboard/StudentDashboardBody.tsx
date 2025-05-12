@@ -3,8 +3,9 @@ import studentDashboardStyles from "../../Styles/StudentDashboardBody.module.css
 import DashboardPaper from "../Papers/DashboardPaper";
 import { useExams } from "../../Providers/ExamsProvider";
 import CheckIcon from "@mui/icons-material/Check";
-import WaringIcon from "@mui/icons-material/Warning";
+import WarningIcon from "@mui/icons-material/Warning";
 import ExpandIcon from "@mui/icons-material/ExpandMore";
+import TimerIcon from "@mui/icons-material/Timer";
 
 import { Stack, Typography } from "@mui/material";
 import { StudentExam } from "../../Models/StudentExam";
@@ -15,6 +16,9 @@ import TimeUtils from "../../Utils/TimeUtils";
 const StudentDashboardBody: React.FC = () => {
   const { studentCheckedExams, studentExams, removeStudentCheckedExam } =
     useExams();
+  const [recentFinishedExams, setRecentFinishedExams] = useState<
+    StudentExam[] | null
+  >([]);
   const [upcomingExams, setUpcomingExams] = useState<StudentExam[] | null>([]);
   const navigate = useNavigate();
 
@@ -26,6 +30,19 @@ const StudentDashboardBody: React.FC = () => {
       return startDate > currentDate;
     });
     setUpcomingExams(upcoming);
+
+    const finishedExams = studentExams.filter((exam) =>
+      Boolean(exam.examUser.completeStatus)
+    );
+    const lastFinishedExams = finishedExams
+      .sort((a, b) => {
+        const dateA = new Date(a.endDate);
+        const dateB = new Date(b.endDate);
+        return dateB.getTime() - dateA.getTime();
+      })
+      .slice(0, 2);
+
+    setRecentFinishedExams(lastFinishedExams);
   }, [studentExams]);
 
   const handleShowExamResult = (examId: string) => {
@@ -52,7 +69,7 @@ const StudentDashboardBody: React.FC = () => {
                   spacing={2}
                   alignItems="center"
                 >
-                  <WaringIcon />
+                  <WarningIcon />
                   <Typography variant="body1">
                     Exam: {exam.name} is upcoming -{" "}
                     {TimeUtils.formatDate(exam.startDate)}
@@ -69,10 +86,35 @@ const StudentDashboardBody: React.FC = () => {
         </DashboardPaper>
         <DashboardPaper>
           <h3>Recent Results</h3>
-          <ul>
-            <li>Mathematics — 88%</li>
-            <li>Programming — 94%</li>
-          </ul>
+          <Stack spacing={2} direction={"column"}>
+            {recentFinishedExams &&
+              recentFinishedExams.length > 0 &&
+              recentFinishedExams.map((exam) => (
+                <Stack
+                  key={exam.examId}
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                >
+                  {Boolean(exam.examUser.isBlocked) ? (
+                    <WarningIcon />
+                  ) : exam.examUser.isChecked ? (
+                    <CheckIcon />
+                  ) : (
+                    <TimerIcon />
+                  )}
+                  <Typography variant="body1">
+                    Exam: {exam.name} - Grade: {exam.examUser.grade.toString()}
+                  </Typography>
+                  <PrimaryFab
+                    size="small"
+                    onClick={() => handleShowExamResult(exam.examId)}
+                  >
+                    <ExpandIcon />
+                  </PrimaryFab>
+                </Stack>
+              ))}
+          </Stack>
         </DashboardPaper>
         <DashboardPaper>
           <h3>Notifications</h3>
