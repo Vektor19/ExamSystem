@@ -101,6 +101,11 @@ const ExamEditPage: React.FC = () => {
       `/dashboard/exam-assessment/${exam?.examId}/${participant.userId}`
     );
   };
+  const handleCheckViolationsClick = (participant: Participant) => {
+    navigate(
+      `/dashboard/exam-assessment/${exam?.examId}/${participant.userId}/violations`
+    );
+  };
 
   const renderField = (
     label: string,
@@ -442,7 +447,7 @@ const ExamEditPage: React.FC = () => {
                           </PrimaryButton>
                         )}
                         {Boolean(p.isBlocked) && (
-                          <PrimaryButton onClick={() => handleAssessClick(p)}>
+                          <PrimaryButton onClick={() => handleCheckViolationsClick(p)}>
                             Check Violations
                           </PrimaryButton>
                         )}
