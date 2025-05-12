@@ -11,8 +11,10 @@ import { StudentExam } from "../../Models/StudentExam";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
+import TimeUtils from "../../Utils/TimeUtils";
 const StudentDashboardBody: React.FC = () => {
-  const { studentCheckedExams, studentExams, removeStudentCheckedExam } = useExams();
+  const { studentCheckedExams, studentExams, removeStudentCheckedExam } =
+    useExams();
   const [upcomingExams, setUpcomingExams] = useState<StudentExam[] | null>([]);
   const navigate = useNavigate();
 
@@ -40,14 +42,30 @@ const StudentDashboardBody: React.FC = () => {
           className={`${studentDashboardStyles["upcoming-exams-container"]}`}
         >
           <h3>Upcoming Exams</h3>
-          <ul>
-            <li>
-              Physics — <em>May 15, 2025 at 10:00</em>
-            </li>
-            <li>
-              English — <em>May 20, 2025 at 12:00</em>
-            </li>
-          </ul>
+          <Stack spacing={2} direction={"column"}>
+            {upcomingExams &&
+              upcomingExams.length > 0 &&
+              upcomingExams.map((exam) => (
+                <Stack
+                  key={exam.examId}
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                >
+                  <WaringIcon />
+                  <Typography variant="body1">
+                    Exam: {exam.name} is upcoming -{" "}
+                    {TimeUtils.formatDate(exam.startDate)}
+                  </Typography>
+                  <PrimaryFab
+                    size="small"
+                    onClick={() => handleShowExamResult(exam.examId)}
+                  >
+                    <ExpandIcon />
+                  </PrimaryFab>
+                </Stack>
+              ))}
+          </Stack>
         </DashboardPaper>
         <DashboardPaper>
           <h3>Recent Results</h3>
@@ -84,27 +102,16 @@ const StudentDashboardBody: React.FC = () => {
                     </PrimaryFab>
                   </Stack>
                 ))}
-            {upcomingExams &&
-              upcomingExams.length > 0 &&
-              upcomingExams.map((exam) => (
-                <Stack
-                  key={exam.examId}
-                  direction="row"
-                  spacing={2}
-                  alignItems="center"
-                >
-                  <WaringIcon />
-                  <Typography variant="body1">
-                    Exam: {exam.name} is upcoming
-                  </Typography>
-                  <PrimaryFab
-                    size="small"
-                    onClick={() => handleShowExamResult(exam.examId)}
-                  >
-                    <ExpandIcon />
-                  </PrimaryFab>
-                </Stack>
-              ))}
+            {studentCheckedExams?.length === 0 && (
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Typography variant="body1">No recent notifications</Typography>
+              </Stack>
+            )}
           </Stack>
         </DashboardPaper>
 
