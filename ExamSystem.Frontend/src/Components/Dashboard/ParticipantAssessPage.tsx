@@ -237,7 +237,7 @@ const ParticipantAssessPage: React.FC = () => {
                             ) {
                               setErrors((prev) => ({
                                 ...prev,
-                                [ans.answerId]: `Введіть число від 0 до ${question.maxPoints}`,
+                                [ans.answerId]: `Enter number from 0 to ${question.maxPoints}`,
                               }));
                               return;
                             }
