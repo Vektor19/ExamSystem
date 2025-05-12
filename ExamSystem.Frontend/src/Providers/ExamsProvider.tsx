@@ -13,6 +13,11 @@ import { StudentExam } from "../Models/StudentExam";
 import { ExaminatorExam } from "../Models/ExaminatorExam";
 import TimeUtils from "../Utils/TimeUtils";
 
+type StudentCheckedExamNotification = {
+  examId: string;
+  addedDate: string; // ISO format
+};
+
 type ExamsContextType = {
   studentExams: StudentExam[] | null;
   examinatorExams: ExaminatorExam[] | null;
@@ -23,47 +28,95 @@ type ExamsContextType = {
   isStudentExamsLoading: boolean;
   isExaminatorExamsLoading: boolean;
   isQuestionsLoading: boolean;
+  studentCheckedExams: StudentCheckedExamNotification[];
+  removeStudentCheckedExam: (examId: string) => void;
 };
 
 const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
 
+const LOCAL_STORAGE_KEYS = {
+  studentExams: (userId: string) => `studentExams-${userId}`,
+  studentCheckedExams: (userId: string) => `studentCheckedExams-${userId}`,
+};
+
 export const ExamsProvider = ({ children }: { children: ReactNode }) => {
   const [studentExams, setStudentExams] = useState<StudentExam[] | null>(null);
-  const [examinatorExams, setExaminatorExams] = useState<
-    ExaminatorExam[] | null
-  >(null);
-  const [isStudentExamsLoading, setIsStudentExamsLoading] = useState(true);
-  const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] =
-    useState(true);
+  const [examinatorExams, setExaminatorExams] = useState<ExaminatorExam[] | null>(null);
   const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [isStudentExamsLoading, setIsStudentExamsLoading] = useState(true);
+  const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] = useState(true);
   const [isQuestionsLoading, setIsQuestionsLoading] = useState(true);
-  useEffect(() => {
-    fetchStudentExams();
-    fetchExaminatorExams();
-  }, []);
+  const [studentCheckedExams, setStudentCheckedExamsState] = useState<StudentCheckedExamNotification[]>([]);
+
+  const getUserId = () => {
+    const token = localStorage.getItem("token");
+    return token ? TokenParser.parseIdFromToken(token) : null;
+  };
+
+  const loadStudentCheckedExams = (userId: string) => {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.studentCheckedExams(userId));
+    const data: StudentCheckedExamNotification[] = raw ? JSON.parse(raw) : [];
+
+    // Check if the exams are older than 2 days and remove them
+    const now = new Date();
+    const filtered = data.filter(n => {
+      const added = new Date(n.addedDate);
+      const diffDays = (now.getTime() - added.getTime()) / (1000 * 60 * 60 * 24);
+      return diffDays <= 2;
+    });
+    localStorage.setItem(LOCAL_STORAGE_KEYS.studentCheckedExams(userId), JSON.stringify(filtered));
+    setStudentCheckedExamsState(filtered);
+    return filtered;
+  };
+
+  const saveStudentCheckedExams = (userId: string, list: StudentCheckedExamNotification[]) => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.studentCheckedExams(userId), JSON.stringify(list));
+    setStudentCheckedExamsState(list);
+  };
+
+  const removeStudentCheckedExam = (examId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+    const filtered = studentCheckedExams.filter(n => n.examId !== examId);
+    saveStudentCheckedExams(userId, filtered);
+  };
 
   const fetchStudentExams = async () => {
     setIsStudentExamsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      if (token) {
-        const userId = TokenParser.parseIdFromToken(token);
-        if (!userId) {
-          setStudentExams(null);
-          setIsStudentExamsLoading(false);
-          return;
-        }
-        const examData = await ExamService.getExamsByParticipantId(userId);
-        examData.forEach((exam) => {
-          console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+      if (!token) return setStudentExams(null);
 
-          exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
-          exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
-        });
-        setStudentExams(examData);
-      } else {
-        setStudentExams(null);
-      }
+      const userId = TokenParser.parseIdFromToken(token);
+      if (!userId) return setStudentExams(null);
+
+      const oldExamsRaw = localStorage.getItem(LOCAL_STORAGE_KEYS.studentExams(userId));
+      const oldExams: StudentExam[] = oldExamsRaw ? JSON.parse(oldExamsRaw) : [];
+
+      const examData = await ExamService.getExamsByParticipantId(userId);
+      examData.forEach((exam) => {
+        exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
+        exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
+      });
+
+      const changedExams = examData.filter(newExam => {
+        const old = oldExams.find(e => e.examId === newExam.examId);
+        return old && !old.examUser.isChecked && newExam.examUser.isChecked;
+      });
+
+      const now = new Date().toISOString();
+      const currentNotifications = loadStudentCheckedExams(userId);
+
+      const updatedNotifications = [
+        ...currentNotifications,
+        ...changedExams
+          .filter(e => !currentNotifications.some(n => n.examId === e.examId))
+          .map(e => ({ examId: e.examId, addedDate: now })),
+      ];
+
+      saveStudentCheckedExams(userId, updatedNotifications);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.studentExams(userId), JSON.stringify(examData));
+      setStudentExams(examData);
     } catch (err) {
       setStudentExams(null);
       console.error(err);
@@ -76,23 +129,18 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
     setIsExaminatorExamsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      if (token) {
-        const userId = TokenParser.parseIdFromToken(token);
-        if (!userId) {
-          setExaminatorExams(null);
-          setIsExaminatorExamsLoading(false);
-          return;
-        }
-        const examData = await ExamService.getExamsByCreatedUserId(userId);
-        examData.forEach((exam) => {
-          exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
-          exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
-          console.log(new Date(exam.startDate).toISOString());
-        });
-        setExaminatorExams(examData);
-      } else {
-        setExaminatorExams(null);
-      }
+      if (!token) return setExaminatorExams(null);
+
+      const userId = TokenParser.parseIdFromToken(token);
+      if (!userId) return setExaminatorExams(null);
+
+      const examData = await ExamService.getExamsByCreatedUserId(userId);
+      examData.forEach((exam) => {
+        exam.startDate = TimeUtils.formatUtcToLocalIso(exam.startDate);
+        exam.endDate = TimeUtils.formatUtcToLocalIso(exam.endDate);
+      });
+
+      setExaminatorExams(examData);
     } catch (err) {
       setExaminatorExams(null);
       console.error(err);
@@ -114,18 +162,27 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      loadStudentCheckedExams(userId); // ініціалізація
+    }
+  }, []);
+
   return (
     <ExamsContext.Provider
       value={{
         studentExams,
         examinatorExams,
+        questions,
         fetchStudentExams,
         fetchExaminatorExams,
+        fetchQuestions,
         isStudentExamsLoading,
         isExaminatorExamsLoading,
-        questions,
-        fetchQuestions,
         isQuestionsLoading,
+        studentCheckedExams,
+        removeStudentCheckedExam,
       }}
     >
       {children}
