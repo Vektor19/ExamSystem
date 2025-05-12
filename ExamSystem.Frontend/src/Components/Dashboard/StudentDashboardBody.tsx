@@ -24,11 +24,16 @@ const StudentDashboardBody: React.FC = () => {
 
   useEffect(() => {
     if (!studentExams) return;
-    const currentDate = new Date();
-    const upcoming = studentExams.filter((exam) => {
-      const startDate = new Date(exam.startDate);
-      return startDate > currentDate;
+    const notStartedExams = studentExams.filter((exam) => {
+      return exam.status === "NotStarted";
     });
+    const upcoming = notStartedExams
+      .sort((a, b) => {
+        const dateA = new Date(a.startDate);
+        const dateB = new Date(b.startDate);
+        return dateA.getTime() - dateB.getTime();
+      })
+      .slice(0, 2);
     setUpcomingExams(upcoming);
 
     const finishedExams = studentExams.filter((exam) =>
