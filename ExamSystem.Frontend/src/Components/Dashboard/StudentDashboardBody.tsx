@@ -97,6 +97,7 @@ const StudentDashboardBody: React.FC = () => {
                   </Typography>
                   <PrimaryFab
                     size="small"
+                    sx={{ width: "30px", height: "30px" }}
                     onClick={() => handleShowExamResult(exam.examId)}
                   >
                     <ExpandIcon />
