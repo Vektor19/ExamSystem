@@ -12,7 +12,7 @@ import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
 const StudentDashboardBody: React.FC = () => {
-  const { studentCheckedExams, studentExams } = useExams();
+  const { studentCheckedExams, studentExams, removeStudentCheckedExam } = useExams();
   const [upcomingExams, setUpcomingExams] = useState<StudentExam[] | null>([]);
   const navigate = useNavigate();
 
@@ -27,6 +27,7 @@ const StudentDashboardBody: React.FC = () => {
   }, [studentExams]);
 
   const handleShowExamResult = (examId: string) => {
+    removeStudentCheckedExam(examId);
     navigate(`/dashboard/exam-result/${examId}`);
   };
 
@@ -76,6 +77,7 @@ const StudentDashboardBody: React.FC = () => {
                       <CheckIcon /> {exam.name} has been checked
                     </Typography>
                     <PrimaryFab
+                      size="small"
                       onClick={() => handleShowExamResult(exam.examId)}
                     >
                       <ExpandIcon />
@@ -97,7 +99,6 @@ const StudentDashboardBody: React.FC = () => {
                   </Typography>
                   <PrimaryFab
                     size="small"
-                    sx={{ width: "30px", height: "30px" }}
                     onClick={() => handleShowExamResult(exam.examId)}
                   >
                     <ExpandIcon />
