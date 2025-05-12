@@ -23,6 +23,7 @@ import { NotificationProvider } from "../Providers/NotificationProvider.tsx";
 import StudentExamResult from "./Dashboard/StudentExamResult.tsx";
 import ParticipantAssessPage from "./Dashboard/ParticipantAssessPage.tsx";
 import ParticipantViolationsPage from "./Dashboard/ParticipantViolationsPage.tsx";
+import ExamsGuardRoute from "./Routes/ExamsGuardRoute.tsx";
 
 const App = () => {
   return (
@@ -56,7 +57,9 @@ const App = () => {
                   element={
                     <PrivateRoute>
                       <UserGuardRoute>
-                        <DashboardLayout />
+                        <ExamsGuardRoute>
+                          <DashboardLayout />
+                        </ExamsGuardRoute>
                       </UserGuardRoute>
                     </PrivateRoute>
                   }
@@ -64,8 +67,14 @@ const App = () => {
                   <Route index element={<Dashboard />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="exam-management" element={<Exams />} />
-                  <Route path="exam-assessment/:examId/:userId" element={<ParticipantAssessPage />} />
-                  <Route path="exam-assessment/:examId/:userId/violations" element={<ParticipantViolationsPage />} />
+                  <Route
+                    path="exam-assessment/:examId/:userId"
+                    element={<ParticipantAssessPage />}
+                  />
+                  <Route
+                    path="exam-assessment/:examId/:userId/violations"
+                    element={<ParticipantViolationsPage />}
+                  />
                   <Route path="create-exam" element={<CreateExamPage />} />
                   <Route path="edit-exam/:id" element={<ExamEditPage />} />
                   <Route
