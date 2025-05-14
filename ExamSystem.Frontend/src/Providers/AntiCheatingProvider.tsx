@@ -79,7 +79,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           violation,
         ]);
         showNotification(
-          `Violation detected! ${violationsRef.current.length+1}/2`,
+          `Violation detected! ${violationsRef.current.length + 1}/2`,
           "error"
         );
       } catch (err) {
@@ -106,14 +106,14 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
       showNotification("You are away from the exam window GO BACK!!!", "error");
 
       violationTimeout = setTimeout(() => {
-        // registerViolation(
-        //   ViolationType.NewPageOpen,
-        //   "User was away from the exam window for more than 5 seconds",
-        //   true
-        // );
-        // console.log(
-        //   "User was away from the exam window for more than 5 seconds"
-        // );
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User was away from the exam window for more than 5 seconds",
+          true
+        );
+        console.log(
+          "User was away from the exam window for more than 5 seconds"
+        );
         violationTimeout = null;
         isWindowBlurred = false;
       }, 5000); // 5 секунд
@@ -139,7 +139,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
 
     const handleWindowFocus = () => {
       cancelViolationTimer();
-      //registerViolation(ViolationType.NewPageOpen, "User lost focus", false);
+      registerViolation(ViolationType.NewPageOpen, "User lost focus", false);
       console.log("User returned to window in time");
     };
 
@@ -186,6 +186,40 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           false
         );
       }
+      if(e.key === "F11") {
+        e.preventDefault();
+        console.log("F11 pressed");
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User pressed F11",
+          false
+        );
+      }
+    };
+    const handleWindowResize = () => {
+      registerViolation(
+        ViolationType.NewPageOpen,
+        "User resized the window",
+        false
+      );
+    };
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+      registerViolation(
+        ViolationType.NewPageOpen,
+        "User attempted to close the tab",
+        true
+      );
+    };
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User exited fullscreen mode",
+          false
+        );
+      }
     };
 
     window.addEventListener("visibilitychange", handleVisibilityChange);
@@ -193,12 +227,23 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener("focus", handleWindowFocus);
     window.addEventListener("copy", handleCopy);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleWindowResize);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.warn("Fullscreen not allowed:", err);
+      });
+    }
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("blur", handleWindowBlur);
       window.removeEventListener("focus", handleWindowFocus);
       window.removeEventListener("copy", handleCopy);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleWindowResize);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
       if (violationTimeout) clearTimeout(violationTimeout);
     };
   }, [studentExam]);
