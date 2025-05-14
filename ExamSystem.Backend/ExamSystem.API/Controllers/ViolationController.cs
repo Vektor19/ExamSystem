@@ -3,6 +3,7 @@ using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.DTOs.Violation;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -26,14 +27,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _violationService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamUserAuthorize))]
         [HttpGet("by-examuser/{id}")]
         public async Task<IActionResult> GetAllByExamUserIdAsync(Guid id)
         {
             var result = await _violationService.GetAllByExamUserIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(ViolationOwnerOrAdminAuthorize))]
@@ -41,7 +42,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _violationService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamUserAuthorize))]
         [HttpPost("exam-user/{id}")]
