@@ -5,6 +5,7 @@ using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.Services;
 using ExamSystem.Application.DTOs.Exam;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -26,14 +27,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _examService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
         [HttpGet("by-me/{id}")]
         public async Task<IActionResult> GetAllByCreatedUserIdAsync(Guid id)
         {
             var result = await _examService.GetAllByCreatedUserIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
@@ -41,7 +42,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAllByParticipantIdAsync(Guid id)
         {
             var result = await _examService.GetAllByParticipantUserIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(ExamReadAccessAuthorize))]
@@ -49,14 +50,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _examService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [CreateExamAuthorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ExamCreateDto examDto)
         {
             var result = await _examService.CreateAsync(examDto);
-            return result.Success ? Ok(result.Data) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
@@ -64,21 +65,21 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] ExamUpdateDto updateDto)
         {
             var result = await _examService.UpdateAsync(id, updateDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _examService.DeleteAsync(id);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
         [HttpPost("{id}/participants")]
         public async Task<IActionResult> AddParticipant(Guid id, [FromBody] AddParticipantDto dto)
         {
             var result = await _examService.AddParticipantAsync(id, dto.UserId);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
@@ -86,14 +87,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> AddParticipantByEmail(Guid id, [FromBody] AddParticipantByEmailDto dto)
         {
             var result = await _examService.AddParticipantByEmailAsync(id, dto.Email);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [HttpPost("join")]
         public async Task<IActionResult> JoinExam([FromBody] JoinExamDto dto)
         {
             var result = await _examService.JoinExam(dto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
     }
