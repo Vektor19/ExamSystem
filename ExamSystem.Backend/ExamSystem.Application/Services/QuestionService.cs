@@ -2,7 +2,8 @@
 using ExamSystem.Application.DTOs;
 using ExamSystem.Application.DTOs.Question;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
@@ -27,12 +28,7 @@ namespace ExamSystem.Application.Services
         {
             var examResult = await _examRepository.GetByIdAsync(questionCreateDto.ExamId);
             if (!examResult.Success || examResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
-            if (string.IsNullOrWhiteSpace(questionCreateDto.QuestionText))
-                return ServiceOperationResult.Fail("Question text is required.");
-            if (string.IsNullOrWhiteSpace(questionCreateDto.Type))
-                return ServiceOperationResult.Fail("Question type is required.");
-            // TODO: Add validation for all models in services using special validators
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.BadRequest);
 
             var question = _mapper.Map<Question>(questionCreateDto);
             question.QuestionId = Guid.NewGuid();
@@ -43,7 +39,7 @@ namespace ExamSystem.Application.Services
             var result = await _questionRepository.AddAsync(question);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create question.");
+                : ServiceOperationResult.Fail("Failed to create question.", ServiceOperationErrorType.Internal);
         }
 
 
@@ -52,16 +48,14 @@ namespace ExamSystem.Application.Services
             var result = await _questionRepository.DeleteAsync(id);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete question.");
+                : ServiceOperationResult.Fail("Failed to delete question.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<IEnumerable<QuestionDto>>> GetAllAsync()
         {
             var result = await _questionRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found.");
+                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
@@ -71,11 +65,9 @@ namespace ExamSystem.Application.Services
         {
             var result = await _questionRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var questions = result.Data!;
             var filteredQuestions = questions.Where(q => q.ExamId == examId).ToList();
-            if (!filteredQuestions.Any())
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam.");
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(filteredQuestions);
             return ServiceOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
@@ -84,7 +76,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _questionRepository.GetByIdAsync(id);
             if (!result.Success)
-                return ServiceOperationResult<QuestionDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<QuestionDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var question = _mapper.Map<QuestionDto>(result.Data);
             return ServiceOperationResult<QuestionDto>.Ok(question);
@@ -94,7 +86,7 @@ namespace ExamSystem.Application.Services
         {
             var existingQuestionResult = await _questionRepository.GetByIdAsync(questionId);
             if (!existingQuestionResult.Success || existingQuestionResult.Data == null)
-                return ServiceOperationResult.Fail("Question not found.");
+                return ServiceOperationResult.Fail("Question not found.", ServiceOperationErrorType.NotFound);
 
             var question = existingQuestionResult.Data;
 
@@ -122,42 +114,42 @@ namespace ExamSystem.Application.Services
             var updateResult = await _questionRepository.UpdateAsync(question);
             return updateResult.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to update question.");
+                : ServiceOperationResult.Fail("Failed to update question.", ServiceOperationErrorType.Internal);
         }
         public async Task<ServiceOperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId)
         {
             var result = await _questionRepository.GetUnansweredByUserAsync(examId, userId);
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var questions = result.Data!;
-            if (!questions.Any())
-                return ServiceOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam and user.");
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(questions);
             return ServiceOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
         public async Task<ServiceOperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto)
         {
-            var answerResult = await _answerRepository.GetByIdAsync(gradeOpenAnswerDto.AnswerId);
-            if (!answerResult.Success || answerResult.Data == null)
-                return ServiceOperationResult.Fail("Answer not found.");
-            if (answerResult.Data.IsGraded)
-                return ServiceOperationResult.Fail("Answer is already graded.");
             var questionResult = await _questionRepository.GetByIdAsync(questionId);
             if (!questionResult.Success || questionResult.Data == null)
-                return ServiceOperationResult.Fail("Question not found.");
+                return ServiceOperationResult.Fail("Question not found.", ServiceOperationErrorType.NotFound);
+
+            var answerResult = await _answerRepository.GetByIdAsync(gradeOpenAnswerDto.AnswerId);
+            if (!answerResult.Success || answerResult.Data == null)
+                return ServiceOperationResult.Fail("Answer not found.", ServiceOperationErrorType.BadRequest);
+            if (answerResult.Data.IsGraded)
+                return ServiceOperationResult.Fail("Answer is already graded.", ServiceOperationErrorType.Conflict);
+            
             var question = questionResult.Data;
             if (question.Type != QuestionType.Text)
-                return ServiceOperationResult.Fail("Question is not of type Text.");
+                return ServiceOperationResult.Fail("Question is not of type Text.", ServiceOperationErrorType.BadRequest);
             if (question.MaxPoints < gradeOpenAnswerDto.Grade)
-                return ServiceOperationResult.Fail("Grade is higher than maximum");
+                return ServiceOperationResult.Fail("Grade is higher than maximum", ServiceOperationErrorType.BadRequest);
             var examUserResult = await _examRepository.GetExamUserByIdAsync(gradeOpenAnswerDto.ExamUserId);
             if (!examUserResult.Success || examUserResult.Data == null)
-                return ServiceOperationResult.Fail("Exam user not found.");
+                return ServiceOperationResult.Fail("Exam user not found.", ServiceOperationErrorType.BadRequest);
 
             var examResult = await _examRepository.GetByIdAsync(question.ExamId);
 
             if (!examResult.Success || examResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.BadRequest);
 
             var exam = examResult.Data;
 
@@ -167,10 +159,10 @@ namespace ExamSystem.Application.Services
             answerResult.Data.IsGraded = true;
             var updateResult = await _answerRepository.UpdateAsync(answerResult.Data);
             if (!updateResult.Success)
-                return ServiceOperationResult.Fail("Failed to update answer.");
+                return ServiceOperationResult.Fail("Failed to update answer.", ServiceOperationErrorType.Internal);
             var answersResult = await _answerRepository.GetAllByExamUserIdAsync(examUserResult.Data.ExamUserId);
-            if (!answersResult.Success)
-                return ServiceOperationResult.Fail("Failed to get answers.");
+            if (!answersResult.Success || !answersResult.Data!.Any())
+                return ServiceOperationResult.Fail("Failed to get answers.", ServiceOperationErrorType.BadRequest);
             var answers = answersResult.Data!;
             if (!answers.Any(a => !a.IsGraded))
             {
@@ -178,7 +170,7 @@ namespace ExamSystem.Application.Services
             }
             var result = await _examRepository.UpdateAsync(exam);
             if (!result.Success)
-                return ServiceOperationResult.Fail("Failed to update exam user.");
+                return ServiceOperationResult.Fail("Failed to update exam user.", ServiceOperationErrorType.Internal);
             return ServiceOperationResult.Ok();
         }
     }
