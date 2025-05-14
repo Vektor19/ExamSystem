@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
-using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
 
 namespace ExamSystem.Application.Services
@@ -21,7 +21,7 @@ namespace ExamSystem.Application.Services
         public async Task<ServiceOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOpenAnswerDto openAnswerDto)
-                return ServiceOperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
+                return ServiceOperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.", ServiceOperationErrorType.Internal);
             var answer = _mapper.Map<Answer>(openAnswerDto);
             answer.AnswerId = Guid.NewGuid();
             answer.IsGraded = false;
@@ -29,13 +29,13 @@ namespace ExamSystem.Application.Services
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create answer.");
+                : ServiceOperationResult.Fail("Failed to create answer.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOptionAnswerDto optionAnswerDto)
-                return ServiceOperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
+                return ServiceOperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.", ServiceOperationErrorType.Internal);
 
             var answer = _mapper.Map<Answer>(optionAnswerDto);
             answer.AnswerId = Guid.NewGuid();
@@ -43,7 +43,7 @@ namespace ExamSystem.Application.Services
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create answer.");
+                : ServiceOperationResult.Fail("Failed to create answer.", ServiceOperationErrorType.Internal);
         }
 
 
@@ -52,16 +52,14 @@ namespace ExamSystem.Application.Services
             var result = await _answerRepository.DeleteAsync(id);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete answer.");
+                : ServiceOperationResult.Fail("Failed to delete answer.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<IEnumerable<AnswerDto>>> GetAllAsync()
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found.");
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var examDtos = _mapper.Map<IEnumerable<AnswerDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(examDtos);
@@ -71,11 +69,9 @@ namespace ExamSystem.Application.Services
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var answers = result.Data!;
             var filteredAnswers = answers.Where(e => e.ExamId == examId).ToList();
-            if (!filteredAnswers.Any())
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this exam.");
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(filteredAnswers);
             return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
@@ -83,11 +79,9 @@ namespace ExamSystem.Application.Services
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var answers = result.Data!;
             var filteredAnswers = answers.Where(e => e.UserId == userId).ToList();
-            if (!filteredAnswers.Any())
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this user.");
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(filteredAnswers);
             return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
@@ -96,7 +90,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _answerRepository.GetByIdAsync(id);
             if (!result.Success)
-                return ServiceOperationResult<AnswerDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<AnswerDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var answerDto = _mapper.Map<AnswerDto>(result.Data);
             return ServiceOperationResult<AnswerDto>.Ok(answerDto);
@@ -105,7 +99,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _answerRepository.GetAllByExamUserIdAsync(examUserId);
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
