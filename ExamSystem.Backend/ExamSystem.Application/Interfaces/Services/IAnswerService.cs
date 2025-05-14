@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using ExamSystem.Application.DTOs;
-using ExamSystem.Core.Common;
+﻿using ExamSystem.Application.DTOs;
+using ExamSystem.Application.Common.Models;
 
 namespace ExamSystem.Application.Interfaces.Services
 {

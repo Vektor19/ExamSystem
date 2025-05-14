@@ -1,4 +1,4 @@
-﻿namespace ExamSystem.Core.Common.Enums;
+﻿namespace ExamSystem.Application.Common.Enums;
 
 public enum ServiceOperationErrorType
 {

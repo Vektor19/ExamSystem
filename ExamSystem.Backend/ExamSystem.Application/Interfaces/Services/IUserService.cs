@@ -1,5 +1,5 @@
 ﻿using ExamSystem.Application.DTOs.User;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
 
 namespace ExamSystem.Application.Interfaces.Services
 {

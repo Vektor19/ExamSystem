@@ -1,6 +1,6 @@
-﻿using ExamSystem.Core.Common.Enums;
+﻿using ExamSystem.Application.Common.Enums;
 
-namespace ExamSystem.Core.Common.Models;
+namespace ExamSystem.Application.Common.Models;
 public class ServiceOperationResult
 {
     public bool Success { get; private set; }

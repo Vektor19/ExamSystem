@@ -1,6 +1,5 @@
 ﻿using ExamSystem.Application.DTOs.QuestionOption;
-using ExamSystem.Core.Common;
-using ExamSystem.Core.Entities;
+using ExamSystem.Application.Common.Models;
 
 namespace ExamSystem.Application.Interfaces.Services
 {
