@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using ExamSystem.Application.DTOs.QuestionOption;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
-using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
 
 namespace ExamSystem.Application.Services
@@ -22,18 +22,17 @@ namespace ExamSystem.Application.Services
 
         public async Task<ServiceOperationResult> CreateAsync(QuestionOptionCreateDto questionCreateDto)
         {
-            var questionOption = _mapper.Map<QuestionOption>(questionCreateDto);
-            questionOption.QuestionOptionId = Guid.NewGuid();
-
             var questionResult = await _questionRepository.GetByIdAsync(questionCreateDto.QuestionId);
             if (!questionResult.Success || questionResult.Data == null)
-                return ServiceOperationResult.Fail("Question not found.");
+                return ServiceOperationResult.Fail("Question not found.", ServiceOperationErrorType.BadRequest);
 
+            var questionOption = _mapper.Map<QuestionOption>(questionCreateDto);
+            questionOption.QuestionOptionId = Guid.NewGuid();
             questionOption.Question = questionResult.Data;
             var result = await _questionOptionRepository.AddAsync(questionOption);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create question option.");
+                : ServiceOperationResult.Fail("Failed to create question option.", ServiceOperationErrorType.Internal);
         }
 
 
@@ -42,16 +41,14 @@ namespace ExamSystem.Application.Services
             var result = await _questionOptionRepository.DeleteAsync(id);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete question option.");
+                : ServiceOperationResult.Fail("Failed to delete question option.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync()
         {
             var result = await _questionOptionRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found.");
+                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var questionOptionsDtos = _mapper.Map<IEnumerable<QuestionOptionDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
@@ -61,11 +58,9 @@ namespace ExamSystem.Application.Services
         {
             var result = await _questionOptionRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var questionOptions = result.Data!;
             var filteredQuestionOptions = questionOptions.Where(q => q.QuestionId == questionId).ToList();
-            if (!filteredQuestionOptions.Any())
-                return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found for this question.");
             var questionOptionsDtos = _mapper.Map<IEnumerable<QuestionOptionDto>>(filteredQuestionOptions);
             return ServiceOperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
         }
@@ -74,7 +69,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _questionOptionRepository.GetByIdAsync(id);
             if (!result.Success)
-                return ServiceOperationResult<QuestionOptionDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<QuestionOptionDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var questionOption = _mapper.Map<QuestionOptionDto>(result.Data);
             return ServiceOperationResult<QuestionOptionDto>.Ok(questionOption);
@@ -84,7 +79,7 @@ namespace ExamSystem.Application.Services
         {
             var existingQuestionOptionResult = await _questionOptionRepository.GetByIdAsync(questionOptionId);
             if (!existingQuestionOptionResult.Success || existingQuestionOptionResult.Data == null)
-                return ServiceOperationResult.Fail("Question option not found.");
+                return ServiceOperationResult.Fail("Question option not found.", ServiceOperationErrorType.NotFound);
 
             var questionOption = existingQuestionOptionResult.Data;
 
@@ -95,7 +90,7 @@ namespace ExamSystem.Application.Services
             var updateResult = await _questionOptionRepository.UpdateAsync(questionOption);
             return updateResult.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to update question option.");
+                : ServiceOperationResult.Fail("Failed to update question option.", ServiceOperationErrorType.Internal);
         }
     }
 }
