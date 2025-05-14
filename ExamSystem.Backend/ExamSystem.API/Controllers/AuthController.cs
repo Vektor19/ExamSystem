@@ -2,6 +2,7 @@
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.DTOs.Token;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -20,20 +21,20 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginDto)
         {
             var result = await _authService.LoginAsync(loginDto);
-            return result.Success ? Ok(result.Data) : Unauthorized(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
         {
             var result = await _authService.RegisterAsync(registerDto);
-            return result.Success ? Ok(result.Data) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [HttpPost("validate")]
         public async Task<IActionResult> ValidateToken([FromBody] ValidateTokenDto tokenDto)
         {
             var result = await _authService.ValidateTokenAsync(tokenDto.Token);
-            return result.Success ? Ok(result.Data) : Unauthorized(result.ErrorMessage);
+            return result.ToActionResult();
         }
     }
 }
