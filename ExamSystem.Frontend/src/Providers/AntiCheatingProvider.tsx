@@ -204,11 +204,11 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
     };
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = "";
+      e.returnValue = "Are you sure you want to leave?";
       registerViolation(
-        ViolationType.NewPageOpen,
+        ViolationType.Unregistered,
         "User attempted to close the tab",
-        true
+        false
       );
     };
     const handleFullscreenChange = () => {
