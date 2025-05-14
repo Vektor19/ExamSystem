@@ -12,26 +12,26 @@ namespace ExamSystem.Persistence.Repositories
         {
             this._dbContext = dbContext;
         }
-        public async Task<OperationResult<IEnumerable<Violation>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<Violation>>> GetAllAsync()
         {
             var violations = await _dbContext.Violations.Include(v => v.ExamUser)
                                                         .ToListAsync();
-            return OperationResult<IEnumerable<Violation>>.Ok(violations);
+            return RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations);
         }
-        public async Task<OperationResult<Violation>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<Violation>> GetByIdAsync(Guid id)
         {
             var violation = await _dbContext.Violations.Include(v => v.ExamUser)
                                              .FirstOrDefaultAsync(v => v.ViolationId == id);
             if (violation == null)
-                return OperationResult<Violation>.Fail("Violation not found.");
-            return OperationResult<Violation>.Ok(violation);
+                return RepositoryOperationResult<Violation>.Fail("Violation not found.");
+            return RepositoryOperationResult<Violation>.Ok(violation);
         }
-        public async Task<OperationResult<IEnumerable<Violation>>> GetAllByExamUserIdAsync(Guid examUserId)
+        public async Task<RepositoryOperationResult<IEnumerable<Violation>>> GetAllByExamUserIdAsync(Guid examUserId)
         {
             var violations = await _dbContext.Violations.Include(v => v.ExamUser)
                                                         .Where(v => v.ExamUserId == examUserId)
                                                         .ToListAsync();
-            return OperationResult<IEnumerable<Violation>>.Ok(violations);
+            return RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations);
         }
         public async Task<RepositoryOperationResult> AddAsync(Violation entity)
         {

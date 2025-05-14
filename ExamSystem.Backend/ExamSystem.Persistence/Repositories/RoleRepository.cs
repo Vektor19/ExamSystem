@@ -14,18 +14,18 @@ namespace ExamSystem.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<OperationResult<IEnumerable<Role>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<Role>>> GetAllAsync()
         {
             var roles = await _dbContext.Roles.ToListAsync();
-            return OperationResult<IEnumerable<Role>>.Ok(roles);
+            return RepositoryOperationResult<IEnumerable<Role>>.Ok(roles);
         }
 
-        public async Task<OperationResult<Role>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<Role>> GetByIdAsync(Guid id)
         {
             var role = await _dbContext.Roles.FindAsync(id);
             if (role == null)
-                return OperationResult<Role>.Fail("Role not found.");
-            return OperationResult<Role>.Ok(role);
+                return RepositoryOperationResult<Role>.Fail("Role not found.");
+            return RepositoryOperationResult<Role>.Ok(role);
         }
 
         public async Task<RepositoryOperationResult> AddAsync(Role entity)
@@ -75,13 +75,13 @@ namespace ExamSystem.Persistence.Repositories
             return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult<IEnumerable<Role>>> GetRolesByNamesAsync(IEnumerable<string> names)
+        public async Task<RepositoryOperationResult<IEnumerable<Role>>> GetRolesByNamesAsync(IEnumerable<string> names)
         {
             var roles = await _dbContext.Roles
                                         .Where(r => names.Contains(r.Name))
                                         .ToListAsync();
 
-            return OperationResult<IEnumerable<Role>>.Ok(roles);
+            return RepositoryOperationResult<IEnumerable<Role>>.Ok(roles);
         }
 
     }

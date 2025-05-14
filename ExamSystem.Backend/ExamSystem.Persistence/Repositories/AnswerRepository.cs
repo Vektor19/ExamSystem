@@ -12,23 +12,23 @@ namespace ExamSystem.Persistence.Repositories
         {
             this._dbContext = dbContext;
         }
-        public async Task<OperationResult<IEnumerable<Answer>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<Answer>>> GetAllAsync()
         {
             var answers = await _dbContext.Answers.Include(a => a.QuestionOption)
                                                   .Include(a => a.User)
                                                   .Include(a => a.Exam)
                                                   .ToListAsync();
-            return OperationResult<IEnumerable<Answer>>.Ok(answers);
+            return RepositoryOperationResult<IEnumerable<Answer>>.Ok(answers);
         }
-        public async Task<OperationResult<Answer>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<Answer>> GetByIdAsync(Guid id)
         {
             var answer = await _dbContext.Answers.Include(a => a.QuestionOption)
                                                  .Include(a => a.User)
                                                  .Include(a => a.Exam)
                                                  .FirstOrDefaultAsync(a => a.AnswerId == id);
             if (answer == null)
-                return OperationResult<Answer>.Fail("Answer not found.");
-            return OperationResult<Answer>.Ok(answer);
+                return RepositoryOperationResult<Answer>.Fail("Answer not found.");
+            return RepositoryOperationResult<Answer>.Ok(answer);
         }
 
         public async Task<RepositoryOperationResult> AddAsync(Answer entity)
@@ -61,14 +61,14 @@ namespace ExamSystem.Persistence.Repositories
                 return RepositoryOperationResult.Fail("Failed to delete answer.");
             return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult<IEnumerable<Answer>>> GetAllByExamUserIdAsync(Guid examUserId)
+        public async Task<RepositoryOperationResult<IEnumerable<Answer>>> GetAllByExamUserIdAsync(Guid examUserId)
         {
             var examUser = await _dbContext.ExamUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(eu => eu.ExamUserId == examUserId);
 
             if (examUser == null)
-                return OperationResult<IEnumerable<Answer>>.Fail("ExamUser not found.");
+                return RepositoryOperationResult<IEnumerable<Answer>>.Fail("ExamUser not found.");
 
             var answers = await _dbContext.Answers
                 .Include(a => a.QuestionOption)
@@ -77,7 +77,7 @@ namespace ExamSystem.Persistence.Repositories
                 .Where(a => a.UserId == examUser.UserId && a.ExamId == examUser.ExamId)
                 .ToListAsync();
 
-            return OperationResult<IEnumerable<Answer>>.Ok(answers);
+            return RepositoryOperationResult<IEnumerable<Answer>>.Ok(answers);
         }
 
     }

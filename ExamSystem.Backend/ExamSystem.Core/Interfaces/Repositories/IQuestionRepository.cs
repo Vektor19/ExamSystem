@@ -5,6 +5,6 @@ namespace ExamSystem.Core.Interfaces.Repositories
 {
     public interface IQuestionRepository : ICrudRepository<Question>
     {
-        Task<OperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId);
+        Task<RepositoryOperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId);
     }
 }

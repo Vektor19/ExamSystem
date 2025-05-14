@@ -7,11 +7,11 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IAnswerService
     {
-        Task<OperationResult<AnswerDto>> GetByIdAsync(Guid answerId);
-        Task<OperationResult<IEnumerable<AnswerDto>>> GetAllAsync();
-        Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId);
-        Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId);
-        Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId);
+        Task<RepositoryOperationResult<AnswerDto>> GetByIdAsync(Guid answerId);
+        Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllAsync();
+        Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId);
+        Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId);
+        Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId);
         Task<RepositoryOperationResult> DeleteAsync(Guid answerId);
         Task<RepositoryOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto);
         Task<RepositoryOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto);

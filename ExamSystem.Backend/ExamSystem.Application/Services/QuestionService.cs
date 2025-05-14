@@ -55,39 +55,39 @@ namespace ExamSystem.Application.Services
                 : RepositoryOperationResult.Fail("Failed to delete question.");
         }
 
-        public async Task<OperationResult<IEnumerable<QuestionDto>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllAsync()
         {
             var result = await _questionRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return OperationResult<IEnumerable<QuestionDto>>.Fail("No questions found.");
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found.");
 
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(result.Data);
-            return OperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
+            return RepositoryOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
 
-        public async Task<OperationResult<IEnumerable<QuestionDto>>> GetAllByExamIdAsync(Guid examId)
+        public async Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllByExamIdAsync(Guid examId)
         {
             var result = await _questionRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
             var questions = result.Data!;
             var filteredQuestions = questions.Where(q => q.ExamId == examId).ToList();
             if (!filteredQuestions.Any())
-                return OperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam.");
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam.");
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(filteredQuestions);
-            return OperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
+            return RepositoryOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
 
-        public async Task<OperationResult<QuestionDto>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<QuestionDto>> GetByIdAsync(Guid id)
         {
             var result = await _questionRepository.GetByIdAsync(id);
             if (!result.Success)
-                return OperationResult<QuestionDto>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<QuestionDto>.Fail(result.ErrorMessage!);
 
             var question = _mapper.Map<QuestionDto>(result.Data);
-            return OperationResult<QuestionDto>.Ok(question);
+            return RepositoryOperationResult<QuestionDto>.Ok(question);
         }
 
         public async Task<RepositoryOperationResult> UpdateAsync(Guid questionId, QuestionUpdateDto updateDto)
@@ -124,16 +124,16 @@ namespace ExamSystem.Application.Services
                 ? RepositoryOperationResult.Ok()
                 : RepositoryOperationResult.Fail("Failed to update question.");
         }
-        public async Task<OperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId)
+        public async Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId)
         {
             var result = await _questionRepository.GetUnansweredByUserAsync(examId, userId);
             if (!result.Success)
-                return OperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail(result.ErrorMessage!);
             var questions = result.Data!;
             if (!questions.Any())
-                return OperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam and user.");
+                return RepositoryOperationResult<IEnumerable<QuestionDto>>.Fail("No questions found for this exam and user.");
             var questionDtos = _mapper.Map<IEnumerable<QuestionDto>>(questions);
-            return OperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
+            return RepositoryOperationResult<IEnumerable<QuestionDto>>.Ok(questionDtos);
         }
         public async Task<RepositoryOperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto)
         {

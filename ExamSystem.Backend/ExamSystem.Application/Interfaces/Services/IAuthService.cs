@@ -5,8 +5,8 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<OperationResult<AuthResponseDto>> LoginAsync(LoginUserDto loginDto);
-        Task<OperationResult<AuthResponseDto>> RegisterAsync(RegisterUserDto registerDto);
-        Task<OperationResult<bool>> ValidateTokenAsync(string token);
+        Task<RepositoryOperationResult<AuthResponseDto>> LoginAsync(LoginUserDto loginDto);
+        Task<RepositoryOperationResult<AuthResponseDto>> RegisterAsync(RegisterUserDto registerDto);
+        Task<RepositoryOperationResult<bool>> ValidateTokenAsync(string token);
     }
 }

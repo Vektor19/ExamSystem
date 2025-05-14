@@ -12,7 +12,7 @@ namespace ExamSystem.Persistence.Repositories
         {
             this._dbContext = dbContext;
         }
-        public async Task<OperationResult<IEnumerable<Exam>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<Exam>>> GetAllAsync()
         {
             var exams = await _dbContext.Exams.Include(e => e.ExamUsers)
                                                 .ThenInclude(eu => eu.User)
@@ -20,9 +20,9 @@ namespace ExamSystem.Persistence.Repositories
                                               .Include(e => e.Questions)
                                               .Include(e => e.Answers)
                                               .ToListAsync();
-            return OperationResult<IEnumerable<Exam>>.Ok(exams);
+            return RepositoryOperationResult<IEnumerable<Exam>>.Ok(exams);
         }
-        public async Task<OperationResult<Exam>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<Exam>> GetByIdAsync(Guid id)
         {
             var exam = await _dbContext.Exams.Include(e => e.ExamUsers)
                                                 .ThenInclude(eu => eu.User)
@@ -34,8 +34,8 @@ namespace ExamSystem.Persistence.Repositories
                                                     .ThenInclude(a => a.QuestionOption)
                                              .FirstOrDefaultAsync(e => e.ExamId == id);
             if (exam == null)
-                return OperationResult<Exam>.Fail("Exam not found.");
-            return OperationResult<Exam>.Ok(exam);
+                return RepositoryOperationResult<Exam>.Fail("Exam not found.");
+            return RepositoryOperationResult<Exam>.Ok(exam);
         }
 
         public async Task<RepositoryOperationResult> AddAsync(Exam entity)
@@ -69,17 +69,17 @@ namespace ExamSystem.Persistence.Repositories
             return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult<ExamUser>> GetExamUserByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<ExamUser>> GetExamUserByIdAsync(Guid id)
         {
             var examUser = await _dbContext.ExamUsers.Include(eu => eu.User)
                                                      .Include(eu => eu.Exam)
                                                      .Include(eu => eu.Violations)
                                                      .FirstOrDefaultAsync(eu => eu.ExamUserId == id);
             if (examUser == null)
-                return OperationResult<ExamUser>.Fail("Exam user not found.");
-            return OperationResult<ExamUser>.Ok(examUser);
+                return RepositoryOperationResult<ExamUser>.Fail("Exam user not found.");
+            return RepositoryOperationResult<ExamUser>.Ok(examUser);
         }
-        public async Task<OperationResult<IEnumerable<ExamUser>>> GetExpiredNotFinishedExamUsersAsync(DateTime now)
+        public async Task<RepositoryOperationResult<IEnumerable<ExamUser>>> GetExpiredNotFinishedExamUsersAsync(DateTime now)
         {
             var expiredExamUsers = await _dbContext.Exams
                 .Where(e => e.EndDate < now)
@@ -87,7 +87,7 @@ namespace ExamSystem.Persistence.Repositories
                     .Where(eu => !eu.CompleteStatus))
                 .ToListAsync();
 
-            return OperationResult<IEnumerable<ExamUser>>.Ok(expiredExamUsers);
+            return RepositoryOperationResult<IEnumerable<ExamUser>>.Ok(expiredExamUsers);
         }
     }
 }

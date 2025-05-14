@@ -5,6 +5,6 @@ namespace ExamSystem.Core.Interfaces.Repositories
 {
     public interface IViolationRepository : ICrudRepository<Violation>
     {
-        Task<OperationResult<IEnumerable<Violation>>> GetAllByExamUserIdAsync(Guid examUserId);
+        Task<RepositoryOperationResult<IEnumerable<Violation>>> GetAllByExamUserIdAsync(Guid examUserId);
     }
 }

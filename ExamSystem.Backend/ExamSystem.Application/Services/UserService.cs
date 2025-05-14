@@ -64,36 +64,36 @@ namespace ExamSystem.Application.Services
                 : RepositoryOperationResult.Fail("Failed to delete user.");
         }
 
-        public async Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<UserDto>>> GetAllAsync()
         {
             var result = await _userRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<UserDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<UserDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return OperationResult<IEnumerable<UserDto>>.Fail("No users found.");
+                return RepositoryOperationResult<IEnumerable<UserDto>>.Fail("No users found.");
 
             var userDtos = _mapper.Map<IEnumerable<UserDto>>(result.Data);
-            return OperationResult<IEnumerable<UserDto>>.Ok(userDtos);
+            return RepositoryOperationResult<IEnumerable<UserDto>>.Ok(userDtos);
         }
 
-        public async Task<OperationResult<UserDto>> GetByEmailAsync(string email)
+        public async Task<RepositoryOperationResult<UserDto>> GetByEmailAsync(string email)
         {
             var result = await _userRepository.GetByEmailAsync(email);
             if (!result.Success)
-                return OperationResult<UserDto>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<UserDto>.Fail(result.ErrorMessage!);
 
             var userDto = _mapper.Map<UserDto>(result.Data);
-            return OperationResult<UserDto>.Ok(userDto);
+            return RepositoryOperationResult<UserDto>.Ok(userDto);
         }
 
-        public async Task<OperationResult<UserDto>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<UserDto>> GetByIdAsync(Guid id)
         {
             var result = await _userRepository.GetByIdAsync(id);
             if (!result.Success)
-                return OperationResult<UserDto>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<UserDto>.Fail(result.ErrorMessage!);
 
             var userDto = _mapper.Map<UserDto>(result.Data);
-            return OperationResult<UserDto>.Ok(userDto);
+            return RepositoryOperationResult<UserDto>.Ok(userDto);
         }
 
         public async Task<RepositoryOperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto)
@@ -157,17 +157,17 @@ namespace ExamSystem.Application.Services
                 ? RepositoryOperationResult.Ok()
                 : RepositoryOperationResult.Fail("Failed to create user.");
         }
-        public async Task<OperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId)
+        public async Task<RepositoryOperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId)
         {
             var examResult = await _examRepository.GetByIdAsync(examId);
             if (!examResult.Success || examResult.Data == null)
-                return OperationResult<IEnumerable<UserDto>>.Fail("Exam not found.");
+                return RepositoryOperationResult<IEnumerable<UserDto>>.Fail("Exam not found.");
 
             var exam = examResult.Data;
             var participants = exam.ExamUsers.Select(eu => eu.User).ToList();
 
             var userDtos = _mapper.Map<IEnumerable<UserDto>>(participants);
-            return OperationResult<IEnumerable<UserDto>>.Ok(userDtos);
+            return RepositoryOperationResult<IEnumerable<UserDto>>.Ok(userDtos);
         }
 
     }

@@ -5,6 +5,6 @@ namespace ExamSystem.Core.Interfaces.Repositories
 {
     public interface IUserRepository : ICrudRepository<User>
     {
-        Task<OperationResult<User>> GetByEmailAsync(string email);
+        Task<RepositoryOperationResult<User>> GetByEmailAsync(string email);
     }
 }

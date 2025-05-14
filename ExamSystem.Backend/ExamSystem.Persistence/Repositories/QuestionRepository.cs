@@ -12,21 +12,21 @@ namespace ExamSystem.Persistence.Repositories
         {
             this._dbContext = dbContext;
         }
-        public async Task<OperationResult<IEnumerable<Question>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<Question>>> GetAllAsync()
         {
             var questions = await _dbContext.Questions.Include(q => q.Exam)
                                                       .Include(q => q.QuestionOptions)
                                                       .ToListAsync();
-            return OperationResult<IEnumerable<Question>>.Ok(questions);
+            return RepositoryOperationResult<IEnumerable<Question>>.Ok(questions);
         }
-        public async Task<OperationResult<Question>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<Question>> GetByIdAsync(Guid id)
         {
             var question = await _dbContext.Questions.Include(q => q.Exam)
                                                      .Include(q => q.QuestionOptions)
                                                      .FirstOrDefaultAsync(q => q.QuestionId == id);
             if (question == null)
-                return OperationResult<Question>.Fail("Question not found.");
-            return OperationResult<Question>.Ok(question);
+                return RepositoryOperationResult<Question>.Fail("Question not found.");
+            return RepositoryOperationResult<Question>.Ok(question);
         }
 
         public async Task<RepositoryOperationResult> AddAsync(Question entity)
@@ -59,7 +59,7 @@ namespace ExamSystem.Persistence.Repositories
                 return RepositoryOperationResult.Fail("Failed to delete question.");
             return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId)
+        public async Task<RepositoryOperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId)
         {
             var questions = await _dbContext.Questions
                 .Include(q => q.QuestionOptions)
@@ -68,7 +68,7 @@ namespace ExamSystem.Persistence.Repositories
                     .Any(a => a.QuestionId == q.QuestionId && a.UserId == userId))
                 .ToListAsync();
 
-            return OperationResult<IEnumerable<Question>>.Ok(questions);
+            return RepositoryOperationResult<IEnumerable<Question>>.Ok(questions);
         }
     }
 }

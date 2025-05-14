@@ -45,39 +45,39 @@ namespace ExamSystem.Application.Services
                 : RepositoryOperationResult.Fail("Failed to delete question option.");
         }
 
-        public async Task<OperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync()
         {
             var result = await _questionOptionRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return OperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found.");
+                return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found.");
 
             var questionOptionsDtos = _mapper.Map<IEnumerable<QuestionOptionDto>>(result.Data);
-            return OperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
+            return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
         }
 
-        public async Task<OperationResult<IEnumerable<QuestionOptionDto>>> GetAllByQuestionIdAsync(Guid questionId)
+        public async Task<RepositoryOperationResult<IEnumerable<QuestionOptionDto>>> GetAllByQuestionIdAsync(Guid questionId)
         {
             var result = await _questionOptionRepository.GetAllAsync();
             if (!result.Success)
-                return OperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Fail(result.ErrorMessage!);
             var questionOptions = result.Data!;
             var filteredQuestionOptions = questionOptions.Where(q => q.QuestionId == questionId).ToList();
             if (!filteredQuestionOptions.Any())
-                return OperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found for this question.");
+                return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Fail("No question options found for this question.");
             var questionOptionsDtos = _mapper.Map<IEnumerable<QuestionOptionDto>>(filteredQuestionOptions);
-            return OperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
+            return RepositoryOperationResult<IEnumerable<QuestionOptionDto>>.Ok(questionOptionsDtos);
         }
 
-        public async Task<OperationResult<QuestionOptionDto>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<QuestionOptionDto>> GetByIdAsync(Guid id)
         {
             var result = await _questionOptionRepository.GetByIdAsync(id);
             if (!result.Success)
-                return OperationResult<QuestionOptionDto>.Fail(result.ErrorMessage!);
+                return RepositoryOperationResult<QuestionOptionDto>.Fail(result.ErrorMessage!);
 
             var questionOption = _mapper.Map<QuestionOptionDto>(result.Data);
-            return OperationResult<QuestionOptionDto>.Ok(questionOption);
+            return RepositoryOperationResult<QuestionOptionDto>.Ok(questionOption);
         }
 
         public async Task<RepositoryOperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto updateDto)

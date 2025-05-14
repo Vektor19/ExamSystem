@@ -12,7 +12,7 @@ namespace ExamSystem.Persistence.Repositories
         {
             this._dbContext = dbContext;
         }
-        public async Task<OperationResult<IEnumerable<User>>> GetAllAsync()
+        public async Task<RepositoryOperationResult<IEnumerable<User>>> GetAllAsync()
         {
             var users = await _dbContext.Users.Include(u => u.UserRoles)
                                                 .ThenInclude(ur => ur.Role)
@@ -20,9 +20,9 @@ namespace ExamSystem.Persistence.Repositories
                                               .Include(u => u.CreatedExams)
                                               .Include(u => u.Answers)
                                               .ToListAsync();
-            return OperationResult<IEnumerable<User>>.Ok(users);
+            return RepositoryOperationResult<IEnumerable<User>>.Ok(users);
         }
-        public async Task<OperationResult<User>> GetByIdAsync(Guid id)
+        public async Task<RepositoryOperationResult<User>> GetByIdAsync(Guid id)
         {
             var user = await _dbContext.Users.Include(u => u.UserRoles)
                                                 .ThenInclude(ur => ur.Role)
@@ -31,8 +31,8 @@ namespace ExamSystem.Persistence.Repositories
                                              .Include(u => u.Answers)
                                              .FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null)
-                return OperationResult<User>.Fail("User not found.");
-            return OperationResult<User>.Ok(user);
+                return RepositoryOperationResult<User>.Fail("User not found.");
+            return RepositoryOperationResult<User>.Ok(user);
         }
 
         public async Task<RepositoryOperationResult> AddAsync(User entity)
@@ -65,7 +65,7 @@ namespace ExamSystem.Persistence.Repositories
                 return RepositoryOperationResult.Fail("Failed to delete user.");
             return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult<User>> GetByEmailAsync(string email)
+        public async Task<RepositoryOperationResult<User>> GetByEmailAsync(string email)
         {
             var user = await _dbContext.Users.Include(u => u.UserRoles)
                                                 .ThenInclude(ur => ur.Role)
@@ -74,8 +74,8 @@ namespace ExamSystem.Persistence.Repositories
                                              .Include(u => u.Answers)
                                              .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
-                return OperationResult<User>.Fail("User not found.");
-            return OperationResult<User>.Ok(user);
+                return RepositoryOperationResult<User>.Fail("User not found.");
+            return RepositoryOperationResult<User>.Ok(user);
         }
     }
 }
