@@ -35,6 +35,7 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
   const [isViolationsLoading, setIsViolationsLoading] = useState(true);
   const violationsRef = useRef<Violation[]>([]);
   const { showNotification } = useNotification();
+  const [isFullscreenLoading, setIsFullscreenLoading] = useState(true);
 
   useEffect(() => {
     violationsRef.current = violations;
@@ -186,22 +187,20 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
           false
         );
       }
-      if(e.key === "F11") {
+      if (e.key === "F11") {
         e.preventDefault();
         console.log("F11 pressed");
-        registerViolation(
-          ViolationType.NewPageOpen,
-          "User pressed F11",
-          false
-        );
+        registerViolation(ViolationType.NewPageOpen, "User pressed F11", false);
       }
     };
     const handleWindowResize = () => {
-      registerViolation(
-        ViolationType.NewPageOpen,
-        "User resized the window",
-        false
-      );
+      if (!isFullscreenLoading && !document.fullscreenElement) {
+        registerViolation(
+          ViolationType.NewPageOpen,
+          "User resized the window",
+          false
+        );
+      }
     };
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
@@ -213,12 +212,14 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
       );
     };
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        registerViolation(
-          ViolationType.NewPageOpen,
-          "User exited fullscreen mode",
-          false
-        );
+      if (!isFullscreenLoading && document.fullscreenElement) {
+        if (!document.fullscreenElement) {
+          registerViolation(
+            ViolationType.NewPageOpen,
+            "User exited fullscreen mode",
+            false
+          );
+        }
       }
     };
 
@@ -230,10 +231,16 @@ export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener("resize", handleWindowResize);
     window.addEventListener("beforeunload", handleBeforeUnload);
     document.addEventListener("fullscreenchange", handleFullscreenChange);
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.warn("Fullscreen not allowed:", err);
-      });
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        setIsFullscreenLoading(true);
+        try {
+          document.documentElement.requestFullscreen();
+        } catch (err) {
+          console.error("Error requesting fullscreen:", err);
+        }
+        setIsFullscreenLoading(false);
+      }
     }
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
