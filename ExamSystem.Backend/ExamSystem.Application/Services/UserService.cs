@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Interfaces.Repositories;
@@ -26,17 +28,14 @@ namespace ExamSystem.Application.Services
 
         public async Task<ServiceOperationResult> CreateUserAsync(RegisterUserDto userDto)
         {
-            if (string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
-                return ServiceOperationResult.Fail("Email and password are required.");
-
             var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
             if (existingUser.Success && existingUser.Data != null)
-                return ServiceOperationResult.Fail("User with this email already exists.");
+                return ServiceOperationResult.Fail("User with this email already exists.", ServiceOperationErrorType.Conflict);
 
             var rolesFromDb = await _roleRepository.GetRolesByNamesAsync([SystemRoles.Student, SystemRoles.Examinator]);
 
             if (!rolesFromDb.Success || rolesFromDb.Data == null || !rolesFromDb.Data.Any())
-                return ServiceOperationResult.Fail("Can't create user");
+                return ServiceOperationResult.Fail("Can't create user", ServiceOperationErrorType.Internal);
 
             var user = _mapper.Map<User>(userDto);
             user.UserId = Guid.NewGuid();
@@ -52,7 +51,7 @@ namespace ExamSystem.Application.Services
             var result = await _userRepository.AddAsync(user);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create user.");
+                : ServiceOperationResult.Fail("Failed to create user.", ServiceOperationErrorType.Internal);
         }
 
 
@@ -61,16 +60,14 @@ namespace ExamSystem.Application.Services
             var result = await _userRepository.DeleteAsync(id);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete user.");
+                : ServiceOperationResult.Fail("Failed to delete user.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<IEnumerable<UserDto>>> GetAllAsync()
         {
             var result = await _userRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<UserDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<UserDto>>.Fail("No users found.");
+                return ServiceOperationResult<IEnumerable<UserDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var userDtos = _mapper.Map<IEnumerable<UserDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<UserDto>>.Ok(userDtos);
@@ -80,7 +77,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _userRepository.GetByEmailAsync(email);
             if (!result.Success)
-                return ServiceOperationResult<UserDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<UserDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var userDto = _mapper.Map<UserDto>(result.Data);
             return ServiceOperationResult<UserDto>.Ok(userDto);
@@ -90,7 +87,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _userRepository.GetByIdAsync(id);
             if (!result.Success)
-                return ServiceOperationResult<UserDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<UserDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var userDto = _mapper.Map<UserDto>(result.Data);
             return ServiceOperationResult<UserDto>.Ok(userDto);
@@ -100,7 +97,7 @@ namespace ExamSystem.Application.Services
         {
             var existingUserResult = await _userRepository.GetByIdAsync(userId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
 
             var user = existingUserResult.Data;
 
@@ -111,35 +108,32 @@ namespace ExamSystem.Application.Services
             var updateResult = await _userRepository.UpdateAsync(user);
             return updateResult.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to update user.");
+                : ServiceOperationResult.Fail("Failed to update user.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult> ValidateCredentialsAsync(string email, string password)
         {
             var result = await _userRepository.GetByEmailAsync(email);
             if (!result.Success || result.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.Unauthorized);
 
             var isValid = _passwordHasher.VerifyPassword(password, result.Data.PasswordHash);
             return isValid
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Invalid credentials.");
+                : ServiceOperationResult.Fail("Invalid credentials.", ServiceOperationErrorType.Unauthorized);
         }
         public async Task<ServiceOperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto)
         {
-            if (string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
-                return ServiceOperationResult.Fail("Email and password are required.");
-
             var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
             if (existingUser.Success && existingUser.Data != null)
-                return ServiceOperationResult.Fail("User with this email already exists.");
+                return ServiceOperationResult.Fail("User with this email already exists.", ServiceOperationErrorType.Conflict);
 
             if (userDto.Roles == null || !userDto.Roles.Any())
-                return ServiceOperationResult.Fail("At least one role must be specified.");
+                return ServiceOperationResult.Fail("At least one role must be specified.", ServiceOperationErrorType.BadRequest);
 
             var rolesFromDb = await _roleRepository.GetRolesByNamesAsync(userDto.Roles);
             if (!rolesFromDb.Success || rolesFromDb.Data == null || !rolesFromDb.Data.Any())
-                return ServiceOperationResult.Fail("Invalid roles specified.");
+                return ServiceOperationResult.Fail("Invalid roles specified.", ServiceOperationErrorType.Internal);
 
             var user = _mapper.Map<User>(userDto);
             user.UserId = Guid.NewGuid();
@@ -155,13 +149,13 @@ namespace ExamSystem.Application.Services
             var result = await _userRepository.AddAsync(user);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to create user.");
+                : ServiceOperationResult.Fail("Failed to create user.", ServiceOperationErrorType.Internal);
         }
         public async Task<ServiceOperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId)
         {
             var examResult = await _examRepository.GetByIdAsync(examId);
             if (!examResult.Success || examResult.Data == null)
-                return ServiceOperationResult<IEnumerable<UserDto>>.Fail("Exam not found.");
+                return ServiceOperationResult<IEnumerable<UserDto>>.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
 
             var exam = examResult.Data;
             var participants = exam.ExamUsers.Select(eu => eu.User).ToList();
