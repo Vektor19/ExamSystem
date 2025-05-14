@@ -1,12 +1,11 @@
-﻿namespace ExamSystem.Core.Common
+﻿namespace ExamSystem.Core.Common.Enums;
+
+public enum ServiceOperationErrorType
 {
-    public enum ServiceOperationErrorType
-    {
-        Unknown,
-        NotFound,
-        Validation,
-        Conflict,
-        Forbidden,
-        Internal
-    }
+    Unknown,
+    NotFound,
+    Validation,
+    Conflict,
+    Forbidden,
+    Internal
 }
