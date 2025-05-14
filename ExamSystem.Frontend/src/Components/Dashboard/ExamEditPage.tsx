@@ -33,6 +33,8 @@ import { ExaminatorExam } from "../../Models/ExaminatorExam";
 import { Participant } from "../../Models/Participant";
 import TimeUtils from "../../Utils/TimeUtils";
 import PrimaryButton from "../Buttons/PrimaryButton";
+import { useNotification } from "../../Providers/NotificationProvider";
+import { NoValidRequestError } from "../../Common/Exceptions/NoValidRequestError";
 
 const statusOptions = ["NotStarted", "Started", "Finished"];
 
@@ -49,6 +51,7 @@ const ExamEditPage: React.FC = () => {
     endDate: "",
     status: "",
   });
+  const { showNotification } = useNotification();
 
   const [participants, setParticipants] = useState<Participant[]>([]);
   const navigate = useNavigate();
@@ -79,7 +82,7 @@ const ExamEditPage: React.FC = () => {
     }
   }, [exam]);
 
-  const handleSaveField = async (field: keyof typeof formValues) => {
+  const handleSaveField = async (_: keyof typeof formValues) => {
     if (!exam) return;
     try {
       await ExamService.updateExam(exam.examId, {
@@ -88,9 +91,21 @@ const ExamEditPage: React.FC = () => {
         endDate: new Date(formValues.endDate).toISOString(),
         status: formValues.status,
       });
+      showNotification("Exam updated successfully", "success");
       await fetchExaminatorExams();
-    } catch (error) {
-      console.error("Failed to update exam:", error);
+    } catch (err: any) {
+      if (err instanceof NoValidRequestError) {
+        const errors = JSON.parse(err.message);
+        console.log("Validation errors:", errors);
+        showNotification(
+          Object.entries(errors).map(
+            ([_, messages]) => `${(messages as string[]).join(", ")}`
+          )[0],
+          "error"
+        );
+      } else {
+        console.error("Failed to update exam:", err);
+      }
     } finally {
       setFormValues(exam);
       setEditingField(null);
@@ -447,7 +462,9 @@ const ExamEditPage: React.FC = () => {
                           </PrimaryButton>
                         )}
                         {Boolean(p.isBlocked) && (
-                          <PrimaryButton onClick={() => handleCheckViolationsClick(p)}>
+                          <PrimaryButton
+                            onClick={() => handleCheckViolationsClick(p)}
+                          >
                             Check Violations
                           </PrimaryButton>
                         )}
