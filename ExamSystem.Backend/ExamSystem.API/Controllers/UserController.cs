@@ -3,6 +3,7 @@ using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.DTOs.User;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -24,35 +25,35 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> CreateByAdmin([FromBody] CreateUserByAdminDto userDto)
         {
             var result = await _userService.CreateUserByAdminAsync(userDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [Authorize(Roles = SystemRoles.Admin)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var result = await _userService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [SelfOrAdminAuthorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _userService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [SelfOrAdminAuthorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserDto updateDto)
         {
             var result = await _userService.UpdateAsync(id, updateDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [SelfOrAdminAuthorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _userService.DeleteAsync(id);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
@@ -60,7 +61,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAllByParticipantIdAsync(Guid id)
         {
             var result = await _userService.GetParticipantsByExamIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
     }
 }
