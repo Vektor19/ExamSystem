@@ -1,7 +1,7 @@
 ﻿using System.Text;
+using ExamSystem.Application.Common.Models;
 using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Application.Models;
 using ExamSystem.Application.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

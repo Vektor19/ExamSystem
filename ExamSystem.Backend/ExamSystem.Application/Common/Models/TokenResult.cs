@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Application.Models
+namespace ExamSystem.Application.Common.Models
 {
     public class TokenResult
     {

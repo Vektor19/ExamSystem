@@ -1,5 +1,5 @@
-﻿using ExamSystem.Application.DTOs.User;
-using ExamSystem.Application.Models;
+﻿using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.DTOs.User;
 using System.Security.Claims;
 
 namespace ExamSystem.Application.Interfaces.Services

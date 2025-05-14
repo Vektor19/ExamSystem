@@ -1,6 +1,6 @@
-﻿using ExamSystem.Application.DTOs.User;
+﻿using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Application.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -1,4 +1,4 @@
-﻿namespace ExamSystem.Application.Models
+﻿namespace ExamSystem.Application.Common.Models
 {
     public class JwtSettings
     {
