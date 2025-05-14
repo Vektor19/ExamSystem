@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
 import TimeUtils from "../../Utils/TimeUtils";
 const StudentDashboardBody: React.FC = () => {
-  const { studentCheckedExams, studentExams, removeStudentCheckedExam } =
+  const { studentCheckedExams, studentExams, removeStudentCheckedExam, isStudentExamsLoading } =
     useExams();
   const [recentFinishedExams, setRecentFinishedExams] = useState<
     StudentExam[] | null
@@ -55,7 +55,7 @@ const StudentDashboardBody: React.FC = () => {
     navigate(`/dashboard/exam-result/${examId}`);
   };
 
-  if (!studentExams) return <LoadingPage />;
+  if (isStudentExamsLoading) return <LoadingPage />;
 
   return (
     <>

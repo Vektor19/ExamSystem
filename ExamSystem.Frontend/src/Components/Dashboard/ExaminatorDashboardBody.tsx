@@ -2,20 +2,18 @@ import React, { use, useEffect, useState } from "react";
 import studentDashboardStyles from "../../Styles/StudentDashboardBody.module.css";
 import DashboardPaper from "../Papers/DashboardPaper";
 import { useExams } from "../../Providers/ExamsProvider";
-import CheckIcon from "@mui/icons-material/Check";
 import WarningIcon from "@mui/icons-material/Warning";
 import ExpandIcon from "@mui/icons-material/ExpandMore";
 import TimerIcon from "@mui/icons-material/Timer";
 
 import { Stack, Typography } from "@mui/material";
-import { StudentExam } from "../../Models/StudentExam";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
 import TimeUtils from "../../Utils/TimeUtils";
 import { ExaminatorExam } from "../../Models/ExaminatorExam";
 const ExaminatorDashboardBody: React.FC = () => {
-  const { examinatorExams } = useExams();
+  const { examinatorExams, isExaminatorExamsLoading } = useExams();
   const [notGradedExams, setNotGradedExams] = useState<ExaminatorExam[] | null>(
     []
   );
@@ -52,7 +50,7 @@ const ExaminatorDashboardBody: React.FC = () => {
     navigate(`/dashboard/edit-exam/${examId}`);
   };
 
-  if (!examinatorExams) return <LoadingPage />;
+  if (isExaminatorExamsLoading) return <LoadingPage />;
 
   return (
     <>
