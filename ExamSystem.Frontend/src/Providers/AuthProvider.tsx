@@ -7,6 +7,7 @@ import {
 } from "react";
 import AuthService from "../Services/AuthService";
 import { RegisterUserRequest } from "../Models/RegisterUserRequest";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -49,6 +50,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         message: "Login successful",
       };
     } catch (err: any) {
+      if (err instanceof NoValidRequestError) {
+        const errors = JSON.parse(err.message);
+        setIsAuthenticated(false);
+        return {
+          success: false,
+          message: Object.entries(errors).map(
+            ([field, messages]) => `${(messages as string[]).join(", ")}`
+          )[0],
+        };
+      }
       setIsAuthenticated(false);
       return {
         success: false,
@@ -67,6 +78,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         message: "Register successful",
       };
     } catch (err: any) {
+      if (err instanceof NoValidRequestError) {
+        const errors = JSON.parse(err.message);
+        setIsAuthenticated(false);
+        return {
+          success: false,
+          message: Object.entries(errors).map(
+            ([field, messages]) => `${(messages as string[]).join(", ")}`
+          )[0],
+        };
+      }
       return {
         success: false,
         message: err?.response?.data?.message || "Register failed",

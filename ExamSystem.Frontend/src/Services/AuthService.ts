@@ -1,4 +1,5 @@
 import examSystemApi from "../Api/examSystemApi";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
 import { RegisterUserRequest } from "../Models/RegisterUserRequest";
 
 class AuthService {
@@ -7,6 +8,9 @@ class AuthService {
       const res = await examSystemApi.post("/auth/login", { email, password });
       return res.data.accessToken;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "Login failed");
     }
   }
@@ -21,6 +25,9 @@ class AuthService {
       });
       return res.data.accessToken;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "Register failed");
     }
   }
