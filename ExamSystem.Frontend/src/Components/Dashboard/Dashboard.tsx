@@ -3,6 +3,7 @@ import { Snackbar, Alert } from "@mui/material";
 import dashboardStyles from "../../Styles/Dashboard.module.css";
 import { useDashboardContext } from "../../Providers/DashboardProvider";
 import StudentDashboardBody from "./StudentDashboardBody";
+import ExaminatorDashboardBody from "./ExaminatorDashboardBody";
 const Dashboard = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -18,7 +19,7 @@ const Dashboard = () => {
   return (
     <>
       <h1 className={`${dashboardStyles["dashboard-title"]}`}>Overview</h1>
-      {mode === "student" ? <StudentDashboardBody /> : <></>}
+      {mode === "student" ? <StudentDashboardBody /> : <ExaminatorDashboardBody/>}
       <Snackbar
         open={openSnackbar}
         onClose={() => setOpenSnackbar(false)}
