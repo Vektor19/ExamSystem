@@ -31,7 +31,7 @@ namespace ExamSystem.Application.Services
             if (!examResult.Success || examResult.Data == null)
                 return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.BadRequest);
 
-            if(ExamValidator.IsModifyAllowed(examResult.Data))
+            if(!ExamValidator.IsModifyAllowed(examResult.Data))
                 return ServiceOperationResult.Fail("Exam in progress. Cannot add questions.", ServiceOperationErrorType.BadRequest);
 
             var question = _mapper.Map<Question>(questionCreateDto);
