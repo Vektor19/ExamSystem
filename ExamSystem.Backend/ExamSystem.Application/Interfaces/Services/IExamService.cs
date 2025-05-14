@@ -5,23 +5,23 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IExamService
     {
-        Task<RepositoryOperationResult<ExamForExaminatorDto>> GetByIdAsync(Guid examId);
-        Task<RepositoryOperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId);
-        Task<RepositoryOperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync();
-        Task<RepositoryOperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
-        Task<RepositoryOperationResult<IEnumerable<ExamForStudentDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
-        Task<RepositoryOperationResult> AddParticipantAsync(Guid examId, Guid userId);
-        Task<RepositoryOperationResult> RemoveParticipantAsync(Guid examId, Guid userId);
-        Task<RepositoryOperationResult> AddParticipantByEmailAsync(Guid examId, string email);
-        Task<RepositoryOperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
-        Task<RepositoryOperationResult> DeleteAsync(Guid examId);
-        Task<RepositoryOperationResult<ExamForExaminatorDto>> CreateAsync(ExamCreateDto createExamDto);
-        Task<RepositoryOperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId);
-        Task<RepositoryOperationResult> JoinExam(JoinExamDto joinExamDto);
-        Task<RepositoryOperationResult> FinishExamAsync(Guid examId, Guid userId);
-        Task<RepositoryOperationResult> BlockExamUserByIdAsync(Guid examUserId);
-        Task<RepositoryOperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId);
-        Task<RepositoryOperationResult<bool>> IsExamInProgressAsync(Guid examId);
-        Task<RepositoryOperationResult<IEnumerable<ExamUserDto>>> GetExpiredNotFinishedExamUsersAsync(DateTime now);
+        Task<ServiceOperationResult<ExamForExaminatorDto>> GetByIdAsync(Guid examId);
+        Task<ServiceOperationResult<ExamUserDto>> GetExamUserByIdAsync(Guid examUserId);
+        Task<ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync();
+        Task<ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllByCreatedUserIdAsync(Guid createdByUserId);
+        Task<ServiceOperationResult<IEnumerable<ExamForStudentDto>>> GetAllByParticipantUserIdAsync(Guid participantUserId);
+        Task<ServiceOperationResult> AddParticipantAsync(Guid examId, Guid userId);
+        Task<ServiceOperationResult> RemoveParticipantAsync(Guid examId, Guid userId);
+        Task<ServiceOperationResult> AddParticipantByEmailAsync(Guid examId, string email);
+        Task<ServiceOperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
+        Task<ServiceOperationResult> DeleteAsync(Guid examId);
+        Task<ServiceOperationResult<ExamForExaminatorDto>> CreateAsync(ExamCreateDto createExamDto);
+        Task<ServiceOperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId);
+        Task<ServiceOperationResult> JoinExam(JoinExamDto joinExamDto);
+        Task<ServiceOperationResult> FinishExamAsync(Guid examId, Guid userId);
+        Task<ServiceOperationResult> BlockExamUserByIdAsync(Guid examUserId);
+        Task<ServiceOperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId);
+        Task<ServiceOperationResult<bool>> IsExamInProgressAsync(Guid examId);
+        Task<ServiceOperationResult<IEnumerable<ExamUserDto>>> GetExpiredNotFinishedExamUsersAsync(DateTime now);
     }
 }

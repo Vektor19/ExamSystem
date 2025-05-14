@@ -5,10 +5,10 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IViolationService
     {
-        Task<RepositoryOperationResult<ViolationDto>> GetByIdAsync(Guid violationId);
-        Task<RepositoryOperationResult<IEnumerable<ViolationDto>>> GetAllAsync();
-        Task<RepositoryOperationResult<IEnumerable<ViolationDto>>> GetAllByExamUserIdAsync(Guid examUserId);
-        Task<RepositoryOperationResult> DeleteAsync(Guid violationId);
-        Task<RepositoryOperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto);
+        Task<ServiceOperationResult<ViolationDto>> GetByIdAsync(Guid violationId);
+        Task<ServiceOperationResult<IEnumerable<ViolationDto>>> GetAllAsync();
+        Task<ServiceOperationResult<IEnumerable<ViolationDto>>> GetAllByExamUserIdAsync(Guid examUserId);
+        Task<ServiceOperationResult> DeleteAsync(Guid violationId);
+        Task<ServiceOperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto);
     }
 }

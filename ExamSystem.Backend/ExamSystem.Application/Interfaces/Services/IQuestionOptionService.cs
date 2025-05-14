@@ -6,11 +6,11 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IQuestionOptionService
     {
-        Task<RepositoryOperationResult<QuestionOptionDto>> GetByIdAsync(Guid questionOptionId);
-        Task<RepositoryOperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync();
-        Task<RepositoryOperationResult<IEnumerable<QuestionOptionDto>>> GetAllByQuestionIdAsync(Guid questionId);
-        Task<RepositoryOperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto questionUpdateDto);
-        Task<RepositoryOperationResult> DeleteAsync(Guid questionOptionId);
-        Task<RepositoryOperationResult> CreateAsync(QuestionOptionCreateDto questionOptionCreateDto);
+        Task<ServiceOperationResult<QuestionOptionDto>> GetByIdAsync(Guid questionOptionId);
+        Task<ServiceOperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync();
+        Task<ServiceOperationResult<IEnumerable<QuestionOptionDto>>> GetAllByQuestionIdAsync(Guid questionId);
+        Task<ServiceOperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto questionUpdateDto);
+        Task<ServiceOperationResult> DeleteAsync(Guid questionOptionId);
+        Task<ServiceOperationResult> CreateAsync(QuestionOptionCreateDto questionOptionCreateDto);
     }
 }

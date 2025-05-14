@@ -17,44 +17,44 @@ namespace ExamSystem.Application.Services
             _violationRepository = violationRepository;
             _mapper = mapper;
         }
-        public async Task<RepositoryOperationResult<ViolationDto>> GetByIdAsync(Guid violationId)
+        public async Task<ServiceOperationResult<ViolationDto>> GetByIdAsync(Guid violationId)
         {
             var result = await _violationRepository.GetByIdAsync(violationId);
             if (!result.Success)
-                return RepositoryOperationResult<ViolationDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<ViolationDto>.Fail(result.ErrorMessage!);
 
             var violationDto = _mapper.Map<ViolationDto>(result.Data);
-            return RepositoryOperationResult<ViolationDto>.Ok(violationDto);
+            return ServiceOperationResult<ViolationDto>.Ok(violationDto);
         }
-        public async Task<RepositoryOperationResult<IEnumerable<ViolationDto>>> GetAllAsync()
+        public async Task<ServiceOperationResult<IEnumerable<ViolationDto>>> GetAllAsync()
         {
             var result = await _violationRepository.GetAllAsync();
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return RepositoryOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found.");
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found.");
 
             var violationDtos = _mapper.Map<IEnumerable<ViolationDto>>(result.Data);
-            return RepositoryOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
+            return ServiceOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
         }
-        public async Task<RepositoryOperationResult<IEnumerable<ViolationDto>>> GetAllByExamUserIdAsync(Guid examUserId)
+        public async Task<ServiceOperationResult<IEnumerable<ViolationDto>>> GetAllByExamUserIdAsync(Guid examUserId)
         {
             var result = await _violationRepository.GetAllByExamUserIdAsync(examUserId);
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return RepositoryOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found for this exam user.");
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found for this exam user.");
             var violationDtos = _mapper.Map<IEnumerable<ViolationDto>>(result.Data);
-            return RepositoryOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
+            return ServiceOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
         }
-        public async Task<RepositoryOperationResult> DeleteAsync(Guid violationId)
+        public async Task<ServiceOperationResult> DeleteAsync(Guid violationId)
         {
             var result = await _violationRepository.DeleteAsync(violationId);
             return result.Success
-                ? RepositoryOperationResult.Ok()
-                : RepositoryOperationResult.Fail("Failed to delete violation.");
+                ? ServiceOperationResult.Ok()
+                : ServiceOperationResult.Fail("Failed to delete violation.");
         }
-        public async Task<RepositoryOperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto)
+        public async Task<ServiceOperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto)
         {
             var violation = _mapper.Map<Violation>(createViolationDto);
             violation.ViolationId = Guid.NewGuid();
@@ -64,9 +64,9 @@ namespace ExamSystem.Application.Services
             if (result.Success)
             {
                 var violationDto = _mapper.Map<ViolationDto>(violation);
-                return RepositoryOperationResult<ViolationDto>.Ok(violationDto);
+                return ServiceOperationResult<ViolationDto>.Ok(violationDto);
             }
-            return RepositoryOperationResult<ViolationDto>.Fail("Failed to create violation.");
+            return ServiceOperationResult<ViolationDto>.Fail("Failed to create violation.");
         }
     }
 }

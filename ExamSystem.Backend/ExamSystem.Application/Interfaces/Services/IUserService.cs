@@ -5,14 +5,14 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<RepositoryOperationResult<UserDto>> GetByIdAsync(Guid id);
-        Task<RepositoryOperationResult<IEnumerable<UserDto>>> GetAllAsync();
-        Task<RepositoryOperationResult<UserDto>> GetByEmailAsync(string email);
-        Task<RepositoryOperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto);
-        Task<RepositoryOperationResult> DeleteAsync(Guid id);
-        Task<RepositoryOperationResult> ValidateCredentialsAsync(string email, string password);
-        Task<RepositoryOperationResult> CreateUserAsync(RegisterUserDto userDto);
-        Task<RepositoryOperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
-        Task<RepositoryOperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId);
+        Task<ServiceOperationResult<UserDto>> GetByIdAsync(Guid id);
+        Task<ServiceOperationResult<IEnumerable<UserDto>>> GetAllAsync();
+        Task<ServiceOperationResult<UserDto>> GetByEmailAsync(string email);
+        Task<ServiceOperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto);
+        Task<ServiceOperationResult> DeleteAsync(Guid id);
+        Task<ServiceOperationResult> ValidateCredentialsAsync(string email, string password);
+        Task<ServiceOperationResult> CreateUserAsync(RegisterUserDto userDto);
+        Task<ServiceOperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
+        Task<ServiceOperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId);
     }
 }

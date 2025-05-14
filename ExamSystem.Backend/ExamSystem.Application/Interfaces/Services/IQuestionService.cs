@@ -6,13 +6,13 @@ namespace ExamSystem.Application.Interfaces.Services
 {
     public interface IQuestionService
     {
-        Task<RepositoryOperationResult<QuestionDto>> GetByIdAsync(Guid questionId);
-        Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllAsync();
-        Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllByExamIdAsync(Guid examId);
-        Task<RepositoryOperationResult> UpdateAsync(Guid questionId, QuestionUpdateDto questionUpdateDto);
-        Task<RepositoryOperationResult> DeleteAsync(Guid questionId);
-        Task<RepositoryOperationResult> CreateAsync(QuestionCreateDto questionCreateDto);
-        Task<RepositoryOperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId);
-        Task<RepositoryOperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto);
+        Task<ServiceOperationResult<QuestionDto>> GetByIdAsync(Guid questionId);
+        Task<ServiceOperationResult<IEnumerable<QuestionDto>>> GetAllAsync();
+        Task<ServiceOperationResult<IEnumerable<QuestionDto>>> GetAllByExamIdAsync(Guid examId);
+        Task<ServiceOperationResult> UpdateAsync(Guid questionId, QuestionUpdateDto questionUpdateDto);
+        Task<ServiceOperationResult> DeleteAsync(Guid questionId);
+        Task<ServiceOperationResult> CreateAsync(QuestionCreateDto questionCreateDto);
+        Task<ServiceOperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId);
+        Task<ServiceOperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto);
     }
 }

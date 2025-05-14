@@ -18,96 +18,96 @@ namespace ExamSystem.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<RepositoryOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
+        public async Task<ServiceOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOpenAnswerDto openAnswerDto)
-                return RepositoryOperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
+                return ServiceOperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
             var answer = _mapper.Map<Answer>(openAnswerDto);
             answer.AnswerId = Guid.NewGuid();
             answer.IsGraded = false;
 
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
-                ? RepositoryOperationResult.Ok()
-                : RepositoryOperationResult.Fail("Failed to create answer.");
+                ? ServiceOperationResult.Ok()
+                : ServiceOperationResult.Fail("Failed to create answer.");
         }
 
-        public async Task<RepositoryOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
+        public async Task<ServiceOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOptionAnswerDto optionAnswerDto)
-                return RepositoryOperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
+                return ServiceOperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
 
             var answer = _mapper.Map<Answer>(optionAnswerDto);
             answer.AnswerId = Guid.NewGuid();
             answer.IsGraded = false;
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
-                ? RepositoryOperationResult.Ok()
-                : RepositoryOperationResult.Fail("Failed to create answer.");
+                ? ServiceOperationResult.Ok()
+                : ServiceOperationResult.Fail("Failed to create answer.");
         }
 
 
-        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
+        public async Task<ServiceOperationResult> DeleteAsync(Guid id)
         {
             var result = await _answerRepository.DeleteAsync(id);
             return result.Success
-                ? RepositoryOperationResult.Ok()
-                : RepositoryOperationResult.Fail("Failed to delete answer.");
+                ? ServiceOperationResult.Ok()
+                : ServiceOperationResult.Fail("Failed to delete answer.");
         }
 
-        public async Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllAsync()
+        public async Task<ServiceOperationResult<IEnumerable<AnswerDto>>> GetAllAsync()
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
             if (!result.Data!.Any())
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found.");
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found.");
 
             var examDtos = _mapper.Map<IEnumerable<AnswerDto>>(result.Data);
-            return RepositoryOperationResult<IEnumerable<AnswerDto>>.Ok(examDtos);
+            return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(examDtos);
         }
 
-        public async Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId)
+        public async Task<ServiceOperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId)
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
             var answers = result.Data!;
             var filteredAnswers = answers.Where(e => e.ExamId == examId).ToList();
             if (!filteredAnswers.Any())
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this exam.");
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this exam.");
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(filteredAnswers);
-            return RepositoryOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
+            return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
-        public async Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId)
+        public async Task<ServiceOperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId)
         {
             var result = await _answerRepository.GetAllAsync();
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
             var answers = result.Data!;
             var filteredAnswers = answers.Where(e => e.UserId == userId).ToList();
             if (!filteredAnswers.Any())
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this user.");
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail("No answers found for this user.");
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(filteredAnswers);
-            return RepositoryOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
+            return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
 
-        public async Task<RepositoryOperationResult<AnswerDto>> GetByIdAsync(Guid id)
+        public async Task<ServiceOperationResult<AnswerDto>> GetByIdAsync(Guid id)
         {
             var result = await _answerRepository.GetByIdAsync(id);
             if (!result.Success)
-                return RepositoryOperationResult<AnswerDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<AnswerDto>.Fail(result.ErrorMessage!);
 
             var answerDto = _mapper.Map<AnswerDto>(result.Data);
-            return RepositoryOperationResult<AnswerDto>.Ok(answerDto);
+            return ServiceOperationResult<AnswerDto>.Ok(answerDto);
         }
-        public async Task<RepositoryOperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId)
+        public async Task<ServiceOperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId)
         {
             var result = await _answerRepository.GetAllByExamUserIdAsync(examUserId);
             if (!result.Success)
-                return RepositoryOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<AnswerDto>>.Fail(result.ErrorMessage!);
             var answerDtos = _mapper.Map<IEnumerable<AnswerDto>>(result.Data);
-            return RepositoryOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
+            return ServiceOperationResult<IEnumerable<AnswerDto>>.Ok(answerDtos);
         }
     }
 }
