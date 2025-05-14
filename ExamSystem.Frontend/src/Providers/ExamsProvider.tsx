@@ -17,6 +17,9 @@ type StudentCheckedExamNotification = {
   examId: string;
   addedDate: string; // ISO format
 };
+type PinnedExaminatorExam = {
+  examId: string;
+};
 
 type ExamsContextType = {
   studentExams: StudentExam[] | null;
@@ -29,7 +32,10 @@ type ExamsContextType = {
   isExaminatorExamsLoading: boolean;
   isQuestionsLoading: boolean;
   studentCheckedExams: StudentCheckedExamNotification[];
+  pinnedExaminatorExams: PinnedExaminatorExam[] | null;
   removeStudentCheckedExam: (examId: string) => void;
+  addPinnedExaminatorExam: (examId: string) => void;
+  removePinnedExaminatorExam: (examId: string) => void;
 };
 
 const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
@@ -37,6 +43,7 @@ const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
 const LOCAL_STORAGE_KEYS = {
   studentExams: (userId: string) => `studentExams-${userId}`,
   studentCheckedExams: (userId: string) => `studentCheckedExams-${userId}`,
+  pinnedExaminatorExams: (userId: string) => `pinnedExaminatorExams-${userId}`,
 };
 
 export const ExamsProvider = ({ children }: { children: ReactNode }) => {
@@ -47,6 +54,7 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
   const [isExaminatorExamsLoading, setIsExaminatorExamsLoading] = useState(true);
   const [isQuestionsLoading, setIsQuestionsLoading] = useState(true);
   const [studentCheckedExams, setStudentCheckedExamsState] = useState<StudentCheckedExamNotification[]>([]);
+  const [pinnedExaminatorExams, setPinnedExaminatorExams] = useState<PinnedExaminatorExam[]>([]);
 
   const getUserId = () => {
     const token = localStorage.getItem("token");
@@ -67,6 +75,29 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.studentCheckedExams(userId), JSON.stringify(filtered));
     setStudentCheckedExamsState(filtered);
     return filtered;
+  };
+  const loadPinnedExaminatorExams = (userId: string) => {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEYS.pinnedExaminatorExams(userId));
+    const data: PinnedExaminatorExam[] = raw ? JSON.parse(raw) : [];
+    return data;
+  }
+  const savePinnedExaminatorExams = (userId: string, list: PinnedExaminatorExam[]) => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.pinnedExaminatorExams(userId), JSON.stringify(list));
+    setPinnedExaminatorExams(list);
+  };
+  const addPinnedExaminatorExam = (examId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+    const newPinnedExam = { examId };
+    const currentPinnedExams = loadPinnedExaminatorExams(userId);
+    const updatedPinnedExams = [...currentPinnedExams, newPinnedExam];
+    savePinnedExaminatorExams(userId, updatedPinnedExams);
+  };
+  const removePinnedExaminatorExam = (examId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+    const filtered = pinnedExaminatorExams.filter(n => n.examId !== examId);
+    savePinnedExaminatorExams(userId, filtered);
   };
 
   const saveStudentCheckedExams = (userId: string, list: StudentCheckedExamNotification[]) => {
@@ -182,7 +213,10 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
         isExaminatorExamsLoading,
         isQuestionsLoading,
         studentCheckedExams,
+        pinnedExaminatorExams,
         removeStudentCheckedExam,
+        addPinnedExaminatorExam,
+        removePinnedExaminatorExam,
       }}
     >
       {children}

@@ -13,13 +13,15 @@ import LoadingPage from "../Extra/LoadingPage";
 import TimeUtils from "../../Utils/TimeUtils";
 import { ExaminatorExam } from "../../Models/ExaminatorExam";
 const ExaminatorDashboardBody: React.FC = () => {
-  const { examinatorExams, isExaminatorExamsLoading } = useExams();
+  const { examinatorExams, isExaminatorExamsLoading, pinnedExaminatorExams } =
+    useExams();
   const [notGradedExams, setNotGradedExams] = useState<ExaminatorExam[] | null>(
     []
   );
   const [upcomingExams, setUpcomingExams] = useState<ExaminatorExam[] | null>(
     []
   );
+  const [pinnedExams, setPinnedExams] = useState<ExaminatorExam[] | null>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +46,14 @@ const ExaminatorDashboardBody: React.FC = () => {
       )
       .slice(0, 3);
     setNotGradedExams(notGradedExams);
+
+    if (!pinnedExaminatorExams) return;
+    const pinnedExamsData = examinatorExams.filter((exam) => {
+      return pinnedExaminatorExams.some(
+        (pinnedExam) => pinnedExam.examId === exam.examId
+      );
+    });
+    setPinnedExams(pinnedExamsData);
   }, [examinatorExams]);
 
   const handleShowExam = (examId: string) => {
@@ -111,14 +121,36 @@ const ExaminatorDashboardBody: React.FC = () => {
           </Stack>
         </DashboardPaper>
         <DashboardPaper>
-          <h3>Notifications</h3>
+          <h3>Pinned exams</h3>
           <Stack spacing={2} direction={"column"}>
-            <Typography variant="body1">No recent notifications</Typography>
+            {pinnedExams &&
+              pinnedExams.length > 0 &&
+              pinnedExams.map((exam) => (
+                <Stack
+                  key={exam.examId}
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                >
+                  <TimerIcon />
+                  <Typography variant="body1">Exam: {exam.name}</Typography>
+                  <PrimaryFab
+                    size="small"
+                    onClick={() => handleShowExam(exam.examId)}
+                  >
+                    <ExpandIcon />
+                  </PrimaryFab>
+                </Stack>
+              ))}
+            {!pinnedExams ||
+              (pinnedExams.length === 0 && (
+                <Typography variant="body1">No pinned exams</Typography>
+              ))}
           </Stack>
         </DashboardPaper>
 
         <DashboardPaper>
-          <h3>Something</h3>
+          <h3>Quick actions</h3>
         </DashboardPaper>
       </div>
     </>
