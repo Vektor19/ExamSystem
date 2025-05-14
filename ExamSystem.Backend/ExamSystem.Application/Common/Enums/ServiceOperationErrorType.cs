@@ -7,5 +7,6 @@ public enum ServiceOperationErrorType
     Validation,
     Conflict,
     Forbidden,
-    Internal
+    Internal,
+    Unauthorized,
 }
