@@ -1,5 +1,5 @@
-﻿using ExamSystem.Application.DTOs.Exam;
-using ExamSystem.Application.DTOs.Question;
+﻿using ExamSystem.Application.DTOs.Question;
+using ExamSystem.Core.Enums;
 using FluentValidation;
 
 namespace ExamSystem.Application.DTOs.User
@@ -15,8 +15,8 @@ namespace ExamSystem.Application.DTOs.User
                 .NotEmpty()
                 .WithMessage("QuestionText is required.");
             RuleFor(x => x.Type)
-                .IsInEnum()
-                .WithMessage("Type must be either MultiChoice or Text.");
+                .Must(type => Enum.TryParse<QuestionType>(type, true, out _))
+                .WithMessage("Type must be a valid QuestionType: MultiChoice or Text.");
             RuleFor(x => x.MaxPoints)
                 .GreaterThan(0)
                 .WithMessage("MaxPoints must be greater than 0.");
