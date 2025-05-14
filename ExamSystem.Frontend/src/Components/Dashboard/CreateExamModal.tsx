@@ -41,7 +41,6 @@ const CreateExamModal: React.FC<Props> = ({ open, onClose, onCreate }) => {
 
   const handleSubmit = () => {
     onCreate(form);
-    onClose();
   };
 
   return (
