@@ -7,6 +7,7 @@ using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
+using ExamSystem.Application.Utils.Validators;
 
 namespace ExamSystem.Application.Services
 {
@@ -29,6 +30,9 @@ namespace ExamSystem.Application.Services
             var examResult = await _examRepository.GetByIdAsync(questionCreateDto.ExamId);
             if (!examResult.Success || examResult.Data == null)
                 return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.BadRequest);
+
+            if(ExamValidator.IsModifyAllowed(examResult.Data))
+                return ServiceOperationResult.Fail("Exam in progress. Cannot add questions.", ServiceOperationErrorType.BadRequest);
 
             var question = _mapper.Map<Question>(questionCreateDto);
             question.QuestionId = Guid.NewGuid();
