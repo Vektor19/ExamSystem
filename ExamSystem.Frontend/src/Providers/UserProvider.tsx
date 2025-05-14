@@ -74,7 +74,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         console.log("Validation errors:", errors);
         showNotification(
           Object.entries(errors)
-            .map(([field, messages]) => `${(messages as string[]).join(", ")}`)
+            .map(([_, messages]) => `${(messages as string[]).join(", ")}`)
             .join("\n"),
           "error"
         );

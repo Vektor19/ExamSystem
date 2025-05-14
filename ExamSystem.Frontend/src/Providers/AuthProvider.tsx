@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return {
           success: false,
           message: Object.entries(errors).map(
-            ([field, messages]) => `${(messages as string[]).join(", ")}`
+            ([_, messages]) => `${(messages as string[]).join(", ")}`
           )[0],
         };
       }
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return {
           success: false,
           message: Object.entries(errors).map(
-            ([field, messages]) => `${(messages as string[]).join(", ")}`
+            ([_, messages]) => `${(messages as string[]).join(", ")}`
           )[0],
         };
       }
