@@ -1,4 +1,5 @@
 ﻿using ExamSystem.Application.DTOs;
+using ExamSystem.Application.DTOs.Question;
 using ExamSystem.Core.Common;
 
 namespace ExamSystem.Application.Interfaces.Services

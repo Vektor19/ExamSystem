@@ -3,6 +3,7 @@ using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
+using ExamSystem.Application.DTOs.Question;
 
 namespace ExamSystem.API.Controllers
 {

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-namespace ExamSystem.Application.DTOs
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExamSystem.Application.DTOs.QuestionOption
 {
-    public class QuestionOptionDto
+    public class QuestionOptionCreateDto
     {
-        public Guid QuestionOptionId { get; set; }
         public Guid QuestionId { get; set; }
         public string Label { get; set; } = string.Empty;
         public string OptionText { get; set; } = string.Empty;
-        
+        public bool IsCorrect { get; set; }
     }
 }

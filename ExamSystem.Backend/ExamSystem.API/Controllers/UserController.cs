@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
+using ExamSystem.Application.DTOs.User;
 
 namespace ExamSystem.API.Controllers
 {

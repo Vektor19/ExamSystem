@@ -1,4 +1,6 @@
-﻿namespace ExamSystem.Application.DTOs
+﻿using ExamSystem.Application.DTOs.QuestionOption;
+
+namespace ExamSystem.Application.DTOs.Question
 {
     public class QuestionCreateDto
     {

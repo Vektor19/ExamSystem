@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExamSystem.Application.DTOs.QuestionOption;
 
-namespace ExamSystem.Application.DTOs
+namespace ExamSystem.Application.DTOs.Question
 {
     public class QuestionUpdateDto
     {

@@ -1,4 +1,4 @@
-﻿using ExamSystem.Application.DTOs;
+﻿using ExamSystem.Application.DTOs.User;
 using ExamSystem.Core.Common;
 
 namespace ExamSystem.Application.Interfaces.Services

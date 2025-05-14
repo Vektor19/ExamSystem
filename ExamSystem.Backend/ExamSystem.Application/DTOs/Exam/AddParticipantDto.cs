@@ -1,4 +1,4 @@
-﻿namespace ExamSystem.Application.DTOs
+﻿namespace ExamSystem.Application.DTOs.Exam
 {
     public class AddParticipantDto
     {

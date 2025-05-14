@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ExamSystem.Application.DTOs;
+using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using ExamSystem.Core.Entities;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Application.DTOs
+namespace ExamSystem.Application.DTOs.User
 {
     public class AuthResponseDto
     {

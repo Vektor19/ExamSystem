@@ -1,4 +1,4 @@
-﻿using ExamSystem.Application.DTOs;
+﻿using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Application.Models;
 using Microsoft.Extensions.Options;

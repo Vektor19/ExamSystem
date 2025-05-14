@@ -4,6 +4,7 @@ using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.Services;
+using ExamSystem.Application.DTOs.Exam;
 
 namespace ExamSystem.API.Controllers
 {

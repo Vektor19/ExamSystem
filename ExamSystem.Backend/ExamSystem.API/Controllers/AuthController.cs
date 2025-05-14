@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
+using ExamSystem.Application.DTOs.User;
+using ExamSystem.Application.DTOs.Token;
 
 namespace ExamSystem.API.Controllers
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using ExamSystem.Application.DTOs;
+using ExamSystem.Application.DTOs.Violation;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
 
