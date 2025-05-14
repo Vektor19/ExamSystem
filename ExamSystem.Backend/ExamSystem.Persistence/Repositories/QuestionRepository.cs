@@ -68,9 +68,6 @@ namespace ExamSystem.Persistence.Repositories
                     .Any(a => a.QuestionId == q.QuestionId && a.UserId == userId))
                 .ToListAsync();
 
-            if (!questions.Any())
-                return OperationResult<IEnumerable<Question>>.Fail("User has answered all questions for this exam.");
-
             return OperationResult<IEnumerable<Question>>.Ok(questions);
         }
     }

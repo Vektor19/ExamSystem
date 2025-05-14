@@ -77,9 +77,6 @@ namespace ExamSystem.Persistence.Repositories
                 .Where(a => a.UserId == examUser.UserId && a.ExamId == examUser.ExamId)
                 .ToListAsync();
 
-            if (!answers.Any())
-                return OperationResult<IEnumerable<Answer>>.Fail("No answers found for this exam user.");
-
             return OperationResult<IEnumerable<Answer>>.Ok(answers);
         }
 

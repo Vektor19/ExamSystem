@@ -31,8 +31,6 @@ namespace ExamSystem.Persistence.Repositories
             var violations = await _dbContext.Violations.Include(v => v.ExamUser)
                                                         .Where(v => v.ExamUserId == examUserId)
                                                         .ToListAsync();
-            if (violations == null || !violations.Any())
-                return OperationResult<IEnumerable<Violation>>.Fail("No violations found for this exam user.");
             return OperationResult<IEnumerable<Violation>>.Ok(violations);
         }
         public async Task<OperationResult> AddAsync(Violation entity)
