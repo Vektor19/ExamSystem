@@ -28,10 +28,10 @@ import ExamsGuardRoute from "./Routes/ExamsGuardRoute.tsx";
 const App = () => {
   return (
     <>
-      <AuthProvider>
-        <UserProvider>
-          <ExamsProvider>
-            <NotificationProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <UserProvider>
+            <ExamsProvider>
               <Routes>
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<Home />} />
@@ -99,10 +99,10 @@ const App = () => {
                 <Route path="*" element={<Navigate to="/" />} />
                 <Route path="/logout" element={<LogoutRoute />} />
               </Routes>
-            </NotificationProvider>
-          </ExamsProvider>
-        </UserProvider>
-      </AuthProvider>
+            </ExamsProvider>
+          </UserProvider>
+        </AuthProvider>
+      </NotificationProvider>
     </>
   );
 };

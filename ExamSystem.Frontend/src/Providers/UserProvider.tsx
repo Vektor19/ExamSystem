@@ -9,6 +9,8 @@ import { User } from "../Models/User";
 import UserService from "../Services/UserService";
 import TokenParser from "../Services/TokenParser";
 import { UpdateUser } from "../Models/UpdateUser";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
+import { useNotification } from "./NotificationProvider";
 
 type UserContextType = {
   user: User | null;
@@ -22,6 +24,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     fetchUser();
@@ -63,9 +66,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (success) {
         await fetchUser();
       }
+      showNotification("User updated successfully", "success");
       return success;
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      if (err instanceof NoValidRequestError) {
+        const errors = JSON.parse(err.message);
+        console.log("Validation errors:", errors);
+        showNotification(
+          Object.entries(errors)
+            .map(([field, messages]) => `${(messages as string[]).join(", ")}`)
+            .join("\n"),
+          "error"
+        );
+      } else {
+        console.error(err);
+      }
       return false;
     } finally {
       setLoading(false);
