@@ -9,4 +9,5 @@ public enum ServiceOperationErrorType
     Forbidden,
     Internal,
     Unauthorized,
+    BadRequest,
 }

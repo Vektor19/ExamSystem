@@ -2,7 +2,8 @@
 using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Application.Utils.Validators;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
 using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
@@ -25,9 +26,7 @@ namespace ExamSystem.Application.Services
         {
             var existingUserResult = await _userRepository.GetByIdAsync(examCreateDto.CreatedByUserId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail("User who creates exam not found.");
-            if (string.IsNullOrWhiteSpace(examCreateDto.Name))
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail("Exam name is required.");
+                return ServiceOperationResult<ExamForExaminatorDto>.Fail("User who creates exam not found.", ServiceOperationErrorType.BadRequest);
 
             var exam = _mapper.Map<Exam>(examCreateDto);
             exam.ExamId = Guid.NewGuid();
@@ -35,16 +34,12 @@ namespace ExamSystem.Application.Services
             exam.CreatedDate = DateTime.UtcNow;
             exam.JoinCode = Guid.NewGuid().ToString();
 
-            var dateValidationResult = ExamValidator.ValidateDates(exam);
-            if (!dateValidationResult.Success)
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail(dateValidationResult.ErrorMessage!);
-
             var result = await _examRepository.AddAsync(exam);
             if (!result.Success)
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var examResult = await _examRepository.GetByIdAsync(exam.ExamId);
             if (!examResult.Success || examResult.Data == null)
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail("Created exam not found");
+                return ServiceOperationResult<ExamForExaminatorDto>.Fail("Created exam not found", ServiceOperationErrorType.Internal);
             var examDto = _mapper.Map<ExamForExaminatorDto>(examResult.Data);
             return ServiceOperationResult<ExamForExaminatorDto>.Ok(examDto);
         }
@@ -55,26 +50,20 @@ namespace ExamSystem.Application.Services
             var existingExamResult = await _examRepository.GetByIdAsync(id);
 
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
 
-            var modifyAllowedResult = ExamValidator.IsModifyAllowed(existingExamResult.Data);
-            if (!modifyAllowedResult.Success)
-                return ServiceOperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+            if (!ExamValidator.IsModifyAllowed(existingExamResult.Data))
+                return ServiceOperationResult.Fail("Exam is in progress. Cannot delete.", ServiceOperationErrorType.Forbidden);
 
             var result = await _examRepository.DeleteAsync(id);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete exam.");
+                : ServiceOperationResult.Fail("Failed to delete exam.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>> GetAllAsync()
         {
             var result = await _examRepository.GetAllAsync();
-            if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Fail("No exams found.");
-
             var examDtos = _mapper.Map<IEnumerable<ExamForExaminatorDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Ok(examDtos);
         }
@@ -83,11 +72,11 @@ namespace ExamSystem.Application.Services
         {
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var exams = result.Data!;
+            if (!exams.Any())
+                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Ok([]);
             var filteredExams = exams.Where(e => e.CreatedByUserId == createdByUserId).ToList();
-            if (!filteredExams.Any())
-                return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Fail("No exams found for this user.");
             var examDtos = _mapper.Map<IEnumerable<ExamForExaminatorDto>>(filteredExams);
             return ServiceOperationResult<IEnumerable<ExamForExaminatorDto>>.Ok(examDtos);
         }
@@ -96,16 +85,13 @@ namespace ExamSystem.Application.Services
         {
             var result = await _examRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ExamForStudentDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<ExamForStudentDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var exams = result.Data!;
 
             var filteredExams = exams
                 .Where(e => e.ExamUsers.Any(eu => eu.UserId == participantUserId))
                 .ToList();
-
-            if (!filteredExams.Any())
-                return ServiceOperationResult<IEnumerable<ExamForStudentDto>>.Fail("No exams found for this user.");
 
             var examDtos = _mapper.Map<List<ExamForStudentDto>>(filteredExams);
 
@@ -123,7 +109,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _examRepository.GetByIdAsync(id);
             if (!result.Success)
-                return ServiceOperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<ExamForExaminatorDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var examDto = _mapper.Map<ExamForExaminatorDto>(result.Data);
             return ServiceOperationResult<ExamForExaminatorDto>.Ok(examDto);
@@ -132,7 +118,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _examRepository.GetExamUserByIdAsync(examUserId);
             if (!result.Success)
-                return ServiceOperationResult<ExamUserDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<ExamUserDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
             var examUserDto = _mapper.Map<ExamUserDto>(result.Data);
             return ServiceOperationResult<ExamUserDto>.Ok(examUserDto);
         }
@@ -140,34 +126,29 @@ namespace ExamSystem.Application.Services
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
 
             var exam = existingExamResult.Data;
 
-            var isAllowedResult = ExamValidator.IsModifyAllowed(exam);
 
-            if (!isAllowedResult.Success)
-                return ServiceOperationResult.Fail(isAllowedResult.ErrorMessage!);
+            if (!ExamValidator.IsModifyAllowed(exam))
+                return ServiceOperationResult.Fail("Exam is in progress. Cannot update.", ServiceOperationErrorType.Forbidden);
 
             exam.Name = updateDto.Name;
             exam.StartDate = updateDto.StartDate;
             exam.EndDate = updateDto.EndDate;
 
-            var dateValidationResult = ExamValidator.ValidateDates(exam);
-            if (!dateValidationResult.Success)
-                return ServiceOperationResult.Fail(dateValidationResult.ErrorMessage!);
-
             var updateResult = await _examRepository.UpdateAsync(exam);
             return updateResult.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to update exam.");
+                : ServiceOperationResult.Fail("Failed to update exam.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult<bool>> IsParticipantAsync(Guid examId, Guid userId)
         {
             var examResult = await _examRepository.GetByIdAsync(examId);
             if (!examResult.Success || examResult.Data == null)
-                return ServiceOperationResult<bool>.Fail("Exam not found.");
+                return ServiceOperationResult<bool>.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var exam = examResult.Data;
             var isParticipant = exam.ExamUsers.Any(eu => eu.UserId == userId);
             return ServiceOperationResult<bool>.Ok(isParticipant);
@@ -177,10 +158,10 @@ namespace ExamSystem.Application.Services
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var existingUserResult = await _userRepository.GetByIdAsync(userId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
 
 
@@ -200,22 +181,21 @@ namespace ExamSystem.Application.Services
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to add participant.");
+                : ServiceOperationResult.Fail("Failed to add participant.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult> RemoveParticipantAsync(Guid examId, Guid userId)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var existingUserResult = await _userRepository.GetByIdAsync(userId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
 
-            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
-            if (!modifyAllowedResult.Success)
-                return ServiceOperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+            if (!ExamValidator.IsModifyAllowed(exam))
+                return ServiceOperationResult.Fail("Exam is in progress. Cannot remove participant.", ServiceOperationErrorType.Forbidden);
 
             var user = existingUserResult.Data;
             var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
@@ -225,19 +205,19 @@ namespace ExamSystem.Application.Services
                 var result = await _examRepository.UpdateAsync(exam);
                 return result.Success
                     ? ServiceOperationResult.Ok()
-                    : ServiceOperationResult.Fail("Failed to remove participant.");
+                    : ServiceOperationResult.Fail("Failed to remove participant.", ServiceOperationErrorType.Internal);
             }
-            return ServiceOperationResult.Fail("Participant not found in the exam.");
+            return ServiceOperationResult.Fail("Participant not found in the exam.", ServiceOperationErrorType.NotFound);
         }
 
         public async Task<ServiceOperationResult> AddParticipantByEmailAsync(Guid examId, string email)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var existingUserResult = await _userRepository.GetByEmailAsync(email);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
 
             var user = existingUserResult.Data;
@@ -256,27 +236,26 @@ namespace ExamSystem.Application.Services
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to add participant.");
+                : ServiceOperationResult.Fail("Failed to add participant.", ServiceOperationErrorType.Internal);
         }
 
         public async Task<ServiceOperationResult> JoinExam(JoinExamDto joinExamDto)
         {
             var examsResult = await _examRepository.GetAllAsync();
             if (!examsResult.Success || examsResult.Data == null)
-                return ServiceOperationResult.Fail("No exams found.");
+                return ServiceOperationResult.Fail("No exams found.", ServiceOperationErrorType.NotFound);
             var exam = examsResult.Data.FirstOrDefault(e => e.JoinCode == joinExamDto.JoinCode);
             if (exam == null)
-                return ServiceOperationResult.Fail("Wrong join code.");
+                return ServiceOperationResult.Fail("Wrong join code.", ServiceOperationErrorType.BadRequest);
 
-            var modifyAllowedResult = ExamValidator.IsModifyAllowed(exam);
-            if (!modifyAllowedResult.Success)
-                return ServiceOperationResult.Fail(modifyAllowedResult.ErrorMessage!);
+            if (!ExamValidator.IsModifyAllowed(exam))
+                return ServiceOperationResult.Fail("Exam is in progress. Cannot join.", ServiceOperationErrorType.Forbidden);
 
             var userResult = await _userRepository.GetByIdAsync(joinExamDto.UserId);
             if (!userResult.Success || userResult.Data == null)
-                return ServiceOperationResult.Fail("User not found.");
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
             if (exam.ExamUsers.Any(eu => eu.UserId == joinExamDto.UserId))
-                return ServiceOperationResult.Fail("User already joined the exam.");
+                return ServiceOperationResult.Fail("User already joined the exam.", ServiceOperationErrorType.BadRequest);
             var user = userResult.Data;
             exam.ExamUsers.Add(new ExamUser
             {
@@ -292,18 +271,18 @@ namespace ExamSystem.Application.Services
             });
             var result = await _examRepository.UpdateAsync(exam);
             if (!result.Success)
-                return ServiceOperationResult.Fail("Failed to join exam.");
+                return ServiceOperationResult.Fail("Failed to join exam.", ServiceOperationErrorType.Internal);
             return ServiceOperationResult.Ok();
         }
         public async Task<ServiceOperationResult> FinishExamAsync(Guid examId, Guid userId)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
             var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
             if (examUser == null)
-                return ServiceOperationResult.Fail("User not found in the exam.");
+                return ServiceOperationResult.Fail("User not found in the exam.", ServiceOperationErrorType.NotFound);
             examUser.CompleteStatus = true;
 
             foreach (var question in exam.Questions.Where(q => q.Type == QuestionType.MultiChoice).ToList())
@@ -341,13 +320,13 @@ namespace ExamSystem.Application.Services
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to finish exam.");
+                : ServiceOperationResult.Fail("Failed to finish exam.", ServiceOperationErrorType.Internal);
         }
         public async Task<ServiceOperationResult> BlockExamUserByIdAsync(Guid examUserId)
         {
             var existingExamUserResult = await _examRepository.GetExamUserByIdAsync(examUserId);
             if (!existingExamUserResult.Success || existingExamUserResult.Data == null)
-                return ServiceOperationResult.Fail("Exam user not found.");
+                return ServiceOperationResult.Fail("Exam user not found.", ServiceOperationErrorType.NotFound);
 
             var examUser = existingExamUserResult.Data;
             examUser.IsBlocked = true;
@@ -355,13 +334,13 @@ namespace ExamSystem.Application.Services
 
             var existingExamResult = await _examRepository.GetByIdAsync(examUser.ExamId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult.Fail("Exam not found.");
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
 
             var exam = existingExamResult.Data;
 
             var examUserInExam = exam.ExamUsers.FirstOrDefault(eu => eu.ExamUserId == examUserId);
             if (examUserInExam == null)
-                return ServiceOperationResult.Fail("Exam user not found in the exam.");
+                return ServiceOperationResult.Fail("Exam user not found in the exam.", ServiceOperationErrorType.NotFound);
 
             examUserInExam.IsBlocked = true;
             examUserInExam.Grade = 0;
@@ -369,24 +348,24 @@ namespace ExamSystem.Application.Services
             var result = await _examRepository.UpdateAsync(exam);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to block exam user.");
+                : ServiceOperationResult.Fail("Failed to block exam user.", ServiceOperationErrorType.Internal);
         }
         public async Task<ServiceOperationResult<bool>> IsUserBlockedInExamAsync(Guid examId, Guid userId)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult<bool>.Fail("Exam not found.");
+                return ServiceOperationResult<bool>.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
             var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == userId);
             if (examUser == null)
-                return ServiceOperationResult<bool>.Fail("User not found in the exam.");
+                return ServiceOperationResult<bool>.Fail("User not found in the exam.", ServiceOperationErrorType.NotFound);
             return ServiceOperationResult<bool>.Ok(examUser.IsBlocked);
         }
         public async Task<ServiceOperationResult<bool>> IsExamInProgressAsync(Guid examId)
         {
             var existingExamResult = await _examRepository.GetByIdAsync(examId);
             if (!existingExamResult.Success || existingExamResult.Data == null)
-                return ServiceOperationResult<bool>.Fail("Exam not found.");
+                return ServiceOperationResult<bool>.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
             var exam = existingExamResult.Data;
             var isInProgress = exam.Status == ExamStatus.Started;
             return ServiceOperationResult<bool>.Ok(isInProgress);
@@ -395,7 +374,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _examRepository.GetExpiredNotFinishedExamUsersAsync(now);
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ExamUserDto>>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<IEnumerable<ExamUserDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
             var examUserDtos = _mapper.Map<IEnumerable<ExamUserDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<ExamUserDto>>.Ok(examUserDtos);
         }
