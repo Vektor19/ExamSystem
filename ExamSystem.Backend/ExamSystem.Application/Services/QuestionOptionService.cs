@@ -20,29 +20,29 @@ namespace ExamSystem.Application.Services
             _questionRepository = questionRepository;
         }
 
-        public async Task<OperationResult> CreateAsync(QuestionOptionCreateDto questionCreateDto)
+        public async Task<RepositoryOperationResult> CreateAsync(QuestionOptionCreateDto questionCreateDto)
         {
             var questionOption = _mapper.Map<QuestionOption>(questionCreateDto);
             questionOption.QuestionOptionId = Guid.NewGuid();
 
             var questionResult = await _questionRepository.GetByIdAsync(questionCreateDto.QuestionId);
             if (!questionResult.Success || questionResult.Data == null)
-                return OperationResult.Fail("Question not found.");
+                return RepositoryOperationResult.Fail("Question not found.");
 
             questionOption.Question = questionResult.Data;
             var result = await _questionOptionRepository.AddAsync(questionOption);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create question option.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to create question option.");
         }
 
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var result = await _questionOptionRepository.DeleteAsync(id);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to delete question option.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to delete question option.");
         }
 
         public async Task<OperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync()
@@ -80,11 +80,11 @@ namespace ExamSystem.Application.Services
             return OperationResult<QuestionOptionDto>.Ok(questionOption);
         }
 
-        public async Task<OperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto updateDto)
+        public async Task<RepositoryOperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto updateDto)
         {
             var existingQuestionOptionResult = await _questionOptionRepository.GetByIdAsync(questionOptionId);
             if (!existingQuestionOptionResult.Success || existingQuestionOptionResult.Data == null)
-                return OperationResult.Fail("Question option not found.");
+                return RepositoryOperationResult.Fail("Question option not found.");
 
             var questionOption = existingQuestionOptionResult.Data;
 
@@ -94,8 +94,8 @@ namespace ExamSystem.Application.Services
 
             var updateResult = await _questionOptionRepository.UpdateAsync(questionOption);
             return updateResult.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to update question option.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to update question option.");
         }
     }
 }

@@ -29,35 +29,35 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<QuestionOption>.Ok(questionOption);
         }
 
-        public async Task<OperationResult> AddAsync(QuestionOption entity)
+        public async Task<RepositoryOperationResult> AddAsync(QuestionOption entity)
         {
             await _dbContext.QuestionOptions.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add question option.");
+                return RepositoryOperationResult.Fail("Failed to add question option.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(QuestionOption entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(QuestionOption entity)
         {
             _dbContext.QuestionOptions.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update question option.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update question option.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var questionOption = await _dbContext.QuestionOptions.FindAsync(id);
             if (questionOption == null)
-                return OperationResult.Fail("Question option not found.");
+                return RepositoryOperationResult.Fail("Question option not found.");
             _dbContext.QuestionOptions.Remove(questionOption);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete question option.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete question option.");
+            return RepositoryOperationResult.Ok();
         }
     }
 }

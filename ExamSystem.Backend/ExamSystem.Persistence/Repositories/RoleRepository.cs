@@ -28,51 +28,51 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<Role>.Ok(role);
         }
 
-        public async Task<OperationResult> AddAsync(Role entity)
+        public async Task<RepositoryOperationResult> AddAsync(Role entity)
         {
             await _dbContext.Roles.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add role.");
+                return RepositoryOperationResult.Fail("Failed to add role.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> UpdateAsync(Role entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(Role entity)
         {
             var existing = await _dbContext.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.RoleId == entity.RoleId);
             if (existing == null)
-                return OperationResult.Fail("Role not found.");
+                return RepositoryOperationResult.Fail("Role not found.");
 
             if (existing.IsSystem)
-                return OperationResult.Fail("System role cannot be updated.");
+                return RepositoryOperationResult.Fail("System role cannot be updated.");
 
             _dbContext.Roles.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to update role.");
+                return RepositoryOperationResult.Fail("Failed to update role.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var role = await _dbContext.Roles.FindAsync(id);
             if (role == null)
-                return OperationResult.Fail("Role not found.");
+                return RepositoryOperationResult.Fail("Role not found.");
 
             if (role.IsSystem)
-                return OperationResult.Fail("System role cannot be deleted.");
+                return RepositoryOperationResult.Fail("System role cannot be deleted.");
 
             _dbContext.Roles.Remove(role);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to delete role.");
+                return RepositoryOperationResult.Fail("Failed to delete role.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
 
         public async Task<OperationResult<IEnumerable<Role>>> GetRolesByNamesAsync(IEnumerable<string> names)

@@ -31,35 +31,35 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<Answer>.Ok(answer);
         }
 
-        public async Task<OperationResult> AddAsync(Answer entity)
+        public async Task<RepositoryOperationResult> AddAsync(Answer entity)
         {
             await _dbContext.Answers.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add answer.");
+                return RepositoryOperationResult.Fail("Failed to add answer.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(Answer entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(Answer entity)
         {
             _dbContext.Answers.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update answer.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update answer.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var answer = await _dbContext.Answers.FindAsync(id);
             if (answer == null)
-                return OperationResult.Fail("Answer not found.");
+                return RepositoryOperationResult.Fail("Answer not found.");
             _dbContext.Answers.Remove(answer);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete answer.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete answer.");
+            return RepositoryOperationResult.Ok();
         }
         public async Task<OperationResult<IEnumerable<Answer>>> GetAllByExamUserIdAsync(Guid examUserId)
         {

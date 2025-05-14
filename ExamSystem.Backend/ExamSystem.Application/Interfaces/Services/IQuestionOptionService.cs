@@ -9,8 +9,8 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<QuestionOptionDto>> GetByIdAsync(Guid questionOptionId);
         Task<OperationResult<IEnumerable<QuestionOptionDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<QuestionOptionDto>>> GetAllByQuestionIdAsync(Guid questionId);
-        Task<OperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto questionUpdateDto);
-        Task<OperationResult> DeleteAsync(Guid questionOptionId);
-        Task<OperationResult> CreateAsync(QuestionOptionCreateDto questionOptionCreateDto);
+        Task<RepositoryOperationResult> UpdateAsync(Guid questionOptionId, QuestionOptionUpdateDto questionUpdateDto);
+        Task<RepositoryOperationResult> DeleteAsync(Guid questionOptionId);
+        Task<RepositoryOperationResult> CreateAsync(QuestionOptionCreateDto questionOptionCreateDto);
     }
 }

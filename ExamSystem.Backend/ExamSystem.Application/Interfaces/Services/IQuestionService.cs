@@ -9,10 +9,10 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<QuestionDto>> GetByIdAsync(Guid questionId);
         Task<OperationResult<IEnumerable<QuestionDto>>> GetAllAsync();
         Task<OperationResult<IEnumerable<QuestionDto>>> GetAllByExamIdAsync(Guid examId);
-        Task<OperationResult> UpdateAsync(Guid questionId, QuestionUpdateDto questionUpdateDto);
-        Task<OperationResult> DeleteAsync(Guid questionId);
-        Task<OperationResult> CreateAsync(QuestionCreateDto questionCreateDto);
+        Task<RepositoryOperationResult> UpdateAsync(Guid questionId, QuestionUpdateDto questionUpdateDto);
+        Task<RepositoryOperationResult> DeleteAsync(Guid questionId);
+        Task<RepositoryOperationResult> CreateAsync(QuestionCreateDto questionCreateDto);
         Task<OperationResult<IEnumerable<QuestionDto>>> GetAllUnansweredByUserAsync(Guid userId, Guid examId);
-        Task<OperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto);
+        Task<RepositoryOperationResult> GradeTextQuestionAnswerAsync(Guid questionId, GradeOpenAnswerDto gradeOpenAnswerDto);
     }
 }

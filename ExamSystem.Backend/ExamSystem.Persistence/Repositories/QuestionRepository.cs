@@ -29,35 +29,35 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<Question>.Ok(question);
         }
 
-        public async Task<OperationResult> AddAsync(Question entity)
+        public async Task<RepositoryOperationResult> AddAsync(Question entity)
         {
             await _dbContext.Questions.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add question.");
+                return RepositoryOperationResult.Fail("Failed to add question.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(Question entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(Question entity)
         {
             _dbContext.Questions.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update question.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update question.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var question = await _dbContext.Questions.FindAsync(id);
             if (question == null)
-                return OperationResult.Fail("Question not found.");
+                return RepositoryOperationResult.Fail("Question not found.");
             _dbContext.Questions.Remove(question);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete question.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete question.");
+            return RepositoryOperationResult.Ok();
         }
         public async Task<OperationResult<IEnumerable<Question>>> GetUnansweredByUserAsync(Guid examId, Guid userId)
         {

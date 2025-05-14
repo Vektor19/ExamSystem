@@ -18,41 +18,41 @@ namespace ExamSystem.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
+        public async Task<RepositoryOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOpenAnswerDto openAnswerDto)
-                return OperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
+                return RepositoryOperationResult.Fail("Invalid answer type. Expected OpenAnswerDto.");
             var answer = _mapper.Map<Answer>(openAnswerDto);
             answer.AnswerId = Guid.NewGuid();
             answer.IsGraded = false;
 
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create answer.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to create answer.");
         }
 
-        public async Task<OperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
+        public async Task<RepositoryOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto)
         {
             if (createAnswerDto is not CreateOptionAnswerDto optionAnswerDto)
-                return OperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
+                return RepositoryOperationResult.Fail("Invalid answer type. Expected OptionAnswerDto.");
 
             var answer = _mapper.Map<Answer>(optionAnswerDto);
             answer.AnswerId = Guid.NewGuid();
             answer.IsGraded = false;
             var result = await _answerRepository.AddAsync(answer);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create answer.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to create answer.");
         }
 
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var result = await _answerRepository.DeleteAsync(id);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to delete answer.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to delete answer.");
         }
 
         public async Task<OperationResult<IEnumerable<AnswerDto>>> GetAllAsync()

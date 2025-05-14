@@ -11,19 +11,19 @@ namespace ExamSystem.Application.Utils.Validators
 {
     public static class ExamValidator
     {
-        public static OperationResult IsModifyAllowed(Exam exam)
+        public static RepositoryOperationResult IsModifyAllowed(Exam exam)
         {
             return exam.Status == ExamStatus.NotStarted
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Operation allowed only when exam status is NotStarted.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Operation allowed only when exam status is NotStarted.");
         }
-        public static OperationResult ValidateDates(Exam exam)
+        public static RepositoryOperationResult ValidateDates(Exam exam)
         {
             if (exam.StartDate < DateTime.UtcNow)
-                return OperationResult.Fail("Start date must be in the future.");
+                return RepositoryOperationResult.Fail("Start date must be in the future.");
             if (exam.EndDate <= exam.StartDate)
-                return OperationResult.Fail("End date must be after start date.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("End date must be after start date.");
+            return RepositoryOperationResult.Ok();
         }
     }
 }

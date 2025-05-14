@@ -12,9 +12,9 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamIdAsync(Guid examId);
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByExamUserIdAsync(Guid examUserId);
         Task<OperationResult<IEnumerable<AnswerDto>>> GetAllByUserIdAsync(Guid userId);
-        Task<OperationResult> DeleteAsync(Guid answerId);
-        Task<OperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto);
-        Task<OperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto);
+        Task<RepositoryOperationResult> DeleteAsync(Guid answerId);
+        Task<RepositoryOperationResult> CreateOpenAnswerAsync(CreateAnswerDto createAnswerDto);
+        Task<RepositoryOperationResult> CreateOptionAnswerAsync(CreateAnswerDto createAnswerDto);
 
     }
 }

@@ -47,12 +47,12 @@ namespace ExamSystem.Application.Services
             var violationDtos = _mapper.Map<IEnumerable<ViolationDto>>(result.Data);
             return OperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
         }
-        public async Task<OperationResult> DeleteAsync(Guid violationId)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid violationId)
         {
             var result = await _violationRepository.DeleteAsync(violationId);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to delete violation.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to delete violation.");
         }
         public async Task<OperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto)
         {

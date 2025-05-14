@@ -24,19 +24,19 @@ namespace ExamSystem.Application.Services
             _examRepository = examRepository;
         }
 
-        public async Task<OperationResult> CreateUserAsync(RegisterUserDto userDto)
+        public async Task<RepositoryOperationResult> CreateUserAsync(RegisterUserDto userDto)
         {
             if (string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
-                return OperationResult.Fail("Email and password are required.");
+                return RepositoryOperationResult.Fail("Email and password are required.");
 
             var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
             if (existingUser.Success && existingUser.Data != null)
-                return OperationResult.Fail("User with this email already exists.");
+                return RepositoryOperationResult.Fail("User with this email already exists.");
 
             var rolesFromDb = await _roleRepository.GetRolesByNamesAsync([SystemRoles.Student, SystemRoles.Examinator]);
 
             if (!rolesFromDb.Success || rolesFromDb.Data == null || !rolesFromDb.Data.Any())
-                return OperationResult.Fail("Can't create user");
+                return RepositoryOperationResult.Fail("Can't create user");
 
             var user = _mapper.Map<User>(userDto);
             user.UserId = Guid.NewGuid();
@@ -51,17 +51,17 @@ namespace ExamSystem.Application.Services
 
             var result = await _userRepository.AddAsync(user);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create user.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to create user.");
         }
 
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var result = await _userRepository.DeleteAsync(id);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to delete user.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to delete user.");
         }
 
         public async Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync()
@@ -96,11 +96,11 @@ namespace ExamSystem.Application.Services
             return OperationResult<UserDto>.Ok(userDto);
         }
 
-        public async Task<OperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto)
+        public async Task<RepositoryOperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto)
         {
             var existingUserResult = await _userRepository.GetByIdAsync(userId);
             if (!existingUserResult.Success || existingUserResult.Data == null)
-                return OperationResult.Fail("User not found.");
+                return RepositoryOperationResult.Fail("User not found.");
 
             var user = existingUserResult.Data;
 
@@ -110,36 +110,36 @@ namespace ExamSystem.Application.Services
 
             var updateResult = await _userRepository.UpdateAsync(user);
             return updateResult.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to update user.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to update user.");
         }
 
-        public async Task<OperationResult> ValidateCredentialsAsync(string email, string password)
+        public async Task<RepositoryOperationResult> ValidateCredentialsAsync(string email, string password)
         {
             var result = await _userRepository.GetByEmailAsync(email);
             if (!result.Success || result.Data == null)
-                return OperationResult.Fail("User not found.");
+                return RepositoryOperationResult.Fail("User not found.");
 
             var isValid = _passwordHasher.VerifyPassword(password, result.Data.PasswordHash);
             return isValid
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Invalid credentials.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Invalid credentials.");
         }
-        public async Task<OperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto)
+        public async Task<RepositoryOperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto)
         {
             if (string.IsNullOrWhiteSpace(userDto.Email) || string.IsNullOrWhiteSpace(userDto.Password))
-                return OperationResult.Fail("Email and password are required.");
+                return RepositoryOperationResult.Fail("Email and password are required.");
 
             var existingUser = await _userRepository.GetByEmailAsync(userDto.Email);
             if (existingUser.Success && existingUser.Data != null)
-                return OperationResult.Fail("User with this email already exists.");
+                return RepositoryOperationResult.Fail("User with this email already exists.");
 
             if (userDto.Roles == null || !userDto.Roles.Any())
-                return OperationResult.Fail("At least one role must be specified.");
+                return RepositoryOperationResult.Fail("At least one role must be specified.");
 
             var rolesFromDb = await _roleRepository.GetRolesByNamesAsync(userDto.Roles);
             if (!rolesFromDb.Success || rolesFromDb.Data == null || !rolesFromDb.Data.Any())
-                return OperationResult.Fail("Invalid roles specified.");
+                return RepositoryOperationResult.Fail("Invalid roles specified.");
 
             var user = _mapper.Map<User>(userDto);
             user.UserId = Guid.NewGuid();
@@ -154,8 +154,8 @@ namespace ExamSystem.Application.Services
 
             var result = await _userRepository.AddAsync(user);
             return result.Success
-                ? OperationResult.Ok()
-                : OperationResult.Fail("Failed to create user.");
+                ? RepositoryOperationResult.Ok()
+                : RepositoryOperationResult.Fail("Failed to create user.");
         }
         public async Task<OperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId)
         {

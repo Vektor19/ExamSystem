@@ -38,35 +38,35 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<Exam>.Ok(exam);
         }
 
-        public async Task<OperationResult> AddAsync(Exam entity)
+        public async Task<RepositoryOperationResult> AddAsync(Exam entity)
         {
             await _dbContext.Exams.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add exam.");
+                return RepositoryOperationResult.Fail("Failed to add exam.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(Exam entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(Exam entity)
         {
             _dbContext.Exams.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update exam.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update exam.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var exam = await _dbContext.Exams.FindAsync(id);
             if (exam == null)
-                return OperationResult.Fail("Exam not found.");
+                return RepositoryOperationResult.Fail("Exam not found.");
             _dbContext.Exams.Remove(exam);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete exam.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete exam.");
+            return RepositoryOperationResult.Ok();
         }
 
         public async Task<OperationResult<ExamUser>> GetExamUserByIdAsync(Guid id)

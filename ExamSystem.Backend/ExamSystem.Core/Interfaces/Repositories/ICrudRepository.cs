@@ -6,8 +6,8 @@ namespace ExamSystem.Core.Interfaces.Repositories
     {
         Task<OperationResult<T>> GetByIdAsync(Guid id);
         Task<OperationResult<IEnumerable<T>>> GetAllAsync();
-        Task<OperationResult> AddAsync(T entity);
-        Task<OperationResult> UpdateAsync(T entity);
-        Task<OperationResult> DeleteAsync(Guid id);
+        Task<RepositoryOperationResult> AddAsync(T entity);
+        Task<RepositoryOperationResult> UpdateAsync(T entity);
+        Task<RepositoryOperationResult> DeleteAsync(Guid id);
     }
 }

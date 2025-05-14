@@ -1,16 +1,16 @@
 ﻿namespace ExamSystem.Core.Common
 {
-    public class OperationResult
+    public class RepositoryOperationResult
     {
         public bool Success { get; private set; }
         public string? ErrorMessage { get; private set; }
-        private OperationResult(bool success, string? errorMessage = null)
+        private RepositoryOperationResult(bool success, string? errorMessage = null)
         {
             Success = success;
             ErrorMessage = errorMessage;
         }
-        public static OperationResult Ok() => new(true);
-        public static OperationResult Fail(string error) => new(false, error);
+        public static RepositoryOperationResult Ok() => new(true);
+        public static RepositoryOperationResult Fail(string error) => new(false, error);
     }
     public class OperationResult<T>
     {

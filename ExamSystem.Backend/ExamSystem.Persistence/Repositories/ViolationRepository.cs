@@ -33,35 +33,35 @@ namespace ExamSystem.Persistence.Repositories
                                                         .ToListAsync();
             return OperationResult<IEnumerable<Violation>>.Ok(violations);
         }
-        public async Task<OperationResult> AddAsync(Violation entity)
+        public async Task<RepositoryOperationResult> AddAsync(Violation entity)
         {
             await _dbContext.Violations.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add violation.");
+                return RepositoryOperationResult.Fail("Failed to add violation.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(Violation entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(Violation entity)
         {
             _dbContext.Violations.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update violation.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update violation.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var violation = await _dbContext.Violations.FindAsync(id);
             if (violation == null)
-                return OperationResult.Fail("Violation not found.");
+                return RepositoryOperationResult.Fail("Violation not found.");
             _dbContext.Violations.Remove(violation);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete violation.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete violation.");
+            return RepositoryOperationResult.Ok();
         }
     }
 }

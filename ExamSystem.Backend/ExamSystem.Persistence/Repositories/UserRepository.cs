@@ -35,35 +35,35 @@ namespace ExamSystem.Persistence.Repositories
             return OperationResult<User>.Ok(user);
         }
 
-        public async Task<OperationResult> AddAsync(User entity)
+        public async Task<RepositoryOperationResult> AddAsync(User entity)
         {
             await _dbContext.Users.AddAsync(entity);
             var result = await _dbContext.SaveChangesAsync();
 
             if (result == 0)
-                return OperationResult.Fail("Failed to add user.");
+                return RepositoryOperationResult.Fail("Failed to add user.");
 
-            return OperationResult.Ok();
+            return RepositoryOperationResult.Ok();
         }
-        public async Task<OperationResult> UpdateAsync(User entity)
+        public async Task<RepositoryOperationResult> UpdateAsync(User entity)
         {
             _dbContext.Users.Update(entity);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to update user.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to update user.");
+            return RepositoryOperationResult.Ok();
         }
 
-        public async Task<OperationResult> DeleteAsync(Guid id)
+        public async Task<RepositoryOperationResult> DeleteAsync(Guid id)
         {
             var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
-                return OperationResult.Fail("User not found.");
+                return RepositoryOperationResult.Fail("User not found.");
             _dbContext.Users.Remove(user);
             var result = await _dbContext.SaveChangesAsync();
             if (result == 0)
-                return OperationResult.Fail("Failed to delete user.");
-            return OperationResult.Ok();
+                return RepositoryOperationResult.Fail("Failed to delete user.");
+            return RepositoryOperationResult.Ok();
         }
         public async Task<OperationResult<User>> GetByEmailAsync(string email)
         {

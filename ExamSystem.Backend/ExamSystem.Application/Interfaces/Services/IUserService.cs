@@ -8,11 +8,11 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<OperationResult<UserDto>> GetByIdAsync(Guid id);
         Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync();
         Task<OperationResult<UserDto>> GetByEmailAsync(string email);
-        Task<OperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto);
-        Task<OperationResult> DeleteAsync(Guid id);
-        Task<OperationResult> ValidateCredentialsAsync(string email, string password);
-        Task<OperationResult> CreateUserAsync(RegisterUserDto userDto);
-        Task<OperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
+        Task<RepositoryOperationResult> UpdateAsync(Guid userId, UpdateUserDto updateDto);
+        Task<RepositoryOperationResult> DeleteAsync(Guid id);
+        Task<RepositoryOperationResult> ValidateCredentialsAsync(string email, string password);
+        Task<RepositoryOperationResult> CreateUserAsync(RegisterUserDto userDto);
+        Task<RepositoryOperationResult> CreateUserByAdminAsync(CreateUserByAdminDto userDto);
         Task<OperationResult<IEnumerable<UserDto>>> GetParticipantsByExamIdAsync(Guid examId);
     }
 }
