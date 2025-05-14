@@ -1,4 +1,5 @@
 import examSystemApi from "../Api/examSystemApi";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
 import { GradeOpenAnswer } from "../Models/GradeOpenAnswer";
 import { Question } from "../Models/Question";
 import { QuestionCreate } from "../Models/QuestionCreate";
@@ -34,6 +35,9 @@ class QuestionService {
       const res = await examSystemApi.post("/question/", question);
       return res.data.success;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "Question not created");
     }
   }
@@ -56,6 +60,9 @@ class QuestionService {
       );
       return res.data.success;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "Question not graded");
     }
   }

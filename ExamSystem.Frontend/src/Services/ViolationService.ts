@@ -1,4 +1,5 @@
 import examSystemApi from "../Api/examSystemApi";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
 import { Violation } from "../Models/Violation";
 import { ViolationCreate } from "../Models/ViolationCreate";
 
@@ -22,6 +23,9 @@ class ViolationService {
       );
       return res.data;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "Violation not created");
     }
   }
