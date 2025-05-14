@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using ExamSystem.Application.DTOs.User;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,7 +14,8 @@ public class ValidationFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var dto = context.ActionArguments.Values.FirstOrDefault();
+        var dto = context.ActionArguments.Values.FirstOrDefault(x => x != null && _serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(x.GetType())) != null);
+
         if (dto == null)
         {
             await next();
