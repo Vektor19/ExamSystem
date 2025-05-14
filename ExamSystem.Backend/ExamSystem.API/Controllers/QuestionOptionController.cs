@@ -3,6 +3,7 @@ using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.DTOs.QuestionOption;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -24,14 +25,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _questionOptionService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
         [HttpGet("by-question/{id}")]
         public async Task<IActionResult> GetAllByQuestion(Guid id)
         {
             var result = await _questionOptionService.GetAllByQuestionIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(OptionOwnerOrAdminAuthorize))]
@@ -39,28 +40,28 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _questionOptionService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(CreateOptionAuthorize))]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] QuestionOptionCreateDto questionDto)
         {
             var result = await _questionOptionService.CreateAsync(questionDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(OptionOwnerOrAdminAuthorize))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _questionOptionService.DeleteAsync(id);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(OptionOwnerOrAdminAuthorize))]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] QuestionOptionUpdateDto questionDto)
         {
             var result = await _questionOptionService.UpdateAsync(id, questionDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
     }
 }
