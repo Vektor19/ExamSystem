@@ -1,4 +1,5 @@
 import examSystemApi from "../Api/examSystemApi";
+import { NoValidRequestError } from "../Common/Exceptions/NoValidRequestError";
 import { UpdateUser } from "../Models/UpdateUser";
 import { User } from "../Models/User";
 
@@ -16,6 +17,9 @@ class UserService {
       const res = await examSystemApi.put("/user/" + id, user);
       return res.data.success;
     } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
       throw new Error(err?.response?.data?.message || "User not found");
     }
   }
