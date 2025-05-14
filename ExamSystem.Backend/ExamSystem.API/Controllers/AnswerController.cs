@@ -3,6 +3,7 @@ using ExamSystem.Application.DTOs;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -28,14 +29,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _answerService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
         [HttpGet("by-exam/{id}")]
         public async Task<IActionResult> GetAllByExamId(Guid id)
         {
             var result = await _answerService.GetAllByExamIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
@@ -43,7 +44,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAllByParticipantIdAsync(Guid id)
         {
             var result = await _answerService.GetAllByUserIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [Authorize(Roles = SystemRoles.Admin)]
@@ -51,7 +52,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _answerService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(CreateAnswerAuthorize))]
         [HttpPost("open-type")]
@@ -109,7 +110,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAllByExamUserId(Guid id)
         {
             var result = await _answerService.GetAllByExamUserIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
     }
 }
