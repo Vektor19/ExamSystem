@@ -4,6 +4,7 @@ using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Core.Common;
 using Microsoft.AspNetCore.Authorization;
 using ExamSystem.Application.DTOs.Question;
+using ExamSystem.API.Extensions;
 
 namespace ExamSystem.API.Controllers
 {
@@ -25,14 +26,14 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await _questionService.GetAllAsync();
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(ExamReadAccessAuthorize))]
         [HttpGet("by-exam/{id}")]
         public async Task<IActionResult> GetAllByExam(Guid id)
         {
             var result = await _questionService.GetAllByExamIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(SelfOrAdminAuthorize))]
@@ -40,7 +41,7 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetAllUnansweredByUser(Guid id, Guid examId)
         {
             var result = await _questionService.GetAllUnansweredByUserAsync(id, examId);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
 
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
@@ -48,35 +49,35 @@ namespace ExamSystem.API.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _questionService.GetByIdAsync(id);
-            return result.Success ? Ok(result.Data) : NotFound(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(CreateQuestionAuthorize))]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] QuestionCreateDto questionDto)
         {
             var result = await _questionService.CreateAsync(questionDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await _questionService.DeleteAsync(id);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] QuestionUpdateDto questionDto)
         {
             var result = await _questionService.UpdateAsync(id, questionDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
         [TypeFilter(typeof(QuestionOwnerOrAdminAuthorize))]
         [HttpPost("{id}/grade-openanswer")]
         public async Task<IActionResult> GradeTextQuestionAnswer(Guid id, [FromBody] GradeOpenAnswerDto gradeOpenAnswerDto)
         {
             var result = await _questionService.GradeTextQuestionAnswerAsync(id, gradeOpenAnswerDto);
-            return result.Success ? Ok(result) : BadRequest(result.ErrorMessage);
+            return result.ToActionResult();
         }
     }
 }
