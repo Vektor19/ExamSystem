@@ -7,7 +7,6 @@ import {
   Divider,
   Paper,
   Zoom,
-  IconButton,
   TextField,
   Chip,
   FormControlLabel,
@@ -25,7 +24,8 @@ import QuestionService from "../../Services/QuestionService";
 import AnswerService from "../../Services/AnswerService";
 import { Answer } from "../../Models/Answer";
 import PrimaryButton from "../Buttons/PrimaryButton";
-
+import { NoValidRequestError } from "../../Common/Exceptions/NoValidRequestError";
+import { useNotification } from "../../Providers/NotificationProvider";
 const ParticipantAssessPage: React.FC = () => {
   const { examId, userId } = useParams<{ examId: string; userId: string }>();
   const { examinatorExams, questions, fetchQuestions, fetchExaminatorExams } =
@@ -34,7 +34,7 @@ const ParticipantAssessPage: React.FC = () => {
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [answers, setAnswers] = useState<Answer[] | null>(null);
   const [gradedAnswers, setGradedAnswers] = useState<Set<string>>(new Set());
-
+  const { showNotification } = useNotification();
   const [formValues, setFormValues] = useState({
     name: "",
     startDate: "",
@@ -98,6 +98,7 @@ const ParticipantAssessPage: React.FC = () => {
         answerId,
         grade,
       });
+      await fetchExaminatorExams();
 
       const updatedAnswers = await AnswerService.getAllByExamUserId(
         participant!.examUserId
@@ -105,8 +106,19 @@ const ParticipantAssessPage: React.FC = () => {
       setAnswers(updatedAnswers);
 
       setGradedAnswers((prev) => new Set(prev).add(answerId));
-    } catch (error) {
-      console.error("Failed to grade question:", error);
+    } catch (err: any) {
+      if (err instanceof NoValidRequestError) {
+        const errors = JSON.parse(err.message);
+        console.log("Validation errors:", errors);
+        showNotification(
+          Object.entries(errors).map(
+            ([_, messages]) => `${(messages as string[]).join(", ")}`
+          )[0],
+          "error"
+        );
+      } else {
+        console.error("Failed to update exam:", err);
+      }
     }
   };
 
