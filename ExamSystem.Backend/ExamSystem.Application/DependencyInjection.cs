@@ -1,7 +1,9 @@
 ﻿using System.Text;
+using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Interfaces.Services;
 using ExamSystem.Application.Models;
 using ExamSystem.Application.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +37,7 @@ namespace ExamSystem.Application
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 
             services.AddAuthentication(options =>
             {
