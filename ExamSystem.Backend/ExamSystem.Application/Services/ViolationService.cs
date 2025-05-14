@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using ExamSystem.Application.DTOs.Violation;
 using ExamSystem.Application.Interfaces.Services;
-using ExamSystem.Core.Common;
+using ExamSystem.Application.Common.Models;
+using ExamSystem.Application.Common.Enums;
 using ExamSystem.Core.Entities;
-using ExamSystem.Core.Enums;
 using ExamSystem.Core.Interfaces.Repositories;
 
 namespace ExamSystem.Application.Services
@@ -21,7 +21,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _violationRepository.GetByIdAsync(violationId);
             if (!result.Success)
-                return ServiceOperationResult<ViolationDto>.Fail(result.ErrorMessage!);
+                return ServiceOperationResult<ViolationDto>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
 
             var violationDto = _mapper.Map<ViolationDto>(result.Data);
             return ServiceOperationResult<ViolationDto>.Ok(violationDto);
@@ -30,9 +30,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _violationRepository.GetAllAsync();
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found.");
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.Internal);
 
             var violationDtos = _mapper.Map<IEnumerable<ViolationDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
@@ -41,9 +39,7 @@ namespace ExamSystem.Application.Services
         {
             var result = await _violationRepository.GetAllByExamUserIdAsync(examUserId);
             if (!result.Success)
-                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!);
-            if (!result.Data!.Any())
-                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail("No violations found for this exam user.");
+                return ServiceOperationResult<IEnumerable<ViolationDto>>.Fail(result.ErrorMessage!, ServiceOperationErrorType.NotFound);
             var violationDtos = _mapper.Map<IEnumerable<ViolationDto>>(result.Data);
             return ServiceOperationResult<IEnumerable<ViolationDto>>.Ok(violationDtos);
         }
@@ -52,7 +48,7 @@ namespace ExamSystem.Application.Services
             var result = await _violationRepository.DeleteAsync(violationId);
             return result.Success
                 ? ServiceOperationResult.Ok()
-                : ServiceOperationResult.Fail("Failed to delete violation.");
+                : ServiceOperationResult.Fail("Failed to delete violation.", ServiceOperationErrorType.Internal);
         }
         public async Task<ServiceOperationResult<ViolationDto>> CreateAsync(CreateViolationDto createViolationDto)
         {
@@ -66,7 +62,7 @@ namespace ExamSystem.Application.Services
                 var violationDto = _mapper.Map<ViolationDto>(violation);
                 return ServiceOperationResult<ViolationDto>.Ok(violationDto);
             }
-            return ServiceOperationResult<ViolationDto>.Fail("Failed to create violation.");
+            return ServiceOperationResult<ViolationDto>.Fail("Failed to create violation.", ServiceOperationErrorType.Internal);
         }
     }
 }
