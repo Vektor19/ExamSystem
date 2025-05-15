@@ -13,6 +13,7 @@ namespace ExamSystem.Application.Interfaces.Services
         Task<ServiceOperationResult> AddParticipantAsync(Guid examId, Guid userId);
         Task<ServiceOperationResult> RemoveParticipantAsync(Guid examId, Guid userId);
         Task<ServiceOperationResult> AddParticipantByEmailAsync(Guid examId, string email);
+        Task<ServiceOperationResult> RemoveParticipantByEmailAsync(Guid examId, string email);
         Task<ServiceOperationResult> UpdateAsync(Guid examId, ExamUpdateDto examUpdateDto);
         Task<ServiceOperationResult> DeleteAsync(Guid examId);
         Task<ServiceOperationResult<ExamForExaminatorDto>> CreateAsync(ExamCreateDto createExamDto);

@@ -238,6 +238,29 @@ namespace ExamSystem.Application.Services
                 ? ServiceOperationResult.Ok()
                 : ServiceOperationResult.Fail("Failed to add participant.", ServiceOperationErrorType.Internal);
         }
+        public async Task<ServiceOperationResult> RemoveParticipantByEmailAsync(Guid examId, string email)
+        {
+            var existingExamResult = await _examRepository.GetByIdAsync(examId);
+            if (!existingExamResult.Success || existingExamResult.Data == null)
+                return ServiceOperationResult.Fail("Exam not found.", ServiceOperationErrorType.NotFound);
+            var existingUserResult = await _userRepository.GetByEmailAsync(email);
+            if (!existingUserResult.Success || existingUserResult.Data == null)
+                return ServiceOperationResult.Fail("User not found.", ServiceOperationErrorType.NotFound);
+            var exam = existingExamResult.Data;
+            if (!ExamValidator.IsModifyAllowed(exam))
+                return ServiceOperationResult.Fail("Exam is in progress. Cannot remove participant.", ServiceOperationErrorType.Forbidden);
+            var user = existingUserResult.Data;
+            var examUser = exam.ExamUsers.FirstOrDefault(eu => eu.UserId == user.UserId);
+            if (examUser != null)
+            {
+                exam.ExamUsers.Remove(examUser);
+                var result = await _examRepository.UpdateAsync(exam);
+                return result.Success
+                    ? ServiceOperationResult.Ok()
+                    : ServiceOperationResult.Fail("Failed to remove participant.", ServiceOperationErrorType.Internal);
+            }
+            return ServiceOperationResult.Fail("Participant not found in the exam.", ServiceOperationErrorType.NotFound);
+        }
 
         public async Task<ServiceOperationResult> JoinExam(JoinExamDto joinExamDto)
         {
