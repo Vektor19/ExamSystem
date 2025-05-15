@@ -5,16 +5,22 @@ import { useExams } from "../../Providers/ExamsProvider";
 import WarningIcon from "@mui/icons-material/Warning";
 import ExpandIcon from "@mui/icons-material/ExpandMore";
 import TimerIcon from "@mui/icons-material/Timer";
+import PinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 
-import { Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../Extra/LoadingPage";
 import TimeUtils from "../../Utils/TimeUtils";
 import { ExaminatorExam } from "../../Models/ExaminatorExam";
 const ExaminatorDashboardBody: React.FC = () => {
-  const { examinatorExams, isExaminatorExamsLoading, pinnedExaminatorExams } =
-    useExams();
+  const {
+    examinatorExams,
+    isExaminatorExamsLoading,
+    pinnedExaminatorExams,
+    fetchPinnedExaminatorExams,
+    removePinnedExaminatorExam,
+  } = useExams();
   const [notGradedExams, setNotGradedExams] = useState<ExaminatorExam[] | null>(
     []
   );
@@ -26,6 +32,7 @@ const ExaminatorDashboardBody: React.FC = () => {
 
   useEffect(() => {
     if (!examinatorExams) return;
+    fetchPinnedExaminatorExams();
     const notStartedExams = examinatorExams.filter((exam) => {
       return exam.status === "NotStarted";
     });
@@ -46,7 +53,10 @@ const ExaminatorDashboardBody: React.FC = () => {
       )
       .slice(0, 3);
     setNotGradedExams(notGradedExams);
+  }, [examinatorExams]);
 
+  useEffect(() => {
+    if (!examinatorExams) return;
     if (!pinnedExaminatorExams) return;
     const pinnedExamsData = examinatorExams.filter((exam) => {
       return pinnedExaminatorExams.some(
@@ -54,7 +64,7 @@ const ExaminatorDashboardBody: React.FC = () => {
       );
     });
     setPinnedExams(pinnedExamsData);
-  }, [examinatorExams]);
+  }, [pinnedExaminatorExams]);
 
   const handleShowExam = (examId: string) => {
     navigate(`/dashboard/edit-exam/${examId}`);
@@ -132,7 +142,11 @@ const ExaminatorDashboardBody: React.FC = () => {
                   spacing={2}
                   alignItems="center"
                 >
-                  <TimerIcon />
+                  <IconButton
+                    onClick={() => removePinnedExaminatorExam(exam.examId)}
+                  >
+                    <PinOutlinedIcon />
+                  </IconButton>
                   <Typography variant="body1">Exam: {exam.name}</Typography>
                   <PrimaryFab
                     size="small"
