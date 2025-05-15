@@ -12,22 +12,62 @@ import {
   TableRow,
   IconButton,
   Stack,
+  Chip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import PinIcon from "@mui/icons-material/PushPin";
+import UnPinIcon from "@mui/icons-material/PushPinOutlined";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import TimeUtils from "../../Utils/TimeUtils";
 import DashboardPaper from "../Papers/DashboardPaper";
+import { use, useEffect, useState } from "react";
+import { ExaminatorExam } from "../../Models/ExaminatorExam";
+import LoadingPage from "../Extra/LoadingPage";
 
 const ExaminatorExamsBody: React.FC = () => {
-  const { examinatorExams } = useExams();
+  const {
+    examinatorExams,
+    pinnedExaminatorExams,
+    addPinnedExaminatorExam,
+    removePinnedExaminatorExam,
+    fetchPinnedExaminatorExams,
+  } = useExams();
   const navigate = useNavigate();
+  const [sortedExams, setSortedExams] = useState<ExaminatorExam[]>([]);
+  useEffect(() => {
+    if (!examinatorExams) return;
+    fetchPinnedExaminatorExams();
+  }, [examinatorExams]);
+
+  useEffect(() => {
+    if (!examinatorExams) return;
+    if (!pinnedExaminatorExams) return;
+    const sorted = [...examinatorExams].sort((a, b) => {
+      const isPinnedA = pinnedExaminatorExams.some(
+        (exam) => exam.examId === a.examId
+      );
+      const isPinnedB = pinnedExaminatorExams.some(
+        (exam) => exam.examId === b.examId
+      );
+      return isPinnedA === isPinnedB ? 0 : isPinnedA ? -1 : 1;
+    });
+
+    setSortedExams(sorted);
+  }, [pinnedExaminatorExams]);
+
+  if (!sortedExams) {
+    return <LoadingPage />;
+  }
 
   return (
     <>
-      <DashboardPaper elevation={3} sx={{ p: 4, borderRadius: 3, overflowY: "auto" }}>
+      <DashboardPaper
+        elevation={3}
+        sx={{ p: 4, borderRadius: 3, overflowY: "auto" }}
+      >
         <Stack spacing={2}>
-          {examinatorExams?.length ? (
+          {sortedExams?.length ? (
             <TableContainer
               sx={{
                 width: "100%",
@@ -54,12 +94,34 @@ const ExaminatorExamsBody: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {examinatorExams.map(
+                  {sortedExams.map(
                     (exam) =>
                       exam && (
-                        <TableRow key={exam.examId}>
+                        <TableRow
+                          key={exam.examId}
+                          sx={
+                            pinnedExaminatorExams?.some(
+                              (e) => e.examId === exam.examId
+                            )
+                              ? { backgroundColor: "rgba(25, 118, 210, 0.05)" }
+                              : {}
+                          }
+                        >
                           <TableCell>{exam.name}</TableCell>
-                          <TableCell>{exam.status}</TableCell>
+                          <TableCell>
+                            <Chip
+                              sx={{ borderRadius: 1 }}
+                              size="small"
+                              label={exam.status}
+                              color={
+                                exam.status === "Closed"
+                                  ? "success"
+                                  : exam.status === "Started"
+                                  ? "primary"
+                                  : "warning"
+                              }
+                            />
+                          </TableCell>
                           <TableCell>
                             {TimeUtils.formatDate(exam.startDate)}
                           </TableCell>
@@ -77,6 +139,27 @@ const ExaminatorExamsBody: React.FC = () => {
                               color="primary"
                             >
                               <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => {
+                                const isPinned = pinnedExaminatorExams?.some(
+                                  (e) => e.examId === exam.examId
+                                );
+                                if (isPinned) {
+                                  removePinnedExaminatorExam(exam.examId);
+                                } else {
+                                  addPinnedExaminatorExam(exam.examId);
+                                }
+                              }}
+                              color="primary"
+                            >
+                              {pinnedExaminatorExams?.some(
+                                (e) => e.examId === exam.examId
+                              ) ? (
+                                <PinIcon sx={{ color: "primary.main" }} />
+                              ) : (
+                                <UnPinIcon sx={{ color: "primary.main" }} />
+                              )}
                             </IconButton>
                           </TableCell>
                         </TableRow>
