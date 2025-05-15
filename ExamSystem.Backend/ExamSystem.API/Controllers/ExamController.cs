@@ -90,6 +90,14 @@ namespace ExamSystem.API.Controllers
             return result.ToActionResult();
         }
 
+        [TypeFilter(typeof(ExamOwnerOrAdminAuthorize))]
+        [HttpPost("{id}/participants/remove-by-email")]
+        public async Task<IActionResult> RemoveParticipantByEmail(Guid id, [FromBody] RemoveParticipantByEmailDto dto)
+        {
+            var result = await _examService.RemoveParticipantByEmailAsync(id, dto.Email);
+            return result.ToActionResult();
+        }
+
         [HttpPost("join")]
         public async Task<IActionResult> JoinExam([FromBody] JoinExamDto dto)
         {
