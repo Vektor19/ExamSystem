@@ -84,6 +84,27 @@ class ExamService {
       throw new Error(err?.response?.data?.message || "Participant not added");
     }
   }
+  async removeParticipantFromExamByEmail(
+    id: string,
+    email: string
+  ): Promise<boolean> {
+    try {
+      const res = await examSystemApi.post(
+        "/exam/" + id + "/participants/remove-by-email",
+        {
+          email,
+        }
+      );
+      return res.data.success;
+    } catch (err: any) {
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        throw new NoValidRequestError(JSON.stringify(err.response.data.errors));
+      }
+      throw new Error(
+        err?.response?.data?.message || "Participant not removed"
+      );
+    }
+  }
 
   async joinExam(userId: string, joinCode: string): Promise<boolean> {
     try {
