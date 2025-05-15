@@ -7,6 +7,7 @@ import ExpandIcon from "@mui/icons-material/ExpandMore";
 import TimerIcon from "@mui/icons-material/Timer";
 import PinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
 import CheckIcon from "@mui/icons-material/Check";
+import AddIcon from "@mui/icons-material/Add";
 import { IconButton, Stack, Typography } from "@mui/material";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
@@ -185,6 +186,30 @@ const ExaminatorDashboardBody: React.FC = () => {
 
         <DashboardPaper>
           <h3>Quick actions</h3>
+          <Stack spacing={2} direction={"column"}>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Typography variant="body1">Create new exam</Typography>
+              <PrimaryFab
+                color="primary"
+                aria-label="add"
+                size="medium"
+                onClick={() => navigate("/dashboard/create-exam")}
+              >
+                <AddIcon />
+              </PrimaryFab>
+            </Stack>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Typography variant="body1">View all exams</Typography>
+              <PrimaryFab
+                color="primary"
+                aria-label="add"
+                size="medium"
+                onClick={() => navigate("/dashboard/exam-management")}
+              >
+                <ExpandIcon />
+              </PrimaryFab>
+            </Stack>
+          </Stack>
         </DashboardPaper>
       </div>
     </>
