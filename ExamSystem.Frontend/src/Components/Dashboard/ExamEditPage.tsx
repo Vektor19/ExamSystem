@@ -382,7 +382,24 @@ const ExamEditPage: React.FC = () => {
                               {i + 1}. {p.firstName} ({p.email})
                             </Typography>
                           </Box>
-                          <IconButton color="error">
+                          <IconButton
+                            color="error"
+                            onClick={async () => {
+                              if (!id) return;
+                              try {
+                                await ExamService.removeParticipantFromExamByEmail(
+                                  id,
+                                  p.email
+                                );
+                                await fetchExaminatorExams();
+                              } catch (err) {
+                                console.error(
+                                  "Failed to remove participant:",
+                                  err
+                                );
+                              }
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         </Paper>
