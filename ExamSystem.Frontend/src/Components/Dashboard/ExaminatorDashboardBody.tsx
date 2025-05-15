@@ -102,6 +102,15 @@ const ExaminatorDashboardBody: React.FC = () => {
                   </PrimaryFab>
                 </Stack>
               ))}
+            {!upcomingExams ||
+              (upcomingExams.length === 0 && (
+                <Stack direction="row" spacing={2} justifyContent="center">
+                  <CheckIcon />
+                  <Typography align="center" variant="body1">
+                    No upcoming exams
+                  </Typography>
+                </Stack>
+              ))}
           </Stack>
         </DashboardPaper>
         <DashboardPaper>
