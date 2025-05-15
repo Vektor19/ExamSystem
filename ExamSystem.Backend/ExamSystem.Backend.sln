@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35521.163 d17.12
+VisualStudioVersion = 17.12.35521.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSystem.Core", "ExamSystem.Core\ExamSystem.Core.csproj", "{F449D46E-2A63-4EE7-A387-AB65715ED3FD}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSystem.Application", "ExamSystem.Application\ExamSystem.Application.csproj", "{EE4BC878-3E6B-4019-A4CB-A3D9A7F67E33}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSystem.API", "ExamSystem.API\ExamSystem.API.csproj", "{21F4D894-A2D0-43E3-A277-3599CD3C1938}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSystem.Tests", "ExamSystem.Tests\ExamSystem.Tests.csproj", "{8B780F1C-A964-44B5-AE22-0914B07A4A60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{21F4D894-A2D0-43E3-A277-3599CD3C1938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21F4D894-A2D0-43E3-A277-3599CD3C1938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21F4D894-A2D0-43E3-A277-3599CD3C1938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B780F1C-A964-44B5-AE22-0914B07A4A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B780F1C-A964-44B5-AE22-0914B07A4A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B780F1C-A964-44B5-AE22-0914B07A4A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B780F1C-A964-44B5-AE22-0914B07A4A60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
