@@ -6,7 +6,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import ExpandIcon from "@mui/icons-material/ExpandMore";
 import TimerIcon from "@mui/icons-material/Timer";
 import PinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
-
+import CheckIcon from "@mui/icons-material/Check";
 import { IconButton, Stack, Typography } from "@mui/material";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import { useNavigate } from "react-router-dom";
@@ -128,6 +128,15 @@ const ExaminatorDashboardBody: React.FC = () => {
                   </PrimaryFab>
                 </Stack>
               ))}
+            {!notGradedExams ||
+              (notGradedExams.length === 0 && (
+                <Stack direction="row" spacing={2} justifyContent="center">
+                  <CheckIcon />
+                  <Typography align="center" variant="body1">
+                    All exams are graded
+                  </Typography>
+                </Stack>
+              ))}
           </Stack>
         </DashboardPaper>
         <DashboardPaper>
@@ -158,7 +167,9 @@ const ExaminatorDashboardBody: React.FC = () => {
               ))}
             {!pinnedExams ||
               (pinnedExams.length === 0 && (
-                <Typography variant="body1">No pinned exams</Typography>
+                <Typography align="center" variant="body1">
+                  No pinned exams
+                </Typography>
               ))}
           </Stack>
         </DashboardPaper>
