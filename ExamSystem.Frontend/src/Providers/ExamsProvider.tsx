@@ -36,6 +36,7 @@ type ExamsContextType = {
   removeStudentCheckedExam: (examId: string) => void;
   addPinnedExaminatorExam: (examId: string) => void;
   removePinnedExaminatorExam: (examId: string) => void;
+  fetchPinnedExaminatorExams: () => Promise<void>;
 };
 
 const ExamsContext = createContext<ExamsContextType | undefined>(undefined);
@@ -99,6 +100,12 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
     const filtered = pinnedExaminatorExams.filter(n => n.examId !== examId);
     savePinnedExaminatorExams(userId, filtered);
   };
+  const fetchPinnedExaminatorExams = async () => {
+    const userId = getUserId();
+    if (!userId) return;
+    const pinnedExams = loadPinnedExaminatorExams(userId);
+    setPinnedExaminatorExams(pinnedExams);
+  }
 
   const saveStudentCheckedExams = (userId: string, list: StudentCheckedExamNotification[]) => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.studentCheckedExams(userId), JSON.stringify(list));
@@ -217,6 +224,7 @@ export const ExamsProvider = ({ children }: { children: ReactNode }) => {
         removeStudentCheckedExam,
         addPinnedExaminatorExam,
         removePinnedExaminatorExam,
+        fetchPinnedExaminatorExams,
       }}
     >
       {children}
