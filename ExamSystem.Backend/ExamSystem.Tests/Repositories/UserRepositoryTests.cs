@@ -12,7 +12,7 @@ namespace ExamSystem.Tests.Repositories
         private ExamSystemDbContext GetDbContext()
         {
             var options = new DbContextOptionsBuilder<ExamSystemDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString()) // окремий БД для кожного тесту
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
             return new ExamSystemDbContext(options);
@@ -56,7 +56,7 @@ namespace ExamSystem.Tests.Repositories
             var result = await repo.GetAllAsync();
 
             Assert.True(result.Success);
-            Assert.Equal(2, result.Data.Count());
+            Assert.Equal(2, result.Data!.Count());
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace ExamSystem.Tests.Repositories
             var result = await repo.GetByIdAsync(user.UserId);
 
             Assert.True(result.Success);
-            Assert.Equal(user.UserId, result.Data.UserId);
+            Assert.Equal(user.UserId, result.Data!.UserId);
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace ExamSystem.Tests.Repositories
             var result = await repo.GetByEmailAsync(user.Email);
 
             Assert.True(result.Success);
-            Assert.Equal(user.Email, result.Data.Email);
+            Assert.Equal(user.Email, result.Data!.Email);
         }
 
         [Fact]
