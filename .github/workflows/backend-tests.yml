@@ -29,4 +29,4 @@ jobs:
         run: dotnet build ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj --no-restore --configuration Release
 
       - name: Run Tests
-        run: dotnet test ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj --no-build --verbosity normal
+        run: dotnet test ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj --no-build --configuration Release --verbosity normal
