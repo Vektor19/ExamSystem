@@ -8,7 +8,7 @@ import theme from "./Components/Theme/theme.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/ExamSystem">
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
