@@ -71,7 +71,8 @@ namespace ExamSystem.API.Controllers
             var result = await _answerService.CreateOpenAnswerAsync(answerDto);
             if (result.Success)
             {
-                if (!(await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId)).Success)
+                var unansweredResult = await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId);
+                if (unansweredResult.Success && !unansweredResult.Data!.ToList().Any())
                 {
                     await _examService.FinishExamAsync(answerDto.ExamId, answerDto.UserId);
                 };
@@ -97,7 +98,8 @@ namespace ExamSystem.API.Controllers
             var result = await _answerService.CreateOptionAnswerAsync(answerDto);
             if (result.Success)
             {
-                if (!(await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId)).Success)
+                var unansweredResult = await _questionService.GetAllUnansweredByUserAsync(answerDto.UserId, answerDto.ExamId);
+                if (unansweredResult.Success && !unansweredResult.Data!.ToList().Any())
                 {
                     await _examService.FinishExamAsync(answerDto.ExamId, answerDto.UserId);
                 };
