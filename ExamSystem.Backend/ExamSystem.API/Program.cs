@@ -1,6 +1,7 @@
 using ExamSystem.Application;
 using ExamSystem.Infrastructure;
 using ExamSystem.Persistence;
+using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,10 @@ app.UseSwaggerUI();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+
+    var dbContext = services.GetRequiredService<ExamSystemDbContext>();
+    await dbContext.Database.MigrateAsync();
+
     var seeder = services.GetRequiredService<DbSeeder>();
     await seeder.SeedAsync();
 }
