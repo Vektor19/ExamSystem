@@ -1,45 +1,76 @@
-﻿using ExamSystem.Application.Common.Models;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using ExamSystem.Application.Common.Models;
 using ExamSystem.Application.DTOs.User;
 using ExamSystem.Application.Services;
 using Microsoft.Extensions.Options;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-
+using Microsoft.IdentityModel.Tokens;
+using Xunit;
 namespace ExamSystem.Tests.Services
 {
     public class JwtServiceTests
     {
-        private readonly JwtSettings _settings = new()
-        {
-            Secret = "supersecretkey1234567890",
-            Issuer = "TestIssuer",
-            Audience = "TestAudience",
-            ExpiryMinutes = 60
-        };
-
-        private readonly JwtService _service;
+        private readonly JwtService _jwtService;
+        private readonly JwtSettings _jwtSettings;
 
         public JwtServiceTests()
         {
-            var options = Options.Create(_settings);
-            _service = new JwtService(options);
+            _jwtSettings = new JwtSettings
+            {
+                Secret = "super_secret_key_1234567890_ABCDEFG",
+                Issuer = "TestIssuer",
+                Audience = "TestAudience",
+                ExpiryMinutes = 30
+            };
+
+            var options = Options.Create(_jwtSettings);
+            _jwtService = new JwtService(options);
         }
 
         [Fact]
-        public void GenerateToken_ShouldReturnValidToken()
+        public void GenerateToken_ShouldReturnValidToken_WithExpiration()
         {
             var user = new UserDto
             {
                 UserId = Guid.NewGuid(),
                 Email = "user@example.com",
-                Roles = new List<string> { "Admin", "User" }
+                Roles = new List<string> { "Admin", "Student" }
             };
 
-            var result = _service.GenerateToken(user);
+            var result = _jwtService.GenerateToken(user);
 
-            Assert.NotNull(result);
             Assert.False(string.IsNullOrEmpty(result.Token));
             Assert.True(result.Expiration > DateTime.Now);
+        }
+
+        [Fact]
+        public void GetPrincipalFromToken_ShouldReturnPrincipal_ForValidToken()
+        {
+            var user = new UserDto
+            {
+                UserId = Guid.NewGuid(),
+                Email = "user@example.com",
+                Roles = new List<string> { "Admin" }
+            };
+
+            var token = _jwtService.GenerateToken(user).Token;
+
+            var principal = _jwtService.GetPrincipalFromToken(token);
+
+            Assert.NotNull(principal);
+            Assert.Equal(user.Email, principal!.FindFirst(ClaimTypes.Email)?.Value);
+            Assert.Contains(principal.Claims, c => c.Type == ClaimTypes.Role && c.Value == "Admin");
+        }
+
+        [Fact]
+        public void GetPrincipalFromToken_ShouldReturnNull_ForInvalidToken()
+        {
+            var invalidToken = "this.is.not.a.valid.token";
+
+            var principal = _jwtService.GetPrincipalFromToken(invalidToken);
+
+            Assert.Null(principal);
         }
 
         [Fact]
@@ -48,13 +79,12 @@ namespace ExamSystem.Tests.Services
             var user = new UserDto
             {
                 UserId = Guid.NewGuid(),
-                Email = "valid@example.com",
-                Roles = new List<string> { "User" }
+                Email = "user@example.com"
             };
 
-            var tokenResult = _service.GenerateToken(user);
+            var token = _jwtService.GenerateToken(user).Token;
 
-            var isValid = _service.ValidateToken(tokenResult.Token);
+            var isValid = _jwtService.ValidateToken(token);
 
             Assert.True(isValid);
         }
@@ -62,38 +92,34 @@ namespace ExamSystem.Tests.Services
         [Fact]
         public void ValidateToken_ShouldReturnFalse_ForInvalidToken()
         {
-            var invalidToken = "invalid.token.string";
+            var invalidToken = "fake.invalid.token";
 
-            var isValid = _service.ValidateToken(invalidToken);
+            var isValid = _jwtService.ValidateToken(invalidToken);
 
             Assert.False(isValid);
         }
 
         [Fact]
-        public void GetPrincipalFromToken_ShouldReturnClaimsPrincipal()
+        public void GenerateToken_ShouldContainAllClaims()
         {
+            var userId = Guid.NewGuid();
             var user = new UserDto
             {
-                UserId = Guid.NewGuid(),
-                Email = "claim@example.com",
-                Roles = new List<string> { "User" }
+                UserId = userId,
+                Email = "claims@test.com",
+                Roles = new List<string> { "Student", "Lecturer" }
             };
 
-            var token = _service.GenerateToken(user).Token;
+            var tokenResult = _jwtService.GenerateToken(user);
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(tokenResult.Token);
 
-            var principal = _service.GetPrincipalFromToken(token);
+            var claims = jwtToken.Claims.ToList();
 
-            Assert.NotNull(principal);
-            Assert.Equal(user.Email, principal?.FindFirst(JwtRegisteredClaimNames.Email)?.Value);
-            Assert.Contains(principal!.Claims, c => c.Type == ClaimTypes.Role && c.Value == "User");
-        }
-
-        [Fact]
-        public void GetPrincipalFromToken_ShouldReturnNull_ForInvalidToken()
-        {
-            var principal = _service.GetPrincipalFromToken("bad.token");
-
-            Assert.Null(principal);
+            Assert.Contains(claims, c => c.Type == JwtRegisteredClaimNames.Sub && c.Value == userId.ToString());
+            Assert.Contains(claims, c => c.Type == JwtRegisteredClaimNames.Email && c.Value == "claims@test.com");
+            Assert.Contains(claims, c => c.Type == ClaimTypes.Role && c.Value == "Student");
+            Assert.Contains(claims, c => c.Type == ClaimTypes.Role && c.Value == "Lecturer");
         }
     }
 }
