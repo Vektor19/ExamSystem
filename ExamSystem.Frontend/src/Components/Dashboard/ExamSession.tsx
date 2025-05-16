@@ -6,11 +6,9 @@ import { Question } from "../../Models/Question";
 import { useNavigate } from "react-router";
 import examsStyles from "../../Styles/Exams.module.css";
 import { useNotification } from "../../Providers/NotificationProvider";
-import { useAntiCheating } from "../../Providers/AntiCheatingProvider";
 import BlockingModal from "./BlockingModal";
-import { Box, Snackbar, Typography, Zoom } from "@mui/material";
+import { Snackbar, Typography } from "@mui/material";
 import TimeUtils from "../../Utils/TimeUtils";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const ExamSession: React.FC = () => {
   const {
@@ -21,7 +19,6 @@ const ExamSession: React.FC = () => {
     makeOptionAnswer,
     fetchNotCompletedQuestions,
   } = useExamSession();
-  const { violations } = useAntiCheating();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [showBlockingModal, setShowBlockingModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

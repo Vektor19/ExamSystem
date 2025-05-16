@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
@@ -29,13 +29,13 @@ const AntiCheatingContext = createContext<AntiCheatingContextType | undefined>(
 );
 
 export const AntiCheatingProvider = ({ children }: { children: ReactNode }) => {
-  const { studentExam, setStudentExam } = useExamSession();
+  const { studentExam, } = useExamSession();
   const { fetchStudentExams } = useExams();
   const [violations, setViolations] = useState<Violation[]>([]);
   const [isViolationsLoading, setIsViolationsLoading] = useState(true);
   const violationsRef = useRef<Violation[]>([]);
   const { showNotification } = useNotification();
-  const [isFullscreenLoading, setIsFullscreenLoading] = useState(false); // TODO: set true if fullscreen is needed
+  const [isFullscreenLoading, ] = useState(false); // TODO: set true if fullscreen is needed
 
   useEffect(() => {
     violationsRef.current = violations;

@@ -8,7 +8,7 @@ const DashboardPaper = styled(({ className, ...props }: PaperProps) => (
     className={`${className} ${studentDashboardStyles["dashboard-paper"]}`}
     elevation={props.elevation ?? 3}
   />
-))(({ theme }) => ({
+))(({ }) => ({
   fontFamily: '"Lato", sans-serif',
   backgroundColor: "white",
   textTransform: "none",
