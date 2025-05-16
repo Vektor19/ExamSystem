@@ -5,7 +5,9 @@ using SQLitePCL;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 builder.Services.AddPersistance(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -33,11 +35,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -46,7 +45,7 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("AllowAllPolicy");
 app.UseAuthorization();
 app.MapControllers();
