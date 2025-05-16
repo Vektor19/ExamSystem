@@ -23,10 +23,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore Dependencies
-        run: dotnet restore ExamSystem.Backend/ExamSystem.API
+        run: dotnet restore ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj
 
       - name: Build
-        run: dotnet build ExamSystem.Backend/ExamSystem.API --no-restore --configuration Release
+        run: dotnet build ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj --no-restore --configuration Release
 
       - name: Run Tests
-        run: dotnet test ExamSystem.Backend/ExamSystem.API --no-build --verbosity normal
+        run: dotnet test ExamSystem.Backend/ExamSystem.Tests/ExamSystem.Tests.csproj --no-build --verbosity normal
