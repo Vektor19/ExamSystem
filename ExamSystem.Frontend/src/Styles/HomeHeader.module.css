@@ -1,0 +1,31 @@
+.home-header{
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 1.1em;
+  letter-spacing: .15em;
+  width: 100%;
+  height: fit-content;
+  background-color: #29223C;
+  color: white;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  padding-left: 2em;
+  padding-right: 4em;
+  position: fixed;
+  gap: 4em;
+  z-index: 1000;
+  height: var(--public-header-height);
+}
+.home-header-info a{
+  display: flex;
+  align-items: center;
+}
+.home-header-info{
+  align-self: center;
+}
+.home-header-info h3{
+  margin-left: 1em;
+}
+.logo{
+  height:max-content;
+}

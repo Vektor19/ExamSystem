@@ -1,0 +1,15 @@
+.home-navigation ul{
+  display: flex;
+  justify-content: start;
+  gap: 4em;
+}
+.home-navigation {
+  align-self: center;
+}
+.home-navigation ul li a{
+  letter-spacing: .15em;
+}
+.home-navigation ul li a:hover{
+  color: #f0f0f0;
+  text-decoration: underline;
+}

@@ -1,0 +1,34 @@
+.student-dashboard-body{
+    display: grid;
+    grid: repeat(2, 1fr) / repeat(2, 1fr);
+    font-size: 1em;
+    letter-spacing: .15em;
+    width: 100%;
+    height: 100%;
+    color: white;
+    gap: 2em;
+}
+.dashboard-paper{
+    width: 100%;
+    height: 100%;
+    padding: 2em 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+.dashboard-paper ul{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.upcoming-exams-container ul{
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+.student-dashboard-body h3{
+    font-size: 1.2em;
+    font-weight: 800;
+    color: var(--primary-main-color);
+    text-align: center;
+}
