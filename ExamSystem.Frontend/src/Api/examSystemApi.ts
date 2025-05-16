@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const examSystemApi = axios.create({
-  baseURL: 'http://localhost:7777',
+  baseURL: 'https://examsystembackend-brbzbwgzhbe3eufv.canadacentral-01.azurewebsites.net',
   headers: {
     'Content-Type': 'application/json',
   },

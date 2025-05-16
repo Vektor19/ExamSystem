@@ -84,7 +84,7 @@ const LoginForm: React.FC = () => {
             variant="contained"
             className={loginStyles["small-login-form-button"]}
             onClick={() => {
-              window.location.href = "/register";
+              navigate("/register");
             }}
           >
             Register
