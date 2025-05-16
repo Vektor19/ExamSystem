@@ -37,7 +37,7 @@ jobs:
           export PATH="$PATH:$HOME/.dotnet/tools"
           dotnet ef database update --project ExamSystem.Backend/ExamSystem.Persistence/ExamSystem.Persistence.csproj --startup-project ExamSystem.Backend/ExamSystem.API/ExamSystem.API.csproj
         env:
-          ConnectionStrings__SqlServer: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          Database__ConnectionStrings__SqlServer: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
           Database__Provider: sqlserver
 
       - name: Deploy to Azure Web App
