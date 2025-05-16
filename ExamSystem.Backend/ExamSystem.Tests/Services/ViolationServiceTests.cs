@@ -7,163 +7,166 @@ using ExamSystem.Core.Entities;
 using ExamSystem.Core.Interfaces.Repositories;
 using Moq;
 
-public class ViolationServiceTests
+namespace ExamSystem.Tests.Services
 {
-    private readonly Mock<IViolationRepository> _violationRepoMock = new();
-    private readonly Mock<IMapper> _mapperMock = new();
-    private readonly ViolationService _service;
-
-    public ViolationServiceTests()
+    public class ViolationServiceTests
     {
-        _service = new ViolationService(_mapperMock.Object, _violationRepoMock.Object);
-    }
+        private readonly Mock<IViolationRepository> _violationRepoMock = new();
+        private readonly Mock<IMapper> _mapperMock = new();
+        private readonly ViolationService _service;
 
-    [Fact]
-    public async Task GetByIdAsync_ShouldReturnViolation_WhenFound()
-    {
-        var id = Guid.NewGuid();
-        var violation = new Violation { ViolationId = id };
-        var dto = new ViolationDto { ViolationId = id };
+        public ViolationServiceTests()
+        {
+            _service = new ViolationService(_mapperMock.Object, _violationRepoMock.Object);
+        }
 
-        _violationRepoMock.Setup(r => r.GetByIdAsync(id))
-            .ReturnsAsync(RepositoryOperationResult<Violation>.Ok(violation));
-        _mapperMock.Setup(m => m.Map<ViolationDto>(violation)).Returns(dto);
+        [Fact]
+        public async Task GetByIdAsync_ShouldReturnViolation_WhenFound()
+        {
+            var id = Guid.NewGuid();
+            var violation = new Violation { ViolationId = id };
+            var dto = new ViolationDto { ViolationId = id };
 
-        var result = await _service.GetByIdAsync(id);
+            _violationRepoMock.Setup(r => r.GetByIdAsync(id))
+                .ReturnsAsync(RepositoryOperationResult<Violation>.Ok(violation));
+            _mapperMock.Setup(m => m.Map<ViolationDto>(violation)).Returns(dto);
 
-        Assert.True(result.Success);
-        Assert.Equal(id, result.Data!.ViolationId);
-    }
+            var result = await _service.GetByIdAsync(id);
 
-    [Fact]
-    public async Task GetByIdAsync_ShouldFail_WhenNotFound()
-    {
-        var id = Guid.NewGuid();
-        _violationRepoMock.Setup(r => r.GetByIdAsync(id))
-            .ReturnsAsync(RepositoryOperationResult<Violation>.Fail("Not found"));
+            Assert.True(result.Success);
+            Assert.Equal(id, result.Data!.ViolationId);
+        }
 
-        var result = await _service.GetByIdAsync(id);
+        [Fact]
+        public async Task GetByIdAsync_ShouldFail_WhenNotFound()
+        {
+            var id = Guid.NewGuid();
+            _violationRepoMock.Setup(r => r.GetByIdAsync(id))
+                .ReturnsAsync(RepositoryOperationResult<Violation>.Fail("Not found"));
 
-        Assert.False(result.Success);
-        Assert.Equal(ServiceOperationErrorType.NotFound, result.ErrorType);
-    }
+            var result = await _service.GetByIdAsync(id);
 
-    [Fact]
-    public async Task GetAllAsync_ShouldReturnViolations()
-    {
-        var violations = new List<Violation> { new Violation() };
-        var dtos = new List<ViolationDto> { new ViolationDto() };
+            Assert.False(result.Success);
+            Assert.Equal(ServiceOperationErrorType.NotFound, result.ErrorType);
+        }
 
-        _violationRepoMock.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations));
-        _mapperMock.Setup(m => m.Map<IEnumerable<ViolationDto>>(violations)).Returns(dtos);
+        [Fact]
+        public async Task GetAllAsync_ShouldReturnViolations()
+        {
+            var violations = new List<Violation> { new Violation() };
+            var dtos = new List<ViolationDto> { new ViolationDto() };
 
-        var result = await _service.GetAllAsync();
+            _violationRepoMock.Setup(r => r.GetAllAsync())
+                .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations));
+            _mapperMock.Setup(m => m.Map<IEnumerable<ViolationDto>>(violations)).Returns(dtos);
 
-        Assert.True(result.Success);
-        Assert.Single(result.Data!);
-    }
+            var result = await _service.GetAllAsync();
 
-    [Fact]
-    public async Task GetAllAsync_ShouldFail_WhenRepoFails()
-    {
-        _violationRepoMock.Setup(r => r.GetAllAsync())
-            .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Fail("Error"));
+            Assert.True(result.Success);
+            Assert.Single(result.Data!);
+        }
 
-        var result = await _service.GetAllAsync();
+        [Fact]
+        public async Task GetAllAsync_ShouldFail_WhenRepoFails()
+        {
+            _violationRepoMock.Setup(r => r.GetAllAsync())
+                .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Fail("Error"));
 
-        Assert.False(result.Success);
-        Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
-    }
+            var result = await _service.GetAllAsync();
 
-    [Fact]
-    public async Task GetAllByExamUserIdAsync_ShouldReturnViolations_WhenValid()
-    {
-        var examUserId = Guid.NewGuid();
-        var violations = new List<Violation> { new Violation() };
-        var dtos = new List<ViolationDto> { new ViolationDto() };
+            Assert.False(result.Success);
+            Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
+        }
 
-        _violationRepoMock.Setup(r => r.GetAllByExamUserIdAsync(examUserId))
-            .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations));
-        _mapperMock.Setup(m => m.Map<IEnumerable<ViolationDto>>(violations)).Returns(dtos);
+        [Fact]
+        public async Task GetAllByExamUserIdAsync_ShouldReturnViolations_WhenValid()
+        {
+            var examUserId = Guid.NewGuid();
+            var violations = new List<Violation> { new Violation() };
+            var dtos = new List<ViolationDto> { new ViolationDto() };
 
-        var result = await _service.GetAllByExamUserIdAsync(examUserId);
+            _violationRepoMock.Setup(r => r.GetAllByExamUserIdAsync(examUserId))
+                .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Ok(violations));
+            _mapperMock.Setup(m => m.Map<IEnumerable<ViolationDto>>(violations)).Returns(dtos);
 
-        Assert.True(result.Success);
-        Assert.Single(result.Data!);
-    }
+            var result = await _service.GetAllByExamUserIdAsync(examUserId);
 
-    [Fact]
-    public async Task GetAllByExamUserIdAsync_ShouldFail_WhenRepoFails()
-    {
-        var examUserId = Guid.NewGuid();
+            Assert.True(result.Success);
+            Assert.Single(result.Data!);
+        }
 
-        _violationRepoMock.Setup(r => r.GetAllByExamUserIdAsync(examUserId))
-            .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Fail("Not found"));
+        [Fact]
+        public async Task GetAllByExamUserIdAsync_ShouldFail_WhenRepoFails()
+        {
+            var examUserId = Guid.NewGuid();
 
-        var result = await _service.GetAllByExamUserIdAsync(examUserId);
+            _violationRepoMock.Setup(r => r.GetAllByExamUserIdAsync(examUserId))
+                .ReturnsAsync(RepositoryOperationResult<IEnumerable<Violation>>.Fail("Not found"));
 
-        Assert.False(result.Success);
-        Assert.Equal(ServiceOperationErrorType.NotFound, result.ErrorType);
-    }
+            var result = await _service.GetAllByExamUserIdAsync(examUserId);
 
-    [Fact]
-    public async Task DeleteAsync_ShouldSucceed_WhenDeleted()
-    {
-        var id = Guid.NewGuid();
+            Assert.False(result.Success);
+            Assert.Equal(ServiceOperationErrorType.NotFound, result.ErrorType);
+        }
 
-        _violationRepoMock.Setup(r => r.DeleteAsync(id))
-            .ReturnsAsync(RepositoryOperationResult.Ok());
+        [Fact]
+        public async Task DeleteAsync_ShouldSucceed_WhenDeleted()
+        {
+            var id = Guid.NewGuid();
 
-        var result = await _service.DeleteAsync(id);
+            _violationRepoMock.Setup(r => r.DeleteAsync(id))
+                .ReturnsAsync(RepositoryOperationResult.Ok());
 
-        Assert.True(result.Success);
-    }
+            var result = await _service.DeleteAsync(id);
 
-    [Fact]
-    public async Task DeleteAsync_ShouldFail_WhenRepoFails()
-    {
-        var id = Guid.NewGuid();
+            Assert.True(result.Success);
+        }
 
-        _violationRepoMock.Setup(r => r.DeleteAsync(id))
-            .ReturnsAsync(RepositoryOperationResult.Fail("Delete error"));
+        [Fact]
+        public async Task DeleteAsync_ShouldFail_WhenRepoFails()
+        {
+            var id = Guid.NewGuid();
 
-        var result = await _service.DeleteAsync(id);
+            _violationRepoMock.Setup(r => r.DeleteAsync(id))
+                .ReturnsAsync(RepositoryOperationResult.Fail("Delete error"));
 
-        Assert.False(result.Success);
-        Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
-    }
+            var result = await _service.DeleteAsync(id);
 
-    [Fact]
-    public async Task CreateAsync_ShouldCreateViolation_WhenValid()
-    {
-        var createDto = new CreateViolationDto();
-        var violation = new Violation();
-        var dto = new ViolationDto();
+            Assert.False(result.Success);
+            Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
+        }
 
-        _mapperMock.Setup(m => m.Map<Violation>(createDto)).Returns(violation);
-        _violationRepoMock.Setup(r => r.AddAsync(It.IsAny<Violation>()))
-            .ReturnsAsync(RepositoryOperationResult.Ok());
-        _mapperMock.Setup(m => m.Map<ViolationDto>(violation)).Returns(dto);
+        [Fact]
+        public async Task CreateAsync_ShouldCreateViolation_WhenValid()
+        {
+            var createDto = new CreateViolationDto();
+            var violation = new Violation();
+            var dto = new ViolationDto();
 
-        var result = await _service.CreateAsync(createDto);
+            _mapperMock.Setup(m => m.Map<Violation>(createDto)).Returns(violation);
+            _violationRepoMock.Setup(r => r.AddAsync(It.IsAny<Violation>()))
+                .ReturnsAsync(RepositoryOperationResult.Ok());
+            _mapperMock.Setup(m => m.Map<ViolationDto>(violation)).Returns(dto);
 
-        Assert.True(result.Success);
-    }
+            var result = await _service.CreateAsync(createDto);
 
-    [Fact]
-    public async Task CreateAsync_ShouldFail_WhenRepoFails()
-    {
-        var createDto = new CreateViolationDto();
-        var violation = new Violation();
+            Assert.True(result.Success);
+        }
 
-        _mapperMock.Setup(m => m.Map<Violation>(createDto)).Returns(violation);
-        _violationRepoMock.Setup(r => r.AddAsync(It.IsAny<Violation>()))
-            .ReturnsAsync(RepositoryOperationResult.Fail("Create error"));
+        [Fact]
+        public async Task CreateAsync_ShouldFail_WhenRepoFails()
+        {
+            var createDto = new CreateViolationDto();
+            var violation = new Violation();
 
-        var result = await _service.CreateAsync(createDto);
+            _mapperMock.Setup(m => m.Map<Violation>(createDto)).Returns(violation);
+            _violationRepoMock.Setup(r => r.AddAsync(It.IsAny<Violation>()))
+                .ReturnsAsync(RepositoryOperationResult.Fail("Create error"));
 
-        Assert.False(result.Success);
-        Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
+            var result = await _service.CreateAsync(createDto);
+
+            Assert.False(result.Success);
+            Assert.Equal(ServiceOperationErrorType.Internal, result.ErrorType);
+        }
     }
 }
