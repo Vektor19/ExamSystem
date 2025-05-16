@@ -1,9 +1,7 @@
 import { useExams } from "../../Providers/ExamsProvider";
 import { useNavigate } from "react-router-dom";
 import {
-  Paper,
   Typography,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +19,7 @@ import UnPinIcon from "@mui/icons-material/PushPinOutlined";
 import PrimaryFab from "../Buttons/PrimaryFab";
 import TimeUtils from "../../Utils/TimeUtils";
 import DashboardPaper from "../Papers/DashboardPaper";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ExaminatorExam } from "../../Models/ExaminatorExam";
 import LoadingPage from "../Extra/LoadingPage";
 

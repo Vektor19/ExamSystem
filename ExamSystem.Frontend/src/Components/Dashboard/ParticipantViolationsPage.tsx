@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useExams } from "../../Providers/ExamsProvider";
-import { Stack, Typography, Box, Divider, Paper, Zoom } from "@mui/material";
+import { Stack, Typography, Box, Paper, Zoom } from "@mui/material";
 import { useEffect, useState } from "react";
 import DashboardPaper from "../Papers/DashboardPaper";
 import LoadingPage from "../Extra/LoadingPage";

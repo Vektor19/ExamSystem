@@ -33,9 +33,9 @@ const ParticipantAssessPage: React.FC = () => {
 
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [answers, setAnswers] = useState<Answer[] | null>(null);
-  const [gradedAnswers, setGradedAnswers] = useState<Set<string>>(new Set());
+  const [, setGradedAnswers] = useState<Set<string>>(new Set());
   const { showNotification } = useNotification();
-  const [formValues, setFormValues] = useState({
+  const [, setFormValues] = useState({
     name: "",
     startDate: "",
     endDate: "",
