@@ -8,7 +8,7 @@ import theme from "./Components/Theme/theme.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HashRouter basename="/ExamSystem">
+    <HashRouter>
       <ThemeProvider theme={theme}>
         <App />
       </ThemeProvider>
