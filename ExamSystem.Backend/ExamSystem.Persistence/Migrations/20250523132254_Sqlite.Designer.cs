@@ -3,7 +3,6 @@ using System;
 using ExamSystem.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,39 +11,38 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamSystem.Persistence.Migrations
 {
     [DbContext(typeof(ExamSystemDbContext))]
-    [Migration("20250508231538_AnswerModify")]
-    partial class AnswerModify
+    [Migration("20250523132254_Sqlite")]
+    partial class Sqlite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
 
             modelBuilder.Entity("ExamSystem.Core.Entities.Answer", b =>
                 {
                     b.Property<Guid>("AnswerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AnswerText")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ExamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsGraded")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("QuestionOptionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("AnswerId");
 
@@ -63,27 +61,27 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("ExamId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("JoinCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ExamId");
 
@@ -96,16 +94,25 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("ExamUserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("CompleteStatus")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("ExamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsChecked")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ExamUserId");
 
@@ -121,21 +128,24 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("QuestionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ExamId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("MaxPoints")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("QuestionText")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("QuestionId");
 
@@ -148,21 +158,21 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("QuestionOptionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Label")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OptionText")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("QuestionId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("QuestionOptionId");
 
@@ -175,14 +185,14 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("RoleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsSystem")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("RoleId");
 
@@ -213,23 +223,23 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId");
 
@@ -240,13 +250,13 @@ namespace ExamSystem.Persistence.Migrations
                 {
                     b.Property<Guid>("UserRoleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserRoleId");
 
@@ -256,6 +266,29 @@ namespace ExamSystem.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("ExamSystem.Core.Entities.Violation", b =>
+                {
+                    b.Property<Guid>("ViolationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ExamUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ViolationType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ViolationId");
+
+                    b.HasIndex("ExamUserId");
+
+                    b.ToTable("Violations");
                 });
 
             modelBuilder.Entity("ExamSystem.Core.Entities.Answer", b =>
@@ -363,6 +396,17 @@ namespace ExamSystem.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ExamSystem.Core.Entities.Violation", b =>
+                {
+                    b.HasOne("ExamSystem.Core.Entities.ExamUser", "ExamUser")
+                        .WithMany("Violations")
+                        .HasForeignKey("ExamUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamUser");
+                });
+
             modelBuilder.Entity("ExamSystem.Core.Entities.Exam", b =>
                 {
                     b.Navigation("Answers");
@@ -370,6 +414,11 @@ namespace ExamSystem.Persistence.Migrations
                     b.Navigation("ExamUsers");
 
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("ExamSystem.Core.Entities.ExamUser", b =>
+                {
+                    b.Navigation("Violations");
                 });
 
             modelBuilder.Entity("ExamSystem.Core.Entities.Question", b =>

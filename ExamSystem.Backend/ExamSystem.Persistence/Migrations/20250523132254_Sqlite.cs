@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExamSystem.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateSqlServer : Migration
+    public partial class Sqlite : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,9 +17,9 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsSystem = table.Column<bool>(type: "bit", nullable: false)
+                    RoleId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsSystem = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,11 +30,11 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,13 +45,13 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Exams",
                 columns: table => new
                 {
-                    ExamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    ExamId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    JoinCode = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,9 +68,9 @@ namespace ExamSystem.Persistence.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    UserRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserRoleId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    RoleId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,10 +93,13 @@ namespace ExamSystem.Persistence.Migrations
                 name: "ExamUsers",
                 columns: table => new
                 {
-                    ExamUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompleteStatus = table.Column<bool>(type: "bit", nullable: false)
+                    ExamUserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ExamId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    CompleteStatus = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsBlocked = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Grade = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsChecked = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,11 +122,12 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Questions",
                 columns: table => new
                 {
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    QuestionId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ExamId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    QuestionText = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    ImageUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    MaxPoints = table.Column<double>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,14 +141,34 @@ namespace ExamSystem.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Violations",
+                columns: table => new
+                {
+                    ViolationId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ExamUserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ViolationType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Violations", x => x.ViolationId);
+                    table.ForeignKey(
+                        name: "FK_Violations_ExamUsers_ExamUserId",
+                        column: x => x.ExamUserId,
+                        principalTable: "ExamUsers",
+                        principalColumn: "ExamUserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QuestionOptions",
                 columns: table => new
                 {
-                    QuestionOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OptionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsCorrect = table.Column<bool>(type: "bit", nullable: false)
+                    QuestionOptionId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Label = table.Column<string>(type: "TEXT", nullable: false),
+                    OptionText = table.Column<string>(type: "TEXT", nullable: false),
+                    IsCorrect = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,10 +185,13 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Answers",
                 columns: table => new
                 {
-                    AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionOptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AnswerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ExamId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    QuestionOptionId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    AnswerText = table.Column<string>(type: "TEXT", nullable: true),
+                    IsGraded = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,13 +201,19 @@ namespace ExamSystem.Persistence.Migrations
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "ExamId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Answers_QuestionOptions_QuestionOptionId",
                         column: x => x.QuestionOptionId,
                         principalTable: "QuestionOptions",
                         principalColumn: "QuestionOptionId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Answers_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Answers_Users_UserId",
                         column: x => x.UserId,
@@ -203,6 +236,11 @@ namespace ExamSystem.Persistence.Migrations
                 name: "IX_Answers_ExamId",
                 table: "Answers",
                 column: "ExamId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Answers_QuestionId",
+                table: "Answers",
+                column: "QuestionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Answers_QuestionOptionId",
@@ -250,6 +288,11 @@ namespace ExamSystem.Persistence.Migrations
                 table: "UserRoles",
                 columns: new[] { "UserId", "RoleId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Violations_ExamUserId",
+                table: "Violations",
+                column: "ExamUserId");
         }
 
         /// <inheritdoc />
@@ -259,16 +302,19 @@ namespace ExamSystem.Persistence.Migrations
                 name: "Answers");
 
             migrationBuilder.DropTable(
-                name: "ExamUsers");
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "Violations");
 
             migrationBuilder.DropTable(
                 name: "QuestionOptions");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "ExamUsers");
 
             migrationBuilder.DropTable(
                 name: "Questions");
