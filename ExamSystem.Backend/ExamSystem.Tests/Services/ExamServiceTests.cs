@@ -269,6 +269,47 @@ namespace ExamSystem.Tests.Services
         }
 
         [Fact]
+        public async Task FinishExamAsync_ShouldDeductPoints_WhenIncorrectAnswersExist()
+        {
+            var examId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+            var examUser = new ExamUser { UserId = userId };
+
+            var correctOption1 = new QuestionOption { IsCorrect = true };
+            var correctOption2 = new QuestionOption { IsCorrect = true };
+            var incorrectOption = new QuestionOption { IsCorrect = false };
+
+            var question = new Question
+            {
+                Type = QuestionType.MultiChoice,
+                MaxPoints = 12,
+                QuestionOptions = new List<QuestionOption> { correctOption1, correctOption2, incorrectOption },
+                Answers = new List<Answer>
+        {
+            new Answer { UserId = userId, QuestionOption = correctOption1 },
+            new Answer { UserId = userId, QuestionOption = incorrectOption }
+        }
+            };
+
+            var exam = new Exam
+            {
+                ExamId = examId,
+                ExamUsers = new List<ExamUser> { examUser },
+                Questions = new List<Question> { question }
+            };
+
+            _examRepoMock.Setup(r => r.GetByIdAsync(examId)).ReturnsAsync(RepositoryOperationResult<Exam>.Ok(exam));
+            _examRepoMock.Setup(r => r.UpdateAsync(exam)).ReturnsAsync(RepositoryOperationResult.Ok());
+
+            var result = await _service.FinishExamAsync(examId, userId);
+
+            // 2 total correct, 1 correct chosen, 1 incorrect chosen => (12/2) - (12/2) = 6 - 6 = 0
+            Assert.True(result.Success);
+            Assert.Equal(0, examUser.Grade);
+        }
+
+
+        [Fact]
         public async Task BlockExamUserByIdAsync_ShouldBlockUser_WhenValid()
         {
             var examUserId = Guid.NewGuid();
