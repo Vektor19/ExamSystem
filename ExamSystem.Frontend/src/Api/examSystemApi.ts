@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const examSystemApi = axios.create({
-  baseURL: 'https://examsystembackend-brbzbwgzhbe3eufv.canadacentral-01.azurewebsites.net',
+  baseURL: 'https://examsystem-backend-9a66e404de39.herokuapp.com',
   headers: {
     'Content-Type': 'application/json',
   },
